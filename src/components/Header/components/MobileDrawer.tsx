@@ -1,9 +1,9 @@
 "use client";
 import { FaTimes, FaChevronRight, FaChevronDown } from "react-icons/fa";
-import Link from "next/link";
 import { useMenuData } from "@/hooks/useMenuData";
 import { useLanguageData } from "@/hooks/useLanguageData";
 import { useState } from "react";
+import { Link } from "@/i18n/navigation";
 
 interface Props {
   setMenuOpen: (open: boolean) => void;

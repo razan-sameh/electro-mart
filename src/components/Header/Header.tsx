@@ -1,20 +1,23 @@
 "use client";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import Logo from "./components/Logo";
 import MobileDrawer from "./components/MobileDrawer";
 import IconButtonGroup from "./components/IconButtonGroup";
 import SearchBar from "./components/SearchBar";
 import CategoriesNavBar from "../CategoriesNavBar";
 import { FaBars } from "react-icons/fa";
+import { useLocale } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const bgColor = pathname === "/" ? "rgba(255,255,255,0.7)" : "white";
+  const locale = useLocale();
+  const isLanding = pathname === `/${locale}` || pathname === "/";
+  const bgColor = isLanding ? "rgba(255,255,255,0.7)" : "white";
   // classes based on pathname
   const containerClasses =
-    pathname === "/"
+    isLanding
       ? "relative max-w-7xl mx-auto rounded-t-lg rounded-b-none md:rounded-lg px-4 md:px-12 py-3"
       : "relative max-w-7xl mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
 

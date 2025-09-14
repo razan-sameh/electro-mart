@@ -1,9 +1,9 @@
 // components/Header/ProductsDropdown.tsx
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { FaBars } from "react-icons/fa";
 import { useMenuData } from "@/hooks/useMenuData";
+import { Link } from "@/i18n/navigation";
 
 export default function ProductsDropdown() {
   const [open, setOpen] = useState(false);

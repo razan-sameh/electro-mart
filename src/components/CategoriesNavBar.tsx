@@ -1,8 +1,8 @@
 // components/CategoriesNavBar.tsx
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useMenuData } from "@/hooks/useMenuData";
+import { useLocale } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 
 interface CategoriesNavBarProps {
   absolute?: boolean; // if true → overlay mode
@@ -12,16 +12,18 @@ export default function CategoriesNavBar({
   absolute = false,
 }: CategoriesNavBarProps) {
   const pathname = usePathname();
+   const locale = useLocale();
+    const isLanding = pathname === `/${locale}` || pathname === "/";
   const { getMenuItemsWithIcons, handleItemClick, isActiveItem } = useMenuData();
   
-  const bgColor = pathname === "/" ? "rgba(255,255,255,0.7)" : "white";
+  const bgColor = isLanding? "rgba(255,255,255,0.7)" : "white";
   
   // Get items with icons only if on homepage
-  const items = getMenuItemsWithIcons(pathname === "/");
+  const items = getMenuItemsWithIcons(isLanding);
 
   // ✅ Dynamic container classes based on pathname
   const containerClasses =
-    pathname === "/"
+    isLanding
       ? "rounded-lg shadow-md" // full rounded when on homepage
       : "rounded-b-lg border-t border-gray-200"; // only bottom rounded when NOT homepage
 
