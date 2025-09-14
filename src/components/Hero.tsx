@@ -1,5 +1,6 @@
 // app/components/Hero.tsx
 import Image from "next/image";
+import CategoriesNavBar from "./CategoriesNavBar";
 
 export default function Hero() {
   return (
@@ -28,6 +29,11 @@ export default function Hero() {
           Discover more
         </button>
       </div>
+      {/* ✅ NavBar only on desktop */}
+      <div className="hidden md:block">
+        <CategoriesNavBar absolute />
+      </div>
+
     </section>
   );
 }

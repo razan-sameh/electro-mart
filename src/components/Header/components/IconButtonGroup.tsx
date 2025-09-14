@@ -1,30 +1,31 @@
-import { FaUser, FaShoppingCart } from "react-icons/fa";
-import { IoLanguage } from "react-icons/io5";
-import IconButton from "./IconButton";
+// components/IconButtonGroup.tsx (refactored)
+"use client";
+import LanguageDropdown from "./LanguageDropdown";
+import UserButton from "./UserButton";
+import CartButton from "./CartButton";
 
 interface Props {
   layout: "desktop" | "mobile";
+  cartItemCount?: number; // Optional cart count
 }
 
-export default function IconButtonGroup({ layout }: Props) {
-  const icons = [
+export default function IconButtonGroup({ layout, cartItemCount }: Props) {
+  // Define which components to show on each layout
+  const componentConfig = [
     {
-      icon: <IoLanguage size={20} />,
       key: "language",
       showOn: ["desktop"],
-      onClick: () => console.log("Change language"),
+      component: <LanguageDropdown />,
     },
     {
-      icon: <FaUser size={20} />,
-      key: "user",
+      key: "user", 
       showOn: ["desktop", "mobile"],
-      onClick: () => console.log("Go to profile"),
+      component: <UserButton />,
     },
     {
-      icon: <FaShoppingCart size={20} />,
       key: "cart",
       showOn: ["desktop", "mobile"],
-      onClick: () => console.log("Open cart"),
+      component: <CartButton itemCount={cartItemCount} />,
     },
   ];
 
@@ -36,10 +37,12 @@ export default function IconButtonGroup({ layout }: Props) {
           : "flex md:hidden gap-4 ml-auto"
       }`}
     >
-      {icons
-        .filter((item) => item.showOn.includes(layout))
-        .map((item) => (
-          <IconButton key={item.key} onClick={item.onClick}>{item.icon}</IconButton>
+      {componentConfig
+        .filter((config) => config.showOn.includes(layout))
+        .map((config) => (
+          <div key={config.key}>
+            {config.component}
+          </div>
         ))}
     </div>
   );

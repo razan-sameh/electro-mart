@@ -7,7 +7,7 @@ interface Props {
 
 export default function IconButton({ children, onClick, className = "" }: Props) {
   return (
-    <button onClick={onClick} className={`flex items-center justify-center cursor-pointer ${className}`}>
+    <button onClick={onClick} className={`flex items-center justify-center cursor-pointer hover:text-blue-600 transition-colors ${className}`}>
       {children}
     </button>
   );
