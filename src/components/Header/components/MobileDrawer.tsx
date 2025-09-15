@@ -1,21 +1,20 @@
 "use client";
 import { FaTimes, FaChevronRight, FaChevronDown } from "react-icons/fa";
-import { useMenuData } from "@/hooks/useMenuData";
-import { useLanguageData } from "@/hooks/useLanguageData";
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { useMenuData } from "@/hooks/useMenuData";
+import { useLanguage } from "@/hooks/useLanguage";
 
-interface Props {
-  setMenuOpen: (open: boolean) => void;
-}
-
-export default function MobileDrawer({ setMenuOpen }: Props) {
+export default function MobileDrawer({
+  setMenuOpen,
+}: {
+  setMenuOpen: (v: boolean) => void;
+}) {
   const { getMenuItemsWithIcons, handleItemClick } = useMenuData();
-  const { languageOptions } = useLanguageData();
-
+  const { languageOptions, currentLanguage, changeLanguage } =
+    useLanguage();
   const menuItems = getMenuItemsWithIcons(true);
   const [showLanguages, setShowLanguages] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState(languageOptions[0]);
 
   return (
     <div className="fixed inset-0 z-30">
@@ -62,7 +61,6 @@ export default function MobileDrawer({ setMenuOpen }: Props) {
             {showLanguages ? <FaChevronDown /> : <FaChevronRight />}
           </button>
 
-          {/* Languages list (only shown when expanded) */}
           {showLanguages && (
             <div className="mt-2 flex flex-col space-y-2 pl-6">
               {languageOptions.map((lang) => (
@@ -70,7 +68,7 @@ export default function MobileDrawer({ setMenuOpen }: Props) {
                   key={lang.code}
                   className="flex items-center gap-2 text-left hover:text-blue-600"
                   onClick={() => {
-                    setCurrentLanguage(lang);
+                    changeLanguage(lang.code.toLowerCase());
                     setShowLanguages(false);
                   }}
                 >

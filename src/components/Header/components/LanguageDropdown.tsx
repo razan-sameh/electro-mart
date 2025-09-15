@@ -1,59 +1,50 @@
-// components/LanguageDropdown.tsx
 "use client";
-import { useState, useRef, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
 import IconButton from "./IconButton";
-import { useLanguageData } from "@/hooks/useLanguageData";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function LanguageDropdown() {
-  const { languageOptions } = useLanguageData();
-  const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
+  const { languageOptions, currentLanguage, changeLanguage, locale } =
+    useLanguage();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Get current language
-  const currentLanguage = languageOptions[currentLanguageIndex];
-
-  // Close dropdown when clicking outside
+  // close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(e.target as Node)
       ) {
         setShowDropdown(false);
       }
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Language selection handler
-  const handleLanguageSelect = (index: number) => {
-    setCurrentLanguageIndex(index);
-    setShowDropdown(false);
-    console.log(`Switched to ${languageOptions[index].label}`);
-  };
-
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div ref={dropdownRef} className="relative">
       <IconButton onClick={() => setShowDropdown(!showDropdown)}>
         <div className="flex items-center gap-1">
           {currentLanguage.icon}
-          <span className="text-sm font-medium">{currentLanguage.code}</span>
+          <span className="text-sm font-medium">{currentLanguage.displayCode}</span>
           <FaChevronDown size={10} />
         </div>
       </IconButton>
 
       {showDropdown && (
-        <div className="absolute top-full right-0 mt-2 bg-[#E5E5E5] border border-gray-200 rounded-md shadow-lg z-50 min-w-[120px]">
-          {languageOptions.map((option, index) => (
+        <div className="absolute top-full right-0 mt-2 bg-[#E5E5E5] rounded-md shadow-lg z-50 min-w-[120px]">
+          {languageOptions.map((option) => (
             <button
               key={option.code}
-              onClick={() => handleLanguageSelect(index)}
+              onClick={() => {
+                changeLanguage(option.code.toLowerCase());
+                setShowDropdown(false);
+              }}
               className={`flex items-center gap-2 w-full px-3 py-2 cursor-pointer text-left hover:bg-gray-100 transition-colors ${
-                index === currentLanguageIndex
+                option.code.toLowerCase() === locale
                   ? "bg-blue-50 text-blue-600"
                   : "text-gray-700"
               }`}
