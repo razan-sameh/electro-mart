@@ -5,8 +5,7 @@ import MobileDrawer from "./components/MobileDrawer";
 import IconButtonGroup from "./components/IconButtonGroup";
 import SearchBar from "./components/SearchBar";
 import CategoriesNavBar from "../CategoriesNavBar";
-import { FaBars } from "react-icons/fa";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 
 export default function Header() {
@@ -15,23 +14,29 @@ export default function Header() {
   const locale = useLocale();
   const isLanding = pathname === `/${locale}` || pathname === "/";
   const bgColor = isLanding ? "rgba(255,255,255,0.7)" : "white";
+  const t = useTranslations("Header");
+
   // classes based on pathname
-  const containerClasses =
-    isLanding
-      ? "relative max-w-7xl mx-auto rounded-t-lg rounded-b-none md:rounded-lg px-4 md:px-12 py-3"
-      : "relative max-w-7xl mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
+  const containerClasses = isLanding
+    ? "relative max-w-7xl mx-auto rounded-t-lg rounded-b-none md:rounded-lg px-4 md:px-12 py-3"
+    : "relative max-w-7xl mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
 
   return (
     <header className="absolute top-6 left-0 w-full z-20 px-4">
       <div className={containerClasses} style={{ backgroundColor: bgColor }}>
         <div className="relative flex items-center justify-between">
           <Logo />
-          <SearchBar />
+          <SearchBar placeholder={t("searchPlaceholder")}/>
           <IconButtonGroup layout="desktop" />
           <IconButtonGroup layout="mobile" />
         </div>
       </div>
-      <SearchBar isMobile menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <SearchBar
+        isMobile
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        placeholder={t("searchPlaceholder")}
+      />
       {pathname !== "/" && (
         <div className="hidden md:block ">
           <CategoriesNavBar />

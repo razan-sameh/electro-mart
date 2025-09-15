@@ -4,15 +4,21 @@ import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { useMenuData } from "@/hooks/useMenuData";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ProductsDropdown() {
   const [open, setOpen] = useState(false);
   const { getMenuItemsLabelsOnly, handleItemClick } = useMenuData();
-  
+  const t = useTranslations("Header");
+
   // Get items without icons for dropdown
   const items = getMenuItemsLabelsOnly();
 
-  const handleItemClickWithClose = (item: { id: string; label: string; href: string }) => {
+  const handleItemClickWithClose = (item: {
+    id: string;
+    label: string;
+    href: string;
+  }) => {
     // Convert to MenuItem format and handle click
     handleItemClick({ ...item, icon: null });
     setOpen(false); // Close dropdown after click
@@ -24,11 +30,11 @@ export default function ProductsDropdown() {
       <div
         onClick={() => setOpen(!open)}
         className={`${
-          open ? "rounded-tl-md" : "rounded-l-md"
+          open ? "rounded-ss-md" : "rounded-s-md"
         } flex items-center gap-2 cursor-pointer px-4 py-2 bg-[#E5E5E5] transition-colors hover:bg-gray-300`}
       >
         <FaBars className="text-gray-700" />
-        <span className="font-medium text-gray-700">Products</span>
+        <span className="font-medium text-gray-700">{t("products")}</span>
       </div>
 
       {/* Dropdown */}
@@ -36,8 +42,8 @@ export default function ProductsDropdown() {
         <div className="absolute left-0 top-full w-56 bg-[#E5E5E5] rounded-b-md shadow-lg z-30">
           <nav className="flex flex-col px-6 py-4 space-y-4 text-gray-800">
             {items.map((item) => (
-              <Link 
-                key={item.id} 
+              <Link
+                key={item.id}
                 href={item.href}
                 onClick={() => handleItemClickWithClose(item)}
                 className="hover:text-blue-600 transition-colors"

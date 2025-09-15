@@ -1,4 +1,9 @@
 {
+  "Header": {
+    "searchPlaceholder": "I'm searching for...",
+    "products": "Products",
+    "language": "Language"
+  },
   "Hero": {
     "title": "Introducing the Next Generation of Sound",
     "subtitle": "Experience pure, immersive sound like never before",

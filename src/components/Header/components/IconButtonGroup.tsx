@@ -34,7 +34,7 @@ export default function IconButtonGroup({ layout, cartItemCount }: Props) {
       className={`text-gray-700 ${
         layout === "desktop"
           ? "hidden md:flex gap-6"
-          : "flex md:hidden gap-4 ml-auto"
+          : "flex md:hidden gap-4 ms-auto"
       }`}
     >
       {componentConfig
