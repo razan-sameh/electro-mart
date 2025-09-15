@@ -12,20 +12,17 @@ export default function CategoriesNavBar({
   absolute = false,
 }: CategoriesNavBarProps) {
   const pathname = usePathname();
-   const locale = useLocale();
-    const isLanding = pathname === `/${locale}` || pathname === "/";
-  const { getMenuItemsWithIcons, handleItemClick, isActiveItem } = useMenuData();
-  
-  const bgColor = isLanding? "rgba(255,255,255,0.7)" : "white";
-  
+  const locale = useLocale();
+  const isLanding = pathname === `/${locale}` || pathname === "/";
+  const { getMenuItemsWithIcons, handleItemClick, isActiveItem } =
+    useMenuData();
   // Get items with icons only if on homepage
   const items = getMenuItemsWithIcons(isLanding);
 
   // ✅ Dynamic container classes based on pathname
-  const containerClasses =
-    isLanding
-      ? "rounded-lg shadow-md" // full rounded when on homepage
-      : "rounded-b-lg border-t border-gray-200"; // only bottom rounded when NOT homepage
+  const containerClasses = isLanding
+    ? "rounded-lg shadow-md" // full rounded when on homepage
+    : "rounded-b-lg border-t border-gray-200"; // only bottom rounded when NOT homepage
 
   return (
     <div
@@ -34,21 +31,22 @@ export default function CategoriesNavBar({
       }
     >
       <div
-        className={`relative max-w-7xl mx-auto px-4 md:px-12 ${containerClasses}`}
-        style={{ backgroundColor: bgColor }}
+        className={`relative max-w-7xl mx-auto px-4 md:px-12 ${containerClasses} ${
+          isLanding ? "bg-background/60" : "bg-background"
+        }`}
       >
         <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto">
           {items.map((item) => {
             const isActive = isActiveItem(pathname, item.id);
-            
+
             return (
               <Link
                 key={item.id}
                 href={item.href}
                 className={`flex flex-col items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "text-blue-600" 
-                    : "text-gray-700 hover:text-blue-600"
+                  isActive
+                    ? "text-blue-600"
+                    : "text-icon hover:text-blue-600"
                 }`}
                 onClick={() => handleItemClick(item)}
               >

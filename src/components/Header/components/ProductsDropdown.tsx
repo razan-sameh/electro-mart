@@ -31,16 +31,16 @@ export default function ProductsDropdown() {
         onClick={() => setOpen(!open)}
         className={`${
           open ? "rounded-ss-md" : "rounded-s-md"
-        } flex items-center gap-2 cursor-pointer px-4 py-2 bg-[#E5E5E5] transition-colors hover:bg-gray-300`}
+        } flex items-center gap-2 cursor-pointer px-4 py-2 bg-background transition-colors hover:bg-background/70`}
       >
-        <FaBars className="text-gray-700" />
-        <span className="font-medium text-gray-700">{t("products")}</span>
+        <FaBars className="text-icon" />
+        <span className="font-medium text-icon">{t("products")}</span>
       </div>
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 top-full w-56 bg-[#E5E5E5] rounded-b-md shadow-lg z-30">
-          <nav className="flex flex-col px-6 py-4 space-y-4 text-gray-800">
+        <div className="absolute left-0 top-full w-56 bg-background rounded-b-md shadow-lg z-30">
+          <nav className="flex flex-col px-6 py-4 space-y-4 text-icon">
             {items.map((item) => (
               <Link
                 key={item.id}

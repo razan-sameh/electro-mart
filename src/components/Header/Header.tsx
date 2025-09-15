@@ -13,7 +13,7 @@ export default function Header() {
   const pathname = usePathname();
   const locale = useLocale();
   const isLanding = pathname === `/${locale}` || pathname === "/";
-  const bgColor = isLanding ? "rgba(255,255,255,0.7)" : "white";
+
   const t = useTranslations("Header");
 
   // classes based on pathname
@@ -23,10 +23,14 @@ export default function Header() {
 
   return (
     <header className="absolute top-6 left-0 w-full z-20 px-4">
-      <div className={containerClasses} style={{ backgroundColor: bgColor }}>
+      <div
+        className={`${
+          isLanding ? "bg-background/60" : "bg-background"
+        } ${containerClasses}`}
+      >
         <div className="relative flex items-center justify-between">
           <Logo />
-          <SearchBar placeholder={t("searchPlaceholder")}/>
+          <SearchBar placeholder={t("searchPlaceholder")} />
           <IconButtonGroup layout="desktop" />
           <IconButtonGroup layout="mobile" />
         </div>

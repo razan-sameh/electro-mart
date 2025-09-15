@@ -3,6 +3,7 @@
 import LanguageDropdown from "./LanguageDropdown";
 import UserButton from "./UserButton";
 import CartButton from "./CartButton";
+import ThemeButton from "./ThemeButton";
 
 interface Props {
   layout: "desktop" | "mobile";
@@ -27,11 +28,16 @@ export default function IconButtonGroup({ layout, cartItemCount }: Props) {
       showOn: ["desktop", "mobile"],
       component: <CartButton itemCount={cartItemCount} />,
     },
+    {
+      key: "theme",
+      showOn: ["desktop", "mobile"],
+      component: <ThemeButton />,
+    },
   ];
 
   return (
     <div
-      className={`text-gray-700 ${
+      className={`text-icon ${
         layout === "desktop"
           ? "hidden md:flex gap-6"
           : "flex md:hidden gap-4 ms-auto"

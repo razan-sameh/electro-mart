@@ -31,9 +31,9 @@ export default function SearchBar({
       {isMobile && setMenuOpen && (
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="px-4 py-2 bg-white/70 flex items-center justify-center rounded-es-md rounded-t-none md:rounded-md"
+          className="px-4 py-2 bg-background/60 flex items-center justify-center rounded-es-md rounded-t-none md:rounded-md"
         >
-          <FaBars size={22} className="text-gray-700" />
+          <FaBars size={22} className="text-icon" />
         </button>
       )}
       {!isMobile && <ProductsDropdown />}
@@ -46,7 +46,7 @@ export default function SearchBar({
         <input
           type="text"
           placeholder={placeholder}
-          className={`w-full px-4 py-2 pe-10 bg-white text-gray-800 placeholder:text-gray-500  focus:outline-none ${
+          className={`w-full px-4 py-2 pe-10 bg-background/70 text-icon placeholder:text-icon  focus:outline-none ${
             isMobile
               ? "rounded-ee-md rounded-t-none md:rounded-md"
               : "rounded-e-md"
@@ -55,7 +55,7 @@ export default function SearchBar({
         <FaSearch
           className={`absolute ${
             locale === "ar" ? "left-3" : "right-3"
-          } top-1/2 -translate-y-1/2 text-gray-500`}
+          } top-1/2 -translate-y-1/2 text-icon`}
         />
       </div>
     </div>

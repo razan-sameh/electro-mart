@@ -29,7 +29,7 @@ export default function MobileDrawer({
         onClick={() => setMenuOpen(false)}
       />
       <div
-        className={`absolute top-0 w-72 bg-white shadow-lg p-6 flex flex-col ${
+        className={`absolute top-0 w-72 bg-background shadow-lg p-6 flex flex-col ${
           locale === "ar" ? "right-0" : "left-0"
         }`}
       >
@@ -38,12 +38,12 @@ export default function MobileDrawer({
             ELECTRIC<span style={{ color: "#FB5F2F" }}>.</span>MART
           </Link>
           <button onClick={() => setMenuOpen(false)}>
-            <FaTimes size={22} className="text-gray-600" />
+            <FaTimes size={22} className="text-icon" />
           </button>
         </div>
 
         <h3 className="text-blue-600 font-semibold mb-4">{t('products')}</h3>
-        <nav className="flex flex-col space-y-4 text-gray-800">
+        <nav className="flex flex-col space-y-4 text-icon">
           {menuItems.map((item) => (
             <Link
               key={item.id}
@@ -60,7 +60,7 @@ export default function MobileDrawer({
         </nav>
 
         {/* Language selector */}
-        <div className="mt-auto pt-6 text-gray-700">
+        <div className="mt-auto pt-6 text-icon">
           <button
             className="flex items-center justify-between w-full"
             onClick={() => setShowLanguages(!showLanguages)}
