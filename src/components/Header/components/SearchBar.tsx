@@ -2,6 +2,7 @@
 import { FaSearch, FaBars } from "react-icons/fa";
 import ProductsDropdown from "./ProductsDropdown";
 import { useLocale } from "next-intl";
+import { Suspense } from "react";
 
 interface Props {
   isMobile?: boolean; // true => render mobile layout with hamburger
@@ -36,8 +37,9 @@ export default function SearchBar({
           <FaBars size={22} className="text-icon" />
         </button>
       )}
-      {!isMobile && <ProductsDropdown />}
-
+      <Suspense fallback={<div>Loading...</div>}>
+        {!isMobile && <ProductsDropdown />}
+      </Suspense>
       <div
         className={`relative flex-1 ${
           isMobile ? "" : "w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl"

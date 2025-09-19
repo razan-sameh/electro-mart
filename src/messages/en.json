@@ -8,5 +8,47 @@
     "title": "Introducing the Next Generation of Sound",
     "subtitle": "Experience pure, immersive sound like never before",
     "button": "Discover more"
+  },
+  "Footer": {
+    "support": "E-commerce support",
+    "workingHours": "Working hours",
+    "aboutUs": "About us",
+    "help": "Help & Support",
+    "newsletter": "Sign up for exclusive offers and the latest news!",
+    "address": {
+      "company": "ELECTRO.MART",
+      "street": "Damstraat 123",
+      "postal": "1012 AB Amsterdam",
+      "country": "The Netherlands",
+      "phone": "Phone: +31 20 123 4567",
+      "email": "Email: support@nextpick.com"
+    },
+    "hours": {
+      "monFri": "Monday to Friday: 09:00 - 18:00",
+      "sat": "Saturday: 10:00 - 16:00",
+      "sun": "Sunday: Closed"
+    },
+    "links": {
+      "about": {
+        "stores": "Stores",
+        "corporate": "Corporate website",
+        "offers": "Exclusive Offers",
+        "career": "Career"
+      },
+      "help": {
+        "center": "Help center",
+        "payments": "Payments",
+        "returns": "Product returns",
+        "faq": "FAQ"
+      }
+    },
+    "bottom": {
+      "rights": "© 2024 ELECTRO.MART All Rights Reserved.",
+      "privacy": "Privacy policy",
+      "cookies": "Cookie settings",
+      "terms": "Terms and conditions",
+      "imprint": "Imprint"
+    },
+    "placeholder": "Your email..."
   }
 }

@@ -6,19 +6,21 @@ import {
   FaChevronLeft,
 } from "react-icons/fa";
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
-import { useMenuData } from "@/hooks/useMenuData";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslations } from "next-intl";
+import { useCategories } from "@/lib/hooks/useCategories";
+import { Category } from "@/content/types";
+import { Link } from "@/i18n/navigation";
+import { renderIcon } from "@/content/iconMap";
 
 export default function MobileDrawer({
   setMenuOpen,
 }: {
   setMenuOpen: (v: boolean) => void;
 }) {
-  const { getMenuItemsWithIcons, handleItemClick } = useMenuData();
-  const { languageOptions, currentLanguage, changeLanguage ,locale } = useLanguage();
-  const menuItems = getMenuItemsWithIcons(true);
+  const { data: categories = []} = useCategories();
+  const { languageOptions, currentLanguage, changeLanguage, locale } =
+    useLanguage();
   const [showLanguages, setShowLanguages] = useState(false);
   const t = useTranslations("Header");
 
@@ -42,20 +44,15 @@ export default function MobileDrawer({
           </button>
         </div>
 
-        <h3 className="text-blue-600 font-semibold mb-4">{t('products')}</h3>
+        <h3 className="text-blue-600 font-semibold mb-4">{t("products")}</h3>
         <nav className="flex flex-col space-y-4 text-icon">
-          {menuItems.map((item) => (
-            <Link
+          {categories.map((item: Category) => (
+            <button
               key={item.id}
-              href={item.href}
-              className="flex items-center gap-3"
-              onClick={() => {
-                handleItemClick(item);
-                setMenuOpen(false);
-              }}
+              className="flex items-center gap-3 hover:text-blue-600 transition-colors"
             >
-              {item.icon} {item.label}
-            </Link>
+              {item.icon && renderIcon(item.icon, 20)} {item.name}
+            </button>
           ))}
         </nav>
 

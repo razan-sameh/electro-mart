@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Logo from "./components/Logo";
 import MobileDrawer from "./components/MobileDrawer";
 import IconButtonGroup from "./components/IconButtonGroup";
@@ -41,12 +41,16 @@ export default function Header() {
         setMenuOpen={setMenuOpen}
         placeholder={t("searchPlaceholder")}
       />
-      {pathname !== "/" && (
-        <div className="hidden md:block ">
-          <CategoriesNavBar />
-        </div>
-      )}{" "}
-      {menuOpen && <MobileDrawer setMenuOpen={setMenuOpen} />}
+      <Suspense fallback={<div>Loading...</div>}>
+        {pathname !== "/" && (
+          <div className="hidden md:block ">
+            <CategoriesNavBar />
+          </div>
+        )}
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
+        {menuOpen && <MobileDrawer setMenuOpen={setMenuOpen} />}
+      </Suspense>
     </header>
   );
 }

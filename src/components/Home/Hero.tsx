@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import CategoriesNavBar from "../CategoriesNavBar";
+import { Suspense } from "react";
 
 export default function Hero() {
   const t = useTranslations("Hero");
@@ -32,9 +33,11 @@ export default function Hero() {
       </div>
 
       {/* ✅ NavBar only on desktop */}
-      <div className="hidden md:block">
-        <CategoriesNavBar absolute />
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="hidden md:block">
+          <CategoriesNavBar absolute />
+        </div>
+      </Suspense>
     </section>
   );
 }

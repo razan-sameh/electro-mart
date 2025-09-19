@@ -4,6 +4,8 @@ export default function Home() {
   return (
     <div>
       <Hero />
+      <div className="w-full h-60 "/>
+      <div className="w-full h-60  "/>
     </div>
   );
 }

@@ -2,27 +2,13 @@
 "use client";
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
-import { useMenuData } from "@/hooks/useMenuData";
-import { Link } from "@/i18n/navigation";
+import { useCategories } from "@/lib/hooks/useCategories";
 import { useTranslations } from "next-intl";
 
 export default function ProductsDropdown() {
   const [open, setOpen] = useState(false);
-  const { getMenuItemsLabelsOnly, handleItemClick } = useMenuData();
+  const { data: categories = [], isLoading, error } = useCategories();
   const t = useTranslations("Header");
-
-  // Get items without icons for dropdown
-  const items = getMenuItemsLabelsOnly();
-
-  const handleItemClickWithClose = (item: {
-    id: string;
-    label: string;
-    href: string;
-  }) => {
-    // Convert to MenuItem format and handle click
-    handleItemClick({ ...item, icon: null });
-    setOpen(false); // Close dropdown after click
-  };
 
   return (
     <div className="relative">
@@ -41,15 +27,13 @@ export default function ProductsDropdown() {
       {open && (
         <div className="absolute left-0 top-full w-56 bg-background rounded-b-md shadow-lg z-30">
           <nav className="flex flex-col px-6 py-4 space-y-4 text-icon">
-            {items.map((item) => (
-              <Link
+            {categories.map((item) => (
+              <button
                 key={item.id}
-                href={item.href}
-                onClick={() => handleItemClickWithClose(item)}
-                className="hover:text-blue-600 transition-colors"
+                className="text-left hover:text-blue-600 transition-colors cursor-pointer"
               >
-                {item.label}
-              </Link>
+                {item.name}
+              </button>
             ))}
           </nav>
         </div>

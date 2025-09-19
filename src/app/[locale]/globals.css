@@ -2,16 +2,19 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  /* font-family: var(--font-roboto), sans-serif; */
 }
 
 @theme {
   --color-background: #ffffff;
   --color-icon: #4b4b4b;
   --color-content: #4b4b4b;
+  --color-lightGray: #cbcbcb;
 }
 
 .dark {
   --color-background: #000000;
   --color-icon: #ece7e7;
   --color-content: #ece7e7;
+  --color-lightGray: #313131;
 }

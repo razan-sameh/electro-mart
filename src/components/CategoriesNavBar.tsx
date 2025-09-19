@@ -1,8 +1,11 @@
 // components/CategoriesNavBar.tsx
 "use client";
-import { useMenuData } from "@/hooks/useMenuData";
 import { useLocale } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { useCategories } from "@/lib/hooks/useCategories";
+import { Category } from "@/content/types";
+import { useEffect } from "react";
+import { renderIcon } from "@/content/iconMap";
 
 interface CategoriesNavBarProps {
   absolute?: boolean; // if true → overlay mode
@@ -14,11 +17,7 @@ export default function CategoriesNavBar({
   const pathname = usePathname();
   const locale = useLocale();
   const isLanding = pathname === `/${locale}` || pathname === "/";
-  const { getMenuItemsWithIcons, handleItemClick, isActiveItem } =
-    useMenuData();
-  // Get items with icons only if on homepage
-  const items = getMenuItemsWithIcons(isLanding);
-
+  const { data: categories } = useCategories(); 
   // ✅ Dynamic container classes based on pathname
   const containerClasses = isLanding
     ? "rounded-lg shadow-md" // full rounded when on homepage
@@ -35,26 +34,16 @@ export default function CategoriesNavBar({
           isLanding ? "bg-background/60" : "bg-background"
         }`}
       >
-        <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto">
-          {items.map((item) => {
-            const isActive = isActiveItem(pathname, item.id);
-
+        <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto ">
+          {categories.map((item: Category) => {
             return (
-              <Link
+              <button
                 key={item.id}
-                href={item.href}
-                className={`flex flex-col items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "text-blue-600"
-                    : "text-icon hover:text-blue-600"
-                }`}
-                onClick={() => handleItemClick(item)}
+                className={`flex flex-col items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium hover:text-blue-600 transition-colors cursor-pointer`}
               >
-                {pathname === "/" && item.icon && (
-                  <div className="text-lg">{item.icon}</div>
-                )}
-                <span className="mt-1">{item.label}</span>
-              </Link>
+                {isLanding && item.icon && renderIcon(item.icon, 20)}
+                <span className="mt-1">{item.name}</span>
+              </button>
             );
           })}
         </div>
