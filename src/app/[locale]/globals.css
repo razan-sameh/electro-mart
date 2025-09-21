@@ -10,6 +10,8 @@ body {
   --color-icon: #4b4b4b;
   --color-content: #4b4b4b;
   --color-lightGray: #cbcbcb;
+  --color-secondary: #fb5f2f;
+  --color-primary: #1a4de1;
 }
 
 .dark {
@@ -17,4 +19,6 @@ body {
   --color-icon: #ece7e7;
   --color-content: #ece7e7;
   --color-lightGray: #313131;
+  --color-secondary: #fb5f2f;
+  --color-primary: #1a4de1;
 }

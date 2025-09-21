@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslations } from "next-intl";
 import { useCategories } from "@/lib/hooks/useCategories";
-import { Category } from "@/content/types";
+import { typCategory } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { renderIcon } from "@/content/iconMap";
 
@@ -18,7 +18,7 @@ export default function MobileDrawer({
 }: {
   setMenuOpen: (v: boolean) => void;
 }) {
-  const { data: categories = []} = useCategories();
+  const { data: categories = [] } = useCategories();
   const { languageOptions, currentLanguage, changeLanguage, locale } =
     useLanguage();
   const [showLanguages, setShowLanguages] = useState(false);
@@ -37,7 +37,7 @@ export default function MobileDrawer({
       >
         <div className="flex items-center justify-between mb-6">
           <Link href="/" className="text-lg font-bold text-blue-600">
-            ELECTRIC<span style={{ color: "#FB5F2F" }}>.</span>MART
+            ELECTRIC<span className="text-secondary">.</span>MART
           </Link>
           <button onClick={() => setMenuOpen(false)}>
             <FaTimes size={22} className="text-icon" />
@@ -46,7 +46,7 @@ export default function MobileDrawer({
 
         <h3 className="text-blue-600 font-semibold mb-4">{t("products")}</h3>
         <nav className="flex flex-col space-y-4 text-icon">
-          {categories.map((item: Category) => (
+          {categories.map((item: typCategory) => (
             <button
               key={item.id}
               className="flex items-center gap-3 hover:text-blue-600 transition-colors"

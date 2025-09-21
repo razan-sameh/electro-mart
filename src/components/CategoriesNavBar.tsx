@@ -3,8 +3,7 @@
 import { useLocale } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useCategories } from "@/lib/hooks/useCategories";
-import { Category } from "@/content/types";
-import { useEffect } from "react";
+import { typCategory } from "@/content/types";
 import { renderIcon } from "@/content/iconMap";
 
 interface CategoriesNavBarProps {
@@ -17,7 +16,7 @@ export default function CategoriesNavBar({
   const pathname = usePathname();
   const locale = useLocale();
   const isLanding = pathname === `/${locale}` || pathname === "/";
-  const { data: categories } = useCategories(); 
+  const { data: categories } = useCategories();
   // ✅ Dynamic container classes based on pathname
   const containerClasses = isLanding
     ? "rounded-lg shadow-md" // full rounded when on homepage
@@ -35,7 +34,7 @@ export default function CategoriesNavBar({
         }`}
       >
         <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto ">
-          {categories.map((item: Category) => {
+          {categories.map((item: typCategory) => {
             return (
               <button
                 key={item.id}

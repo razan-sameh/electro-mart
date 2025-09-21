@@ -1,12 +1,10 @@
 // lib/services/categories.ts
-import { Category } from "@/content/types";
-import { apiClient } from "../apiClient";
+import { typCategory } from "@/content/types";
+import { apiClient, STRAPI_URL } from "../apiClient";
 
-const STRAPI_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-  "http://localhost:1337";
 
-export async function fetchCategories(locale: string): Promise<Category[]> {
+
+export async function fetchCategories(locale: string): Promise<typCategory[]> {
   const data = await apiClient<any>(
     "/categories",
     { cache: "force-cache" }, // ✅ Let it use default force-cache

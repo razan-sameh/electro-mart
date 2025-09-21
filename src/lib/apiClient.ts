@@ -1,6 +1,8 @@
 // apiClient.ts
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
-
+export const STRAPI_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+  "http://localhost:1337";
 // In apiClient.ts - let React Query handle ALL caching
 export async function apiClient<T>(
   endpoint: string,

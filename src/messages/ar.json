@@ -9,6 +9,39 @@
     "subtitle": "غُص في عالم من النقاء والعمق الصوتي كما لم تختبره من قبل",
     "button": "اكتشف المزيد"
   },
+  "HomeSection": {
+    "specialOffersTitle": "عروض خاصة",
+    "bestSellersTitle": "الأكثر مبيعًا",
+    "categoriesTitle": "تسوق حسب الفئة",
+    "brandsTitle": "الماركات",
+    "viewAll": "عرض الكل"
+  },
+  "Features": {
+    "freeShipping": "شحن مجاني",
+    "freeShippingDesc": "على الطلبات التي تزيد عن 50€",
+    "easyReturns": "إرجاع سهل",
+    "easyReturnsDesc": "مجاناً خلال 30 يومًا",
+    "specialGifts": "هدايا خاصة",
+    "specialGiftsDesc": "مجانية مع بعض الطلبات",
+    "support": "دعم 24/7",
+    "supportDesc": "مساعدة عند الحاجة",
+    "securePayment": "دفع آمن",
+    "securePaymentDesc": "آمن بنسبة 100%"
+  },
+    "ProductAds": {
+    "ads": [
+      {
+        "title": "MacBook Pro",
+        "description": "الآن مع شريحة Apple M1 لتجربة سرعة وكفاءة وأداء لا مثيل لها.",
+        "buttonText": "سجل الآن"
+      },
+      {
+        "title": "سماعات",
+        "description": "أفضل تجربة استماع على الإطلاق.",
+        "buttonText": "اشتري الآن"
+      }
+    ]
+  },
   "Footer": {
     "support": "دعم المتجر الإلكتروني",
     "workingHours": "ساعات العمل",

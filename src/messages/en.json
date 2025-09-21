@@ -9,6 +9,39 @@
     "subtitle": "Experience pure, immersive sound like never before",
     "button": "Discover more"
   },
+  "HomeSection": {
+    "specialOffersTitle": "Special offers",
+    "bestSellersTitle": "Best Sellers",
+    "categoriesTitle": "Categories",
+    "brandsTitle": "Brands",
+    "viewAll": "View all"
+  },
+  "Features": {
+    "freeShipping": "Free shipping",
+    "freeShippingDesc": "On orders over €50",
+    "easyReturns": "Easy returns",
+    "easyReturnsDesc": "Free within 30 days",
+    "specialGifts": "Special gifts",
+    "specialGiftsDesc": "Free with select orders",
+    "support": "Support 24/7",
+    "supportDesc": "Help when you need it",
+    "securePayment": "Secured payment",
+    "securePaymentDesc": "100% safe"
+  },
+  "ProductAds": {
+    "ads": [
+      {
+        "title": "MacBook Pro",
+        "description": "Now with the Apple M1 chip redefining speed, efficiency, and performance.",
+        "buttonText": "Register now"
+      },
+      {
+        "title": "Speakers",
+        "description": "The ultimate listening experience.",
+        "buttonText": "Buy now"
+      }
+    ]
+  },
   "Footer": {
     "support": "E-commerce support",
     "workingHours": "Working hours",
