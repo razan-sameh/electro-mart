@@ -1,7 +1,7 @@
 'use client'
 import { useTranslations } from "next-intl";
 import SectionHeader from "./SectionHeader";
-import ProductCard from "../ProductCard";
+import ProductCard from "@/components/reusable/ProductCard";
 
 const bestSellers = [
   {

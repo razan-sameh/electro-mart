@@ -1,0 +1,34 @@
+"use client";
+import { useTranslations } from "next-intl";
+
+import { useProducts } from "@/lib/hooks/useProducts";
+import { typProduct } from "@/content/types";
+import SectionHeader from "@/app/[locale]/(main)/components/SectionHeader";
+import ProductCard from "@/components/reusable/ProductCard";
+
+export default function SpecialOffers() {
+  const t = useTranslations("HomeSection");
+  const { data: offers } = useProducts({ specialOffer: true });
+
+  return (
+    <section className="py-8">
+      {/* Header */}
+      <SectionHeader title={t("specialOffersTitle")} linkText={t("viewAll")} />
+
+      {/* Offers Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {offers.map((item: typProduct) => (
+          <ProductCard
+            key={item.id}
+            title={item.name}
+            offer={item.specialOffers?.[0]}
+            price={item.price}
+            img={item.imageUrl}
+            rating={5}
+            reviews={10}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}

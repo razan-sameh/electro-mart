@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import CategoriesNavBar from "../CategoriesNavBar";
 import { Suspense } from "react";
+import CategoriesNavBar from "@/components/reusable/CategoriesNavBar";
 
 export default function Hero() {
   const t = useTranslations("Hero");

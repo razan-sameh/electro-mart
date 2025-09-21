@@ -1,12 +1,13 @@
 "use client";
 import { Suspense, useState } from "react";
-import Logo from "./components/Logo";
-import MobileDrawer from "./components/MobileDrawer";
-import IconButtonGroup from "./components/IconButtonGroup";
-import SearchBar from "./components/SearchBar";
-import CategoriesNavBar from "../CategoriesNavBar";
+
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
+import CategoriesNavBar from "@/components/reusable/CategoriesNavBar";
+import Logo from "./components/Logo";
+import MobileDrawer from "./components/MobileDrawer";
+import SearchBar from "./components/SearchBar";
+import IconButtonGroup from "./components/IconButtonGroup";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +27,8 @@ export default function Header() {
       <div
         className={`${
           isLanding ? "bg-background/60" : "bg-background"
-        } ${containerClasses}`}
+        } 
+        ${containerClasses}`}
       >
         <div className="relative flex items-center justify-between">
           <Logo />

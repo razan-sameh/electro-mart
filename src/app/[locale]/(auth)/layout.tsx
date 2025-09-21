@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Roboto } from "next/font/google";
-
 import "./globals.css";
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
+import Footer from "@/components/layout/Footer/Footer";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { ThemeProvider } from "next-themes";
-import Providers from "./providers";
+import Header from "@/components/layout/Header/Header";
+import Providers from "../providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +31,7 @@ export const metadata: Metadata = {
   description: "Electronic E-Commerce Website",
 };
 
-export default async function RootLayout({
+export default async function AuthLayout({
   children,
   params,
 }: Readonly<{
@@ -64,9 +62,7 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
-              <Header />
               {children}
-              <Footer />
           </Providers>
         </NextIntlClientProvider>
       </body>

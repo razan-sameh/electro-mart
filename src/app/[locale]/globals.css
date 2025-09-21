@@ -3,10 +3,12 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   /* font-family: var(--font-roboto), sans-serif; */
+  background-color: var(--color-body);
 }
 
 @theme {
-  --color-background: #ffffff;
+  --color-body: #F5F5F5;
+  --color-background: #FFFFFF;
   --color-icon: #4b4b4b;
   --color-content: #4b4b4b;
   --color-lightGray: #cbcbcb;
@@ -15,6 +17,7 @@ body {
 }
 
 .dark {
+  --color-body: #141414;
   --color-background: #000000;
   --color-icon: #ece7e7;
   --color-content: #ece7e7;

@@ -1,15 +1,15 @@
-import BestSellers from "@/components/Home/BestSellers";
-import Brands from "@/components/Home/Brands";
-import Categories from "@/components/Home/Categories";
-import Features from "@/components/Home/Features";
-import Hero from "@/components/Home/Hero";
-import ProductAds from "@/components/Home/ProductAds";
-import SpecialOffers from "@/components/Home/SpecialOffers";
+
+import Features from "@/app/[locale]/(main)/components/Features";
+import ProductAds from "@/app/[locale]/(main)/components/ProductAds";
 import { Suspense } from "react";
+import SpecialOffers from "./components/SpecialOffers";
+import Brands from "./components/Brands";
+import Categories from "./components/Categories";
+import Hero from "./components/Hero";
 
 export default function Home() {
   return (
-    <div>
+    <div className="bg-background">
       <Hero />
       <div className="container m-auto">
         <Suspense fallback={<div>Loading...</div>}>
@@ -20,7 +20,7 @@ export default function Home() {
           <Categories />
         </Suspense>
         <ProductAds />
-        <BestSellers />
+        {/* <BestSellers /> */}
         <Suspense fallback={<div>Loading...</div>}>
           <Brands />
         </Suspense>
