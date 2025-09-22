@@ -11,27 +11,27 @@ export type typCategory = {
 };
 
 export type typSpecificationType = {
-  id: number;
+  id: string;
   name: string;
   specificationValues?: typSpecificationValus[];
   categories?: typCategory[];
 };
 
 export type typSpecificationValus = {
-  id: number;
+  id: string;
   name: string;
   specificationType?: typSpecificationType;
   products?: typProduct[];
 };
 
 export type typBrand = {
-  id: number;
+  id: string;
   name: string;
   imageUrl?: string;
   products?: typProduct[];
 };
 export type typSpecialOffer = {
-  id: number;
+  id: string;
   title: string;
   discountType: enmDiscountType;
   discountValue: number;
@@ -39,14 +39,17 @@ export type typSpecialOffer = {
   endDate: string;
   products?: typProduct[];
 };
-export type ProductFilters = {
+export type typProductFilters = {
   specialOffer?: boolean;
   categoryId?: string;
-  brandId?: number;
+  brandId?: string;
+  specificationValuesId?: string[];
+  colorsId?: string[];
+  price?: number;
 };
 
 export type typColor = {
-  id: number;
+  id: string;
   name: string;
   hexCode?: string;
   products?: typProduct[];
@@ -54,7 +57,7 @@ export type typColor = {
 
 // Product
 export type typProduct = {
-  id: number;
+  id: string;
   imageUrl: string;
   name: string;
   price: number;
@@ -69,7 +72,7 @@ export type typProduct = {
 
 // User (Auth)
 export type typUser = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   token?: string; // for JWT
@@ -77,13 +80,13 @@ export type typUser = {
 
 // Cart
 export type typCartItem = {
-  id: number;
+  id: string;
   product: typProduct;
   quantity: number;
 };
 
 export type typCart = {
-  id: number;
+  id: string;
   userId: number;
   items: typCartItem[];
 };

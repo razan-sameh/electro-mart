@@ -24,24 +24,15 @@ export class SpecificationValueAdapter extends BaseAdapter<
 
   adapt(source: StrapiSpecificationValue): typSpecificationValus {
     return {
-      id: source.id,
+      id: source.documentId,
       name: this.handleNullUndefined(source.value, ""),
       specificationType: source.specification_type
         ? {
-            id: source.specification_type.id,
+            id: source.specification_type.documentId,
             name: source.specification_type.name,
           }
         : undefined,
       // Don't adapt products here to avoid circular dependencies
-    };
-  }
-
-  adaptWithProductCount(
-    source: StrapiSpecificationValue
-  ): typSpecificationValus & { productCount: number } {
-    return {
-      ...this.adapt(source),
-      productCount: source.products?.length || 0,
     };
   }
 }

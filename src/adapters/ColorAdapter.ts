@@ -19,19 +19,10 @@ export class ColorAdapter extends BaseAdapter<StrapiColor, typColor> {
 
   adapt(source: StrapiColor): typColor {
     return {
-      id: source.id,
+      id: source.documentId,
       name: this.handleNullUndefined(source.name, ""),
       hexCode: this.handleNullUndefined(source.hex_code, ""),
       // Don't adapt products here to avoid circular dependencies
-    };
-  }
-
-  adaptWithProductCount(
-    source: StrapiColor
-  ): typColor & { productCount: number } {
-    return {
-      ...this.adapt(source),
-      productCount: source.products?.length || 0,
     };
   }
 }

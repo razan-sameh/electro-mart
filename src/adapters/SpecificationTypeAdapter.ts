@@ -28,22 +28,13 @@ export class SpecificationTypeAdapter extends BaseAdapter<
 
   adapt(source: StrapiSpecificationType): typSpecificationType {
     return {
-      id: source.id,
+      id: source.documentId,
       name: this.handleNullUndefined(source.name, ""),
       specificationValues: source.specification_values
         ? this.specificationValueAdapter.adaptMany(
             source.specification_values
           )
         : undefined,
-    };
-  }
-
-  adaptWithCategoryCount(
-    source: StrapiSpecificationType
-  ): typSpecificationType & { categoryCount: number } {
-    return {
-      ...this.adapt(source),
-      categoryCount: source.categories?.length || 0,
     };
   }
 }

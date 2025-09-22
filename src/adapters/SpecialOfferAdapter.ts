@@ -20,20 +20,13 @@ export class SpecialOfferAdapter extends BaseAdapter<StrapiSpecialOffer, typSpec
 
   adapt(source: StrapiSpecialOffer): typSpecialOffer {
     return {
-      id: source.id,
+      id: source.documentId,
       title: this.handleNullUndefined(source.title, ''),
       discountType: source.discount_type as enmDiscountType,
       discountValue: this.handleNullUndefined(source.discount_value, 0),
       startDate: this.handleNullUndefined(source.start_date, ''),
       endDate: this.handleNullUndefined(source.end_date, ''),
       // Don't adapt products here to avoid circular dependencies
-    };
-  }
-
-  adaptWithProductCount(source: StrapiSpecialOffer): typSpecialOffer & { productCount: number } {
-    return {
-      ...this.adapt(source),
-      productCount: source.products?.length || 0,
     };
   }
 

@@ -1,5 +1,6 @@
 export interface StrapiImage {
   id: number;
+  documentId: string;
   url: string;
   alternativeText?: string;
   formats?: {
@@ -18,18 +19,19 @@ export interface StrapiImageFormat {
 
 export interface StrapiCategory {
   id: number;
-  documentId:string;
+  documentId: string;
   name: string;
   CategoryName?: string; // Add this if your API uses CategoryName
   icon?: string;
   ImageURL?: StrapiImage; // Single image object
-  LogoURL?: StrapiImage;  // Single image object (alternative field name)
+  LogoURL?: StrapiImage; // Single image object (alternative field name)
   products?: StrapiProduct[];
   specification_types?: StrapiSpecificationType[];
 }
 
 export interface StrapiSpecificationType {
   id: number;
+  documentId: string;
   name: string;
   specification_values?: StrapiSpecificationValue[]; // Add this if your API uses CategoryName
   categories?: StrapiCategory[];
@@ -37,6 +39,7 @@ export interface StrapiSpecificationType {
 
 export interface StrapiSpecificationValue {
   id: number;
+  documentId: string;
   value: string;
   specification_type?: StrapiSpecificationType; // Add this if your API uses CategoryName
   products?: StrapiProduct[];
@@ -44,6 +47,7 @@ export interface StrapiSpecificationValue {
 
 export interface StrapiSpecialOffer {
   id: number;
+  documentId: string;
   title: string;
   discount_type: string;
   discount_value: number;
@@ -52,14 +56,17 @@ export interface StrapiSpecialOffer {
   products?: StrapiProduct[];
 }
 
-
 export interface StrapiBrand {
   id: number;
+  documentId: string;
+
   Name: string;
   LogoURL?: StrapiImage;
   products?: StrapiProduct[];
 }
 export interface StrapiColor {
+  documentId: string;
+
   id: number;
   name: string;
   hex_code: string;
@@ -67,6 +74,8 @@ export interface StrapiColor {
 }
 
 export interface StrapiProduct {
+  documentId: string;
+
   id: number;
   Name: string;
   Description: string;

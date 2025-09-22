@@ -47,12 +47,14 @@ export default function MobileDrawer({
         <h3 className="text-blue-600 font-semibold mb-4">{t("products")}</h3>
         <nav className="flex flex-col space-y-4 text-icon">
           {categories.map((item: typCategory) => (
-            <button
+            <Link
               key={item.id}
+              href={`/categories/${item.id}`} // ✅ use your slug or id
               className="flex items-center gap-3 hover:text-blue-600 transition-colors"
+              onClick={() => setMenuOpen(false)} // ✅ close drawer after click
             >
               {item.icon && renderIcon(item.icon, 20)} {item.name}
-            </button>
+            </Link>
           ))}
         </nav>
 

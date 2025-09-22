@@ -1,9 +1,9 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getProducts } from "../services/products";
 import { useLocale } from "next-intl";
-import { ProductFilters } from "@/content/types";
+import { typProductFilters } from "@/content/types";
 
-export const useProducts = (filters?: ProductFilters) => {
+export const useProducts = (filters?: typProductFilters) => {
   const locale = useLocale();
 
   return useSuspenseQuery({

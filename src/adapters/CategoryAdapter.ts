@@ -29,11 +29,4 @@ export class CategoryAdapter extends BaseAdapter<StrapiCategory, typCategory> {
       specificationTypes: source.specification_types ? this.specificationTypeAdapter.adaptMany(source.specification_types) : undefined,
     };
   }
-
-  adaptWithProductCount(source: StrapiCategory): typCategory & { productCount: number } {
-    return {
-      ...this.adapt(source),
-      productCount: source.products?.length || 0,
-    };
-  }
 }

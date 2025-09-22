@@ -1,12 +1,12 @@
 import { ProductAdapter } from "@/adapters/ProductAdapter";
 import { apiClient, STRAPI_URL } from "../apiClient";
-import { ProductFilters, typProduct } from "@/content/types";
+import { typProductFilters, typProduct } from "@/content/types";
 
 const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
 
 export const getProducts = async (
   locale: string,
-  filters?: ProductFilters
+  filters?: typProductFilters
 ): Promise<typProduct[]> => {
   // Initialize queryParams object
   // const queryParams: Record<string, any> = {
@@ -28,16 +28,35 @@ export const getProducts = async (
   if (filters?.categoryId) {
     queryParams["filters[category][documentId][$eq]"] = filters.categoryId; // ✅ correct
   }
+  // ✅ Brand
   if (filters?.brandId) {
-    queryParams["filters[brand][id]"] = filters.brandId;
+    queryParams["filters[brand][documentId][$eq]"] = filters.brandId;
   }
 
-  const res = await apiClient<any>(
-    "/products",
-    { cache: "force-cache" },
-    queryParams,
-    locale
-  );
+  if (filters?.specificationValuesId?.length) {
+    filters.specificationValuesId.forEach((id, index) => {
+      queryParams[
+        `filters[$or][${index}][specification_values][documentId][$eq]`
+      ] = id;
+    });
+  }
+
+  
+  // ✅ Color
+    if (filters?.colorsId?.length) {
+    filters.colorsId.forEach((id, index) => {
+      queryParams[
+        `filters[$or][${index}][product_colors][documentId][$eq]`
+      ] = id;
+    });
+  }
+
+  // ✅ Price
+  if (filters?.price) {
+    queryParams["filters[Price][$lte]"] = filters.price;
+  }
+
+  const res = await apiClient<any>("/products", {}, queryParams, locale);
 
   return res.data.map((category: any) => productAdapter.adapt(category));
 };

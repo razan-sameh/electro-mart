@@ -19,17 +19,10 @@ export class BrandAdapter extends BaseAdapter<StrapiBrand, typBrand> {
 
   adapt(source: StrapiBrand): typBrand {
     return {
-      id: source.id,
+      id: source.documentId,
       name: this.handleNullUndefined(source.Name, ''),
       imageUrl: this.adaptImageUrl(source.LogoURL),
       // Don't adapt products here to avoid circular dependencies
-    };
-  }
-
-  adaptWithProductCount(source: StrapiBrand): typBrand & { productCount: number } {
-    return {
-      ...this.adapt(source),
-      productCount: source.products?.length || 0,
     };
   }
 }

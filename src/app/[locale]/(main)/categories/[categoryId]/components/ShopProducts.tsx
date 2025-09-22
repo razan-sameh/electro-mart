@@ -1,19 +1,22 @@
 // components/ShopProducts.tsx
 "use client";
-
 import ProductCard from "@/components/reusable/ProductCard";
-import { typProduct } from "@/content/types";
+import { typProduct, typProductFilters } from "@/content/types";
 import { useCategoryWithSpecs } from "@/lib/hooks/useCategories";
 import { useProducts } from "@/lib/hooks/useProducts";
 
-export default function ShopProducts({ categoryID }: { categoryID: string }) {
-  const { data: products } = useProducts({ categoryId: categoryID });
-  console.log({products});
-  
-  const { data: catwithspecs } = useCategoryWithSpecs(categoryID!);
+interface ShopProductsProps {
+  categoryName: string;
+  products: typProduct[];
+}
+
+export default function ShopProducts({
+  categoryName,
+  products,
+}: ShopProductsProps) {
   return (
     <main className="flex-1">
-      <h1 className="text-2xl font-semibold mb-4">{catwithspecs.name}</h1>
+      <h1 className="text-2xl font-semibold mb-4">{categoryName}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((item: typProduct) => (
           <ProductCard

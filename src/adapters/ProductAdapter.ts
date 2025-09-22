@@ -34,7 +34,7 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
 
   adapt(source: StrapiProduct): typProduct {
     return {
-      id: source.id,
+      id: source.documentId,
       name: this.handleNullUndefined(source.Name, ""),
       description: this.handleNullUndefined(source.Description, ""),
       price: this.handleNullUndefined(source.Price, 0),
@@ -51,33 +51,6 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
       specificationValues: this.specificationValueAdapter.adaptMany(
         source.specification_values || []
       ),
-    };
-  }
-
-  adaptWithDiscountedPrice(
-    source: StrapiProduct
-  ): typProduct & { discountedPrice?: number } {
-    const product = this.adapt(source);
-    const activeOffers =
-      product.specialOffers?.filter((offer) =>
-        this.specialOfferAdapter.isActive(offer)
-      ) || [];
-
-    if (activeOffers.length === 0) {
-      return product;
-    }
-
-    // Apply the best discount (lowest final price)
-    const discountedPrices = activeOffers.map((offer) =>
-      this.specialOfferAdapter.calculateDiscountedPrice(product.price, offer)
-    );
-
-    const discountedPrice = Math.min(...discountedPrices);
-
-    return {
-      ...product,
-      discountedPrice:
-        discountedPrice < product.price ? discountedPrice : undefined,
     };
   }
 }
