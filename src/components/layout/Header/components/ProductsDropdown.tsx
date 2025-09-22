@@ -1,4 +1,3 @@
-// components/Header/ProductsDropdown.tsx
 "use client";
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
@@ -10,14 +9,18 @@ export default function ProductsDropdown() {
   const { data: categories = [], isLoading, error } = useCategories();
   const t = useTranslations("Header");
 
+  // Base classes that don't change
+  const baseClasses = "flex items-center gap-2 cursor-pointer px-4 py-2 bg-lightGray/40 transition-colors hover:bg-lightGray/70";
+  
+  // Dynamic border radius class
+  const borderClass = open ? "rounded-ss-md" : "rounded-s-md";
+
   return (
     <div className="relative">
       {/* Trigger button */}
       <div
         onClick={() => setOpen(!open)}
-        className={`${
-          open ? "rounded-ss-md" : "rounded-s-md"
-        } flex items-center gap-2 cursor-pointer px-4 py-2 bg-background transition-colors hover:bg-background/70`}
+        className={`${borderClass} ${baseClasses}`}
       >
         <FaBars className="text-icon" />
         <span className="font-medium text-icon">{t("products")}</span>

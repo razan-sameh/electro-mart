@@ -2,12 +2,28 @@ import { enmDiscountType } from "./enums";
 
 // Category
 export type typCategory = {
-  id: number;
+  id: string;
   name: string;
   icon?: string;
   imageUrl?: string;
   products?: typProduct[];
+  specificationTypes?: typSpecificationType[];
 };
+
+export type typSpecificationType = {
+  id: number;
+  name: string;
+  specificationValues?: typSpecificationValus[];
+  categories?: typCategory[];
+};
+
+export type typSpecificationValus = {
+  id: number;
+  name: string;
+  specificationType?: typSpecificationType;
+  products?: typProduct[];
+};
+
 export type typBrand = {
   id: number;
   name: string;
@@ -25,8 +41,15 @@ export type typSpecialOffer = {
 };
 export type ProductFilters = {
   specialOffer?: boolean;
-  categoryId?: number;
+  categoryId?: string;
   brandId?: number;
+};
+
+export type typColor = {
+  id: number;
+  name: string;
+  hexCode?: string;
+  products?: typProduct[];
 };
 
 // Product
@@ -40,6 +63,8 @@ export type typProduct = {
   description: string;
   stockQuantity: number;
   specialOffers?: typSpecialOffer[];
+  color?: typColor[];
+  specificationValues?: typSpecificationValus[];
 };
 
 // User (Auth)

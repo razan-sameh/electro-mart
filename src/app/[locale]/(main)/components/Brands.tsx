@@ -6,7 +6,6 @@ import { useBrands } from "@/lib/hooks/useBrands";
 export default function Brands() {
   const { data: brands } = useBrands();
   const t = useTranslations("HomeSection");
-
   return (
     <section className="py-8 mt-6">
       <SectionHeader title={t("brandsTitle")} />

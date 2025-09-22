@@ -50,9 +50,7 @@ export default function ProductCard({
       <div className="relative">
         {offer && (
           <span className="absolute top-2 bg-secondary text-white text-xs px-2 py-1 rounded-e-sm">
-            {offer.discountType === enmDiscountType.percentage
-              ? `${offer.discountValue}%`
-              : `${offer.discountValue}€`}
+            {offer.title}
           </span>
         )}
         <img

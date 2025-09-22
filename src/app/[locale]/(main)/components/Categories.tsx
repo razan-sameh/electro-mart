@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import SectionHeader from "./SectionHeader";
 import { useCategories } from "@/lib/hooks/useCategories";
+import { Link } from "@/i18n/navigation"; // ✅ localized Link
 
 export default function Categories() {
   const { data: categories = [] } = useCategories();
@@ -12,8 +13,9 @@ export default function Categories() {
       <SectionHeader title={t("categoriesTitle")} />
       <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
         {categories.map((c) => (
-          <button
+          <Link
             key={c.id}
+            href={`/categories/${c.id}`}
             className="flex flex-col items-center p-3 bg-lightGray/20 border border-lightGray/20 rounded-md hover:bg-lightGray/40 transition cursor-pointer"
           >
             {c.imageUrl && (
@@ -24,7 +26,7 @@ export default function Categories() {
               />
             )}
             <p className="text-sm">{c.name}</p>
-          </button>
+          </Link>
         ))}
       </div>
     </section>

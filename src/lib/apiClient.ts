@@ -11,6 +11,7 @@ export async function apiClient<T>(
   locale?: string
 ): Promise<T> {
   const url = new URL(`${API_URL}${endpoint}`);
+  console.log({url});
   
   const queryParams = locale ? { ...params, locale } : params || {};
   

@@ -23,7 +23,7 @@ export default function Header() {
     : "relative max-w-7xl mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
 
   return (
-    <header className="absolute top-6 left-0 w-full z-20 px-4">
+    <header className={`w-full px-4 ${isLanding ? 'absolute top-6 left-0  z-20' : 'mt-6'}`}>
       <div
         className={`${
           isLanding ? "bg-background/60" : "bg-background"

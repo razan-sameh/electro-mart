@@ -1,8 +1,9 @@
 // lib/services/categories.ts
 import { typCategory } from "@/content/types";
 import { apiClient, STRAPI_URL } from "../apiClient";
+import { CategoryAdapter } from "@/adapters/CategoryAdapter";
 
-
+const categoryAdapter = CategoryAdapter.getInstance(STRAPI_URL);
 
 export async function fetchCategories(locale: string): Promise<typCategory[]> {
   const data = await apiClient<any>(
@@ -12,10 +13,22 @@ export async function fetchCategories(locale: string): Promise<typCategory[]> {
     locale
   );
 
-  return data.data.map((item: any) => ({
-    id: item.id,
-    name: item.CategoryName,
-    icon: item.icon, // ✅ Store icon name instead of JSX element
-    imageUrl: item.ImageURL ? `${STRAPI_URL}${item.ImageURL.url}` : undefined,
-  }));
+  return data.data.map((category: any) => categoryAdapter.adapt(category));
 }
+
+export async function fetchCategoryById(id: string, locale: string) {
+  const queryParams: Record<string, any> = {
+    "populate[specification_types][populate][0]": "specification_values",
+  };
+
+  const data = await apiClient<any>(
+    `/categories/${id}`, // single category endpoint
+    {},
+    queryParams,
+    locale
+  );
+
+  // adapt single object instead of mapping
+  return categoryAdapter.adapt(data.data);
+}
+
