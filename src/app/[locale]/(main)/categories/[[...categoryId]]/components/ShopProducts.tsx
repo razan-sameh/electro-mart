@@ -1,9 +1,7 @@
 // components/ShopProducts.tsx
 "use client";
 import ProductCard from "@/components/reusable/ProductCard";
-import { typProduct, typProductFilters } from "@/content/types";
-import { useCategoryWithSpecs } from "@/lib/hooks/useCategories";
-import { useProducts } from "@/lib/hooks/useProducts";
+import { typProduct } from "@/content/types";
 
 interface ShopProductsProps {
   categoryName?: string;

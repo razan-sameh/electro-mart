@@ -1,31 +1,20 @@
 "use client";
-import { useReducer, useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Filters from "./Filters";
 import ShopProducts from "./ShopProducts";
 import { useCategoryWithSpecs } from "@/lib/hooks/useCategories";
 import { useProducts } from "@/lib/hooks/useProducts";
-import { filtersReducer } from "./filtersReducer";
 import { typSpecificationType } from "@/content/types";
 
 export default function ShopPageClient({
   categoryId,
-  searchQuery = "",
 }: {
   categoryId?: string[];
-  searchQuery?: string;
 }) {
+  const { data: products } = useProducts();
   const currentCategoryId = categoryId?.[0];
-  const [filters, dispatch] = useReducer(filtersReducer, {
-    categoryId: currentCategoryId || undefined,
-  });
-  const { data: products } = useProducts(filters, searchQuery);
-  
   // Always call the hook - it will only fetch when currentCategoryId exists
   const { data: categoryWithSpecs } = useCategoryWithSpecs(currentCategoryId!);
-  
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
-  const [showPriceFilter, setShowPriceFilter] = useState(false);
 
   // Extract specification types from products when no category
   const productSpecificationTypes = useMemo((): typSpecificationType[] => {
@@ -76,8 +65,6 @@ export default function ShopPageClient({
     );
   }, [products]);
 
-  console.log({ productSpecificationTypes });
-
   // Determine which specification types to use
   const specificationTypes: typSpecificationType[] = useMemo(() => {
     if (currentCategoryId && categoryWithSpecs?.specificationTypes) {
@@ -86,30 +73,11 @@ export default function ShopPageClient({
     return productSpecificationTypes;
   }, [currentCategoryId, categoryWithSpecs, productSpecificationTypes]);
 
-
-  useEffect(() => {
-    if (products?.length) {
-      const prices = products.map((p) => p.price);
-      const min = Math.min(...prices);
-      const max = Math.max(...prices);
-      setMinPrice(min);
-      setMaxPrice(max);
-      setShowPriceFilter(min !== max);
-    } else {
-      setShowPriceFilter(false);
-    }
-  }, [products]);
-
   return (
     <div className="flex gap-6 px-6 py-8">
       <aside className="w-64 shrink-0">
         <Filters
           specificationTypes={specificationTypes}
-          filters={filters}
-          dispatch={dispatch}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          showPriceFilter={showPriceFilter}
         />
       </aside>
 

@@ -7,7 +7,8 @@ const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
 export const getProducts = async (
   locale: string,
   filters?: typProductFilters,
-  search?:string
+  search?: string,
+  limit?: number
 ): Promise<typProduct[]> => {
   const queryParams: Record<string, any> = {
     "populate[brand]": true,
@@ -38,13 +39,11 @@ export const getProducts = async (
     });
   }
 
-  
   // ✅ Color
-    if (filters?.colorsId?.length) {
+  if (filters?.colorsId?.length) {
     filters.colorsId.forEach((id, index) => {
-      queryParams[
-        `filters[$or][${index}][product_colors][documentId][$eq]`
-      ] = id;
+      queryParams[`filters[$or][${index}][product_colors][documentId][$eq]`] =
+        id;
     });
   }
 
@@ -53,12 +52,49 @@ export const getProducts = async (
     queryParams["filters[Price][$lte]"] = filters.price;
   }
 
-    // ✅ Search filter
+  // ✅ Search filter
   if (search && search.trim() !== "") {
     queryParams["filters[Name][$containsi]"] = search.trim();
   }
 
+  if (limit) {
+    queryParams["pagination[limit]"] = limit; // <-- Strapi pagination
+  }
   const res = await apiClient<any>("/products", {}, queryParams, locale);
 
-  return res.data.map((category: any) => productAdapter.adapt(category));
+  return res.data.map((product: any) => productAdapter.adapt(product));
+};
+
+export const getMinPrice = async (locale: string, categoryId?: string) => {
+  const queryParams: Record<string, any> = {
+    "sort": "Price:asc",
+    "pagination[limit]": 1,
+    "populate[category]": true,
+  };
+  if (categoryId) {
+    queryParams["filters[category][documentId][$eq]"] = categoryId;
+  }
+
+  const res = await apiClient<any>("/products", {}, queryParams, locale);
+
+  console.log({ res });
+
+  return res.data[0]?.Price || 0;
+};
+
+export const getMaxPrice = async (locale: string, categoryId?: string) => {
+  const queryParams: Record<string, any> = {
+    sort: "Price:desc",
+    pagination: { limit: 1 },
+    locale,
+  };
+
+  if (categoryId) {
+    queryParams["filters[category][documentId][$eq]"] = categoryId;
+  }
+
+  const res = await apiClient<any>("/products", {}, queryParams, locale);
+
+
+  return res.data[0]?.Price || 0;
 };
