@@ -6,12 +6,9 @@ const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
 
 export const getProducts = async (
   locale: string,
-  filters?: typProductFilters
+  filters?: typProductFilters,
+  search?:string
 ): Promise<typProduct[]> => {
-  // Initialize queryParams object
-  // const queryParams: Record<string, any> = {
-  //   populate: "*",
-  // };
   const queryParams: Record<string, any> = {
     "populate[brand]": true,
     "populate[category]": true,
@@ -54,6 +51,11 @@ export const getProducts = async (
   // ✅ Price
   if (filters?.price) {
     queryParams["filters[Price][$lte]"] = filters.price;
+  }
+
+    // ✅ Search filter
+  if (search && search.trim() !== "") {
+    queryParams["filters[Name][$containsi]"] = search.trim();
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);

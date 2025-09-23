@@ -62,9 +62,9 @@ export default async function MainLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
-              <Header />
-              {children}
-              <Footer />
+            <Header />
+            {children}
+            <Footer />
           </Providers>
         </NextIntlClientProvider>
       </body>

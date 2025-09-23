@@ -6,7 +6,7 @@ import { useCategoryWithSpecs } from "@/lib/hooks/useCategories";
 import { useProducts } from "@/lib/hooks/useProducts";
 
 interface ShopProductsProps {
-  categoryName: string;
+  categoryName?: string;
   products: typProduct[];
 }
 
@@ -16,7 +16,7 @@ export default function ShopProducts({
 }: ShopProductsProps) {
   return (
     <main className="flex-1">
-      <h1 className="text-2xl font-semibold mb-4">{categoryName}</h1>
+      { categoryName && <h1 className="text-2xl font-semibold mb-4">{categoryName}</h1>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((item: typProduct) => (
           <ProductCard

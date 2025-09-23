@@ -1,11 +1,11 @@
 "use client";
-import { typProductFilters } from "@/content/types";
+import { typProductFilters, typSpecificationType } from "@/content/types";
 import { useCategoryWithSpecs } from "@/lib/hooks/useCategories";
 import { useColors } from "@/lib/hooks/useColors";
 import { useState, useEffect } from "react";
 
 interface FiltersProps {
-  categoryID: string;
+  specificationTypes: typSpecificationType[];
   filters: typProductFilters;
   dispatch: React.Dispatch<any>;
   minPrice: number;
@@ -14,7 +14,7 @@ interface FiltersProps {
 }
 
 export default function Filters({
-  categoryID,
+  specificationTypes,
   filters,
   dispatch,
   minPrice,
@@ -22,11 +22,19 @@ export default function Filters({
   showPriceFilter,
 }: FiltersProps) {
   const { data: colors } = useColors();
-  const { data: catwithspecs } = useCategoryWithSpecs(categoryID!);
+  // const { data: catwithspecs } = useCategoryWithSpecs(categoryID!);
   const [tempPrice, setTempPrice] = useState(maxPrice);
 
-  useEffect(() => setTempPrice(maxPrice), [maxPrice]);
-
+  // Update tempPrice when maxPrice changes or when filters.price changes
+  useEffect(() => {
+    if (filters.price) {
+      // If we have an active price filter, use it
+      setTempPrice(filters.price);
+    } else {
+      // Otherwise use maxPrice
+      setTempPrice(maxPrice);
+    }
+  }, [maxPrice, filters.price]);
   return (
     <div className="bg-white p-4 rounded-xl shadow-sm border border-lightGray/20">
       <div className="mb-5 flex justify-end">
@@ -88,7 +96,7 @@ export default function Filters({
       )}
 
       {/* Dynamic Specs */}
-      {catwithspecs?.specificationTypes?.map((specType) => (
+      {specificationTypes?.map((specType) => (
         <div key={specType.id} className="mb-5">
           <h3 className="font-medium mb-2">{specType.name}</h3>
           <div className="flex flex-col gap-2 text-sm text-gray-700">

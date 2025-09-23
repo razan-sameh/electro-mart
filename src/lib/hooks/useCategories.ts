@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 import { useCallback } from "react";
 import { fetchCategories, fetchCategoryById } from "../services/categories";
@@ -16,11 +16,16 @@ export function useCategories() {
   });
 }
 
-export function useCategoryWithSpecs(categoryId: string) {
+export function useCategoryWithSpecs(categoryId?: string) {
   const locale = useLocale();
 
-  return useSuspenseQuery({
-    queryKey: ["category-specs", categoryId, locale],
-    queryFn: () => fetchCategoryById(categoryId, locale),
+  return useQuery({
+    queryKey: categoryId
+      ? ["category-specs", categoryId, locale]
+      : ["category-specs-inactive"], // Different key that never fetches
+    queryFn: categoryId
+      ? () => fetchCategoryById(categoryId, locale)
+      : () => Promise.resolve(null), // Never actually called due to enabled
+    enabled: !!categoryId,
   });
 }

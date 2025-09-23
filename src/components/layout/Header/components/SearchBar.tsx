@@ -3,6 +3,8 @@ import { FaSearch, FaBars } from "react-icons/fa";
 import ProductsDropdown from "./ProductsDropdown";
 import { useLocale } from "next-intl";
 import { Suspense } from "react";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   isMobile?: boolean; // true => render mobile layout with hamburger
@@ -20,7 +22,17 @@ export default function SearchBar({
   className = "",
 }: Props) {
   const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
+  const handleSearch = (q: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (q) params.set("q", q);
+    else params.delete("q");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
   return (
     <div
       className={`${
@@ -48,6 +60,7 @@ export default function SearchBar({
         <input
           type="text"
           placeholder={placeholder}
+          onChange={(e) => handleSearch(e.target.value)}
           className={`w-full px-4 py-2 pe-10 bg-background/70 text-icon placeholder:text-icon  focus:outline-none ${
             isMobile
               ? "rounded-ee-md rounded-t-none md:rounded-md"

@@ -1,8 +1,9 @@
 {
   "Header": {
     "searchPlaceholder": "I'm searching for...",
-    "products": "Products",
-    "language": "Language"
+    "products": "All Products",
+    "language": "Language",
+    "allCategories": "All Categories"
   },
   "Hero": {
     "title": "Introducing the Next Generation of Sound",
