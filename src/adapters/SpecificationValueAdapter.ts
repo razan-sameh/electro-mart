@@ -1,11 +1,11 @@
 // File: adapters/BrandAdapter.ts
-import { typSpecificationValus } from "@/content/types";
+import { typSpecificationValues } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
 import { StrapiSpecificationValue } from "./interfaces/types";
 
 export class SpecificationValueAdapter extends BaseAdapter<
   StrapiSpecificationValue,
-  typSpecificationValus
+  typSpecificationValues
 > {
   private static instance: SpecificationValueAdapter;
 
@@ -22,7 +22,7 @@ export class SpecificationValueAdapter extends BaseAdapter<
     return SpecificationValueAdapter.instance;
   }
 
-  adapt(source: StrapiSpecificationValue): typSpecificationValus {
+  adapt(source: StrapiSpecificationValue): typSpecificationValues {
     return {
       id: source.documentId,
       name: this.handleNullUndefined(source.value, ""),

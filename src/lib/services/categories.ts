@@ -17,14 +17,10 @@ export async function fetchCategories(locale: string): Promise<typCategory[]> {
 }
 
 export async function fetchCategoryById(id: string, locale: string) {
-  const queryParams: Record<string, any> = {
-    "populate[specification_types][populate][0]": "specification_values",
-  };
-
   const data = await apiClient<any>(
     `/categories/${id}`, // single category endpoint
     {},
-    queryParams,
+    { populate: "*" },
     locale
   );
 

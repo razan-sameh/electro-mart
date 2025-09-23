@@ -13,11 +13,11 @@ export type typCategory = {
 export type typSpecificationType = {
   id: string;
   name: string;
-  specificationValues?: typSpecificationValus[];
+  specificationValues?: typSpecificationValues[];
   categories?: typCategory[];
 };
 
-export type typSpecificationValus = {
+export type typSpecificationValues = {
   id: string;
   name: string;
   specificationType?: typSpecificationType;
@@ -67,7 +67,7 @@ export type typProduct = {
   stockQuantity: number;
   specialOffers?: typSpecialOffer[];
   color?: typColor[];
-  specificationValues?: typSpecificationValus[];
+  specificationValues?: typSpecificationValues[];
 };
 
 // User (Auth)

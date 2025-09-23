@@ -4,7 +4,7 @@ import { typProductFilters, typProduct } from "@/content/types";
 
 const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
 
-export const getProducts = async (
+export const fetchProducts = async (
   locale: string,
   filters?: typProductFilters,
   search?: string,
@@ -76,8 +76,6 @@ export const getMinPrice = async (locale: string, categoryId?: string) => {
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
-  console.log({ res });
 
   return res.data[0]?.Price || 0;
 };

@@ -2,19 +2,20 @@
 "use client";
 import ProductCard from "@/components/reusable/ProductCard";
 import { typProduct } from "@/content/types";
+import { useCategoryById } from "@/lib/hooks/useCategories";
+import { useProducts } from "@/lib/hooks/useProducts";
 
 interface ShopProductsProps {
-  categoryName?: string;
-  products: typProduct[];
+  categoryId?: string;
 }
-
-export default function ShopProducts({
-  categoryName,
-  products,
-}: ShopProductsProps) {
+export default function ShopProducts({categoryId}:ShopProductsProps) {
+  const { data: products } = useProducts(categoryId!);
+  const { data: category } = useCategoryById(categoryId!); // <- destructure `data` here
   return (
     <main className="flex-1">
-      { categoryName && <h1 className="text-2xl font-semibold mb-4">{categoryName}</h1>}
+      {category && (
+        <h1 className="text-2xl font-semibold mb-4">{category.name || "All Products"}</h1>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products?.map((item: typProduct) => (
           <ProductCard

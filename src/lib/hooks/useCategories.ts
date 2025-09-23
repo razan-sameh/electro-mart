@@ -16,13 +16,12 @@ export function useCategories() {
   });
 }
 
-export function useCategoryWithSpecs(categoryId?: string) {
+export function useCategoryById(categoryId?:string) {
   const locale = useLocale();
-
   return useQuery({
     queryKey: categoryId
-      ? ["category-specs", categoryId, locale]
-      : ["category-specs-inactive"], // Different key that never fetches
+      ? ["category", categoryId, locale]
+      : ["category-inactive"], // Different key that never fetches
     queryFn: categoryId
       ? () => fetchCategoryById(categoryId, locale)
       : () => Promise.resolve(null), // Never actually called due to enabled

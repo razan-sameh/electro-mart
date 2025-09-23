@@ -4,20 +4,21 @@ import { useColors } from "@/lib/hooks/useColors";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { usePriceRange } from "@/lib/hooks/useProducts";
+import { useSpecification } from "@/lib/hooks/useSpecification";
+
 
 interface FiltersProps {
-  specificationTypes: typSpecificationType[];
+  categoryId?: string;
 }
-
 export default function Filters({
-  specificationTypes,
+  categoryId,
 }: FiltersProps) {
   const { data: colors } = useColors();
-const priceRangeQuery = usePriceRange();
-
-// Access min and max like this
-const minPrice = priceRangeQuery.data?.minPrice ?? 0;
-const maxPrice = priceRangeQuery.data?.maxPrice ?? 1000
+  const priceRangeQuery = usePriceRange(categoryId!);
+  const specificationTypes = useSpecification(categoryId!);
+  // Access min and max like this
+  const minPrice = priceRangeQuery.data?.minPrice ?? 0;
+  const maxPrice = priceRangeQuery.data?.maxPrice ?? 1000;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
