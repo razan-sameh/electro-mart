@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Providers from "../providers";
 import Header from "@/components/layout/Header/Header";
+import Container from "@/components/layout/Container";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,7 +63,9 @@ export default async function MainLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
-            <Header />
+            <Container>
+              <Header />
+            </Container>
             {children}
             <Footer />
           </Providers>

@@ -6,12 +6,14 @@ import SpecialOffers from "./components/SpecialOffers";
 import Brands from "./components/Brands";
 import Categories from "./components/Categories";
 import Hero from "./components/Hero";
+import Container from "@/components/layout/Container";
 
 export default function Home() {
   return (
     <div className="bg-background">
       <Hero />
-      <div className="container m-auto">
+      {/* <div className="container m-auto"> */}
+        <Container>
         <Suspense fallback={<div>Loading...</div>}>
           <SpecialOffers />
         </Suspense>
@@ -24,7 +26,8 @@ export default function Home() {
         <Suspense fallback={<div>Loading...</div>}>
           <Brands />
         </Suspense>
-      </div>
+        </Container>
+      {/* </div> */}
     </div>
   );
 }

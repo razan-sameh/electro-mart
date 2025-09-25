@@ -30,8 +30,8 @@ export default function CategoriesNavBar({
       }
     >
       <div
-        className={`relative max-w-7xl mx-auto px-4 md:px-12 ${containerClasses} ${
-          isLanding ? "bg-background/60" : "bg-background"
+        className={`relative mx-auto  md:px-12 ${containerClasses} ${
+          isLanding ? "container px-4 bg-background/60" : "bg-background"
         }`}
       >
         <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto ">

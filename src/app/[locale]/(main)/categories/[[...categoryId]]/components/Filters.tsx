@@ -8,8 +8,9 @@ import { useBrands } from "@/lib/hooks/useBrands";
 
 interface FiltersProps {
   categoryId?: string;
+  isMobile?:boolean
 }
-export default function Filters({ categoryId }: FiltersProps) {
+export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
   const { data: colors } = useColors();
   const { data: brands } = useBrands();
   const priceRangeQuery = usePriceRange(categoryId!);
@@ -48,11 +49,15 @@ export default function Filters({ categoryId }: FiltersProps) {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-lightGray/20">
+    <div
+      className={`bg-background 
+        ${!isMobile && "p-4 rounded-xl shadow-sm border border-lightGray/20"}
+      `}
+    >
       <div className="mb-5 flex justify-end">
         <button
           onClick={() => router.push(pathname)} // clear all filters
-          className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
+          className="bg-lightGray/40 px-3 py-1 rounded hover:bg-lightGray/60 cursor-pointer"
         >
           Clear Filters
         </button>
@@ -60,7 +65,7 @@ export default function Filters({ categoryId }: FiltersProps) {
 
       {/* Color */}
       <div className="mb-5">
-        <h3 className="font-medium mb-2">Color</h3>
+        <h3 className="text-xl mb-2">Color</h3>
         <div className="flex gap-2 flex-wrap">
           {colors?.map((color) => {
             const selected = selectedColors.includes(color.id);
@@ -87,9 +92,9 @@ export default function Filters({ categoryId }: FiltersProps) {
       {/* Price */}
       {minPrice != maxPrice && (
         <div className="mb-5">
-          <h3 className="font-medium mb-2">Price</h3>
+          <h3 className="text-xl mb-2">Price</h3>
           <div className="flex text-sm text-gray-500 mt-1">
-            <span>
+            <span className="text-icon">
               €{minPrice} - €{tempPrice}
             </span>
           </div>
@@ -104,7 +109,7 @@ export default function Filters({ categoryId }: FiltersProps) {
             />
             <button
               onClick={() => updateParam("price", tempPrice.toString())}
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              className="bg-primary text-white px-3 py-1 rounded hover:bg-primary/80 cursor-pointer"
             >
               Go
             </button>
@@ -113,7 +118,7 @@ export default function Filters({ categoryId }: FiltersProps) {
       )}
 
       <div className="mb-5">
-        <label className="flex items-center gap-2 text-sm text-gray-700 ">
+        <label className="flex items-center gap-2 text-xl ">
           <input
             type="checkbox"
             checked={selectedOffer}
@@ -126,8 +131,8 @@ export default function Filters({ categoryId }: FiltersProps) {
       </div>
 
       <div className="mb-5">
-        <h3 className="font-medium mb-2">Brands</h3>
-        <div className="flex flex-col gap-2 text-sm text-gray-700">
+        <h3 className="mb-2 text-xl">Brands</h3>
+        <div className="flex flex-col gap-2 text-sm ">
           {brands?.map((val) => {
             const checked = selectedBrands.includes(val.id);
             return (
@@ -153,8 +158,8 @@ export default function Filters({ categoryId }: FiltersProps) {
       {/* Dynamic Specs */}
       {specificationTypes?.map((specType) => (
         <div key={specType.id} className="mb-5">
-          <h3 className="font-medium mb-2">{specType.name}</h3>
-          <div className="flex flex-col gap-2 text-sm text-gray-700">
+          <h3 className="text-xl mb-2">{specType.name}</h3>
+          <div className="flex flex-col gap-2 text-sm">
             {specType.specificationValues?.map((val) => {
               const checked = selectedSpecs.includes(val.id);
               return (

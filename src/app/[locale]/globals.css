@@ -25,3 +25,22 @@ body {
   --color-secondary: #fb5f2f;
   --color-primary: #1a4de1;
 }
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+button{
+  cursor: pointer;
+}
+
+

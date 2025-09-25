@@ -19,11 +19,11 @@ export default function Header() {
 
   // classes based on pathname
   const containerClasses = isLanding
-    ? "relative max-w-7xl mx-auto rounded-t-lg rounded-b-none md:rounded-lg px-4 md:px-12 py-3"
-    : "relative max-w-7xl mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
+    ? "relative container mx-auto rounded-t-lg rounded-b-none md:rounded-lg md:px-12 py-3"
+    : "relative mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
 
   return (
-    <header className={`w-full px-4 ${isLanding ? 'absolute top-6 left-0  z-20' : 'mt-6'}`}>
+    <header className={`w-full ${isLanding ? 'px-4 absolute top-6 left-0  z-20' : 'mt-6'}`}>
       <div
         className={`${
           isLanding ? "bg-background/60" : "bg-background"
