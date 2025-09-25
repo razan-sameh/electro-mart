@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { usePriceRange } from "@/lib/hooks/useProducts";
 import { useSpecification } from "@/lib/hooks/useSpecification";
 import { useBrands } from "@/lib/hooks/useBrands";
+import { useTranslations } from "next-intl";
 
 interface FiltersProps {
   categoryId?: string;
@@ -27,6 +28,7 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
     searchParams.get("specificationValuesId")?.split(",") || [];
   const selectedBrands = searchParams.get("brandsId")?.split(",") || [];
   const selectedOffer = searchParams.get("specialOffer") === "true"; // check if URL has specialOffer
+  const t = useTranslations("Filters");
 
   const [tempPrice, setTempPrice] = useState(
     selectedPrice ? Number(selectedPrice) : maxPrice
@@ -59,13 +61,13 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
           onClick={() => router.push(pathname)} // clear all filters
           className="bg-lightGray/40 px-3 py-1 rounded hover:bg-lightGray/60 cursor-pointer"
         >
-          Clear Filters
+          {t("clearFilters")}
         </button>
       </div>
 
       {/* Color */}
       <div className="mb-5">
-        <h3 className="text-xl mb-2">Color</h3>
+        <h3 className="text-xl mb-2">{t("color")}</h3>
         <div className="flex gap-2 flex-wrap">
           {colors?.map((color) => {
             const selected = selectedColors.includes(color.id);
@@ -92,7 +94,7 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
       {/* Price */}
       {minPrice != maxPrice && (
         <div className="mb-5">
-          <h3 className="text-xl mb-2">Price</h3>
+          <h3 className="text-xl mb-2">{t("price")}</h3>
           <div className="flex text-sm text-gray-500 mt-1">
             <span className="text-icon">
               €{minPrice} - €{tempPrice}
@@ -111,7 +113,7 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
               onClick={() => updateParam("price", tempPrice.toString())}
               className="bg-primary text-white px-3 py-1 rounded hover:bg-primary/80 cursor-pointer"
             >
-              Go
+              {t("go")}
             </button>
           </div>
         </div>
@@ -126,12 +128,12 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
               updateParam("specialOffer", e.target.checked ? "true" : null);
             }}
           />
-          Special Offers
+          {t("specialOffers")}
         </label>
       </div>
 
       <div className="mb-5">
-        <h3 className="mb-2 text-xl">Brands</h3>
+        <h3 className="mb-2 text-xl">{t("brands")}</h3>
         <div className="flex flex-col gap-2 text-sm ">
           {brands?.map((val) => {
             const checked = selectedBrands.includes(val.id);

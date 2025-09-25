@@ -10,7 +10,7 @@ export default function Footer() {
   const t = useTranslations("Footer");
 
   return (
-    <footer className="bg-lightGray/40 border-t border-lightGray text-content text-sm mt-10">
+    <footer className="bg-lightGray/40 border-t border-lightGray text-content text-sm">
       <Container>
         <div className="py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           <FooterSection title={t("support")}>

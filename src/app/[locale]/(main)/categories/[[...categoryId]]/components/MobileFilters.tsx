@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Filters from "./Filters";
 import { FaFilter } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
 export default function MobileFilters({ categoryId }: { categoryId?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const t = useTranslations("Filters");
 
   const openSheet = () => {
     setIsVisible(true);
@@ -26,7 +28,7 @@ export default function MobileFilters({ categoryId }: { categoryId?: string }) {
         className="flex items-center gap-2 px-4 py-2 rounded-xl  border border-lightGray/60"
       >
         <FaFilter className="text-icon" />
-        <span className="font-medium">Filters</span>
+        <span className="font-medium">{t('filters')}</span>
       </button>
 
       {/* Bottom sheet */}

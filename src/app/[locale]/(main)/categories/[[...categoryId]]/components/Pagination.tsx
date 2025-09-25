@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 interface PaginationProps {
   setPaginate: (value: number) => void;
   currentPage: number;
@@ -13,6 +15,7 @@ export default function Pagination({
 }: PaginationProps) {
   const totalPages = Math.ceil(productsLength / pageSize);
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const t = useTranslations("Pagination");
 
   return (
     <nav aria-label="Page navigation">
@@ -20,18 +23,21 @@ export default function Pagination({
         <li>
           <button
             onClick={() => currentPage > 1 && setPaginate(currentPage - 1)}
-            className="relative block cursor-pointer rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700 dark:hover:text-white"
+            className="relative block cursor-pointer rounded bg-transparent px-3 py-1.5 text-sm  transition-all duration-300 hover:text-primary/90"
           >
-            Previous
+            {t("previous")}
           </button>
         </li>
 
         {pages.map((page) => (
-          <li key={page} aria-current={page === currentPage ? "page" : undefined}>
+          <li
+            key={page}
+            aria-current={page === currentPage ? "page" : undefined}
+          >
             <button
               onClick={() => setPaginate(page)}
-              className={`relative block cursor-pointer rounded px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700 dark:hover:text-white ${
-                page === currentPage ? "bg-primary-100" : "bg-transparent"
+              className={`relative block cursor-pointer rounded px-3 py-1.5 text-sm  transition-all duration-300 hover:text-primary/90 ${
+                page === currentPage ? " text-primary" : ""
               }`}
             >
               {page}
@@ -41,10 +47,12 @@ export default function Pagination({
 
         <li>
           <button
-            onClick={() => currentPage < totalPages && setPaginate(currentPage + 1)}
-            className="relative block cursor-pointer rounded bg-transparent px-3 py-1.5 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700 dark:hover:text-white"
+            onClick={() =>
+              currentPage < totalPages && setPaginate(currentPage + 1)
+            }
+            className="relative block cursor-pointer rounded bg-transparent px-3 py-1.5 text-sm transition-all duration-300 hover:text-primary/90"
           >
-            Next
+            {t("next")}
           </button>
         </li>
       </ul>

@@ -1,10 +1,9 @@
 "use client";
 import { useTranslations } from "next-intl";
-
 import { useSpecialOffers } from "@/lib/hooks/useProducts";
 import { typProduct } from "@/content/types";
-import SectionHeader from "@/app/[locale]/(main)/components/SectionHeader";
 import ProductCard from "@/components/reusable/ProductCard";
+import SectionHeader from "./SectionHeader";
 
 export default function SpecialOffers() {
   const t = useTranslations("HomeSection");
@@ -20,7 +19,7 @@ export default function SpecialOffers() {
       />
 
       {/* Offers Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {offers.map((item: typProduct) => (
           <ProductCard
             key={item.id}

@@ -35,7 +35,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="py-8 grid grid-cols-2 md:grid-cols-5 gap-6 bg-lightGray/20 border border-lightGray/20 rounded-md justify-items-center">
+    <section className="py-8 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 bg-lightGray/20 border border-lightGray/20 rounded-md justify-items-center">
       {features.map((f, i) => (
         <div key={i} className="flex items-center gap-3">
           {/* Icon */}

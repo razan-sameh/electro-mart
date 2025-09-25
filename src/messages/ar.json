@@ -4,7 +4,7 @@
     "chooseCategory": "اختر قسم",
     "products": "المنتجات",
     "language": "اللغة",
-    "allCategories":"جميع الأقسام"
+    "allCategories": "جميع الأقسام"
   },
   "Hero": {
     "title": "الجيل القادم من التجربة الصوتية",
@@ -30,7 +30,7 @@
     "securePayment": "دفع آمن",
     "securePaymentDesc": "آمن بنسبة 100%"
   },
-    "ProductAds": {
+  "ProductAds": {
     "ads": [
       {
         "title": "MacBook Pro",
@@ -43,6 +43,19 @@
         "buttonText": "اشتري الآن"
       }
     ]
+  },
+  "Filters": {
+    "clearFilters": "مسح الفلاتر",
+    "color": "اللون",
+    "price": "السعر",
+    "go": "اذهب",
+    "specialOffers": "عروض خاصة",
+    "brands": "الماركات",
+    "filters": "الفلاتر"
+  },
+  "Pagination": {
+    "next": "التالى",
+    "previous": "السابق"
   },
   "Footer": {
     "support": "دعم المتجر الإلكتروني",

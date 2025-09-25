@@ -44,6 +44,19 @@
       }
     ]
   },
+  "Filters": {
+    "clearFilters": "Clear Filters",
+    "color": "Color",
+    "price": "Price",
+    "go": "Go",
+    "specialOffers": "Special Offers",
+    "brands": "Brands",
+    "filters": "Filters"
+  },
+  "Pagination": {
+    "next": "Next",
+    "previous": "Previous"
+  },
   "Footer": {
     "support": "E-commerce support",
     "workingHours": "Working hours",
