@@ -10,7 +10,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslations } from "next-intl";
 import { useCategories } from "@/lib/hooks/useCategories";
 import { typCategory } from "@/content/types";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { renderIcon } from "@/content/iconMap";
 
 export default function MobileDrawer({
@@ -23,6 +23,21 @@ export default function MobileDrawer({
     useLanguage();
   const [showLanguages, setShowLanguages] = useState(false);
   const t = useTranslations("Header");
+  const allCategories = [
+    { id: "all", name: t("allCategories") },
+    ...categories,
+  ];
+    const router = useRouter();
+  
+  const handleSelectCategory = (categoryId: string | null) => {
+    const updatedCat = categoryId === "all" ? null : categoryId;
+    router.push(
+      updatedCat
+        ? `/categories/${updatedCat}`
+        : `/categories`
+    );
+    setMenuOpen(false);
+  };
 
   return (
     <div className="fixed inset-0 z-30">
@@ -46,15 +61,14 @@ export default function MobileDrawer({
 
         <h3 className="text-blue-600 font-semibold mb-4">{t("products")}</h3>
         <nav className="flex flex-col space-y-4 text-icon">
-          {categories.map((item: typCategory) => (
-            <Link
+          {allCategories.map((item: typCategory) => (
+            <button
               key={item.id}
-              href={`/categories/${item.id}`} // ✅ use your slug or id
               className="flex items-center gap-3 hover:text-blue-600 transition-colors"
-              onClick={() => setMenuOpen(false)} // ✅ close drawer after click
+              onClick={() => handleSelectCategory(item.id)} // ✅ close drawer after click
             >
               {item.icon && renderIcon(item.icon, 20)} {item.name}
-            </Link>
+            </button>
           ))}
         </nav>
 

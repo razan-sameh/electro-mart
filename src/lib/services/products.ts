@@ -8,8 +8,10 @@ export const fetchProducts = async (
   locale: string,
   filters?: typProductFilters,
   search?: string,
-  limit?: number
-): Promise<typProduct[]> => {
+  limit?: number,
+  page?: number,   
+  pageSize?: number  
+): Promise<{ data: typProduct[]; meta: any }> => {
   const queryParams: Record<string, any> = {
     "populate[brand]": true,
     "populate[category]": true,
@@ -17,6 +19,9 @@ export const fetchProducts = async (
     "populate[ImageURL]": true,
     "populate[product_colors]": true,
     "populate[specification_values][populate]": "specification_type",
+    "pagination[page]": page, // ← add page
+    "pagination[pageSize]": pageSize, // ← add pageSize
+    "pagination[withCount]": true, // ← get total count
   };
 
   // Add filters if they exist
@@ -46,6 +51,11 @@ export const fetchProducts = async (
         id;
     });
   }
+  if (filters?.brandsId?.length) {
+    filters.brandsId.forEach((id, index) => {
+      queryParams[`filters[$or][${index}][brand][documentId][$eq]`] = id;
+    });
+  }
 
   // ✅ Price
   if (filters?.price) {
@@ -58,16 +68,25 @@ export const fetchProducts = async (
   }
 
   if (limit) {
-    queryParams["pagination[limit]"] = limit; // <-- Strapi pagination
+    queryParams["pagination[limit]"] = limit;
+  }
+
+    if (page !== undefined && pageSize !== undefined) {
+    queryParams["pagination[page]"] = page;
+    queryParams["pagination[pageSize]"] = pageSize;
+    queryParams["pagination[withCount]"] = true;
   }
   const res = await apiClient<any>("/products", {}, queryParams, locale);
 
-  return res.data.map((product: any) => productAdapter.adapt(product));
+  return {
+    data: res.data.map((product: any) => productAdapter.adapt(product)),
+    meta: res.meta.pagination,
+  };
 };
 
 export const getMinPrice = async (locale: string, categoryId?: string) => {
   const queryParams: Record<string, any> = {
-    "sort": "Price:asc",
+    sort: "Price:asc",
     "pagination[limit]": 1,
     "populate[category]": true,
   };
@@ -92,7 +111,6 @@ export const getMaxPrice = async (locale: string, categoryId?: string) => {
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
 
   return res.data[0]?.Price || 0;
 };

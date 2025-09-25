@@ -8,7 +8,7 @@ const categoryAdapter = CategoryAdapter.getInstance(STRAPI_URL);
 export async function fetchCategories(locale: string): Promise<typCategory[]> {
   const data = await apiClient<any>(
     "/categories",
-    { cache: "force-cache" }, // ✅ Let it use default force-cache
+    {  }, // ✅ Let it use default force-cache
     { populate: "*" },
     locale
   );

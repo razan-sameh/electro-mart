@@ -9,7 +9,7 @@ const colorAdapter = ColorAdapter.getInstance(STRAPI_URL);
 export async function fetchColors(locale: string): Promise<typColor[]> {
   const data = await apiClient<any>(
     "/product-colors",
-    { cache: "force-cache" }, // ✅ Let it use default force-cache
+    {}, // ✅ Let it use default force-cache
     { populate: "*" },
     locale
   );

@@ -45,6 +45,7 @@ export type typProductFilters = {
   brandId?: string;
   specificationValuesId?: string[];
   colorsId?: string[];
+  brandsId?: string[];
   price?: number;
 };
 

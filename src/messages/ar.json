@@ -1,9 +1,10 @@
 {
   "Header": {
     "searchPlaceholder": "أبحث عن ...",
-    "products": "كل المنتجات",
+    "chooseCategory": "اختر قسم",
+    "products": "المنتجات",
     "language": "اللغة",
-    "allDepartments":"جميع الأقسام"
+    "allCategories":"جميع الأقسام"
   },
   "Hero": {
     "title": "الجيل القادم من التجربة الصوتية",

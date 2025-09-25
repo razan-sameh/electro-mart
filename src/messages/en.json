@@ -1,7 +1,8 @@
 {
   "Header": {
     "searchPlaceholder": "I'm searching for...",
-    "products": "All Products",
+    "chooseCategory": "Choose Category",
+    "products": "Products",
     "language": "Language",
     "allCategories": "All Categories"
   },

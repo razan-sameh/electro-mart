@@ -8,7 +8,7 @@ const brandAdapter = BrandAdapter.getInstance(STRAPI_URL);
 export async function fetchBrands(locale: string): Promise<typBrand[]> {
   const data = await apiClient<any>(
     "/brands",
-    { cache: "force-cache" }, // ✅ Let it use default force-cache
+    { }, // ✅ Let it use default force-cache
     { populate: "*" },
     locale
   );

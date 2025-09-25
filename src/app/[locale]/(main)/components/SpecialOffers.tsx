@@ -8,12 +8,16 @@ import ProductCard from "@/components/reusable/ProductCard";
 
 export default function SpecialOffers() {
   const t = useTranslations("HomeSection");
-  const { data: offers } = useSpecialOffers(5);
-
+  const { data: offersWithMeta } = useSpecialOffers(5);
+  const offers = offersWithMeta.data;
   return (
     <section className="py-8">
       {/* Header */}
-      <SectionHeader title={t("specialOffersTitle")} linkText={t("viewAll")} />
+      <SectionHeader
+        title={t("specialOffersTitle")}
+        linkText={t("viewAll")}
+        linkHref="/categories?specialOffer=true"
+      />
 
       {/* Offers Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import CategoriesNavBar from "@/components/reusable/CategoriesNavBar";
+import { Link } from "@/i18n/navigation";
 
 export default function Hero() {
   const t = useTranslations("Hero");
@@ -26,10 +27,10 @@ export default function Hero() {
         <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
           {t("title")}
         </h1>
-        <p className="mt-4 text-lg text-gray-200">{t("subtitle")}</p>
-        <button className="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition cursor-pointer">
+        <p className="mt-4 text-lg text-gray-200 mb-6">{t("subtitle")}</p>
+        <Link href='/categories' className="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition cursor-pointer">
           {t("button")}
-        </button>
+        </Link>
       </div>
 
       {/* ✅ NavBar only on desktop */}

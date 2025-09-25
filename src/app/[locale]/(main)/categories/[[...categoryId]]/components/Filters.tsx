@@ -1,19 +1,17 @@
 "use client";
-import { typSpecificationType } from "@/content/types";
 import { useColors } from "@/lib/hooks/useColors";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { usePriceRange } from "@/lib/hooks/useProducts";
 import { useSpecification } from "@/lib/hooks/useSpecification";
-
+import { useBrands } from "@/lib/hooks/useBrands";
 
 interface FiltersProps {
   categoryId?: string;
 }
-export default function Filters({
-  categoryId,
-}: FiltersProps) {
+export default function Filters({ categoryId }: FiltersProps) {
   const { data: colors } = useColors();
+  const { data: brands } = useBrands();
   const priceRangeQuery = usePriceRange(categoryId!);
   const specificationTypes = useSpecification(categoryId!);
   // Access min and max like this
@@ -26,6 +24,9 @@ export default function Filters({
   const selectedColors = searchParams.get("colorsId")?.split(",") || [];
   const selectedSpecs =
     searchParams.get("specificationValuesId")?.split(",") || [];
+  const selectedBrands = searchParams.get("brandsId")?.split(",") || [];
+  const selectedOffer = searchParams.get("specialOffer") === "true"; // check if URL has specialOffer
+
   const [tempPrice, setTempPrice] = useState(
     selectedPrice ? Number(selectedPrice) : maxPrice
   );
@@ -110,6 +111,44 @@ export default function Filters({
           </div>
         </div>
       )}
+
+      <div className="mb-5">
+        <label className="flex items-center gap-2 text-sm text-gray-700 ">
+          <input
+            type="checkbox"
+            checked={selectedOffer}
+            onChange={(e) => {
+              updateParam("specialOffer", e.target.checked ? "true" : null);
+            }}
+          />
+          Special Offers
+        </label>
+      </div>
+
+      <div className="mb-5">
+        <h3 className="font-medium mb-2">Brands</h3>
+        <div className="flex flex-col gap-2 text-sm text-gray-700">
+          {brands?.map((val) => {
+            const checked = selectedBrands.includes(val.id);
+            return (
+              <label key={val.id} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={val.id}
+                  checked={checked}
+                  onChange={() => {
+                    let newSpecs = new Set(selectedSpecs);
+                    if (checked) newSpecs.delete(val.id);
+                    else newSpecs.add(val.id);
+                    updateParam("brandsId", Array.from(newSpecs));
+                  }}
+                />
+                {val.name}
+              </label>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Dynamic Specs */}
       {specificationTypes?.map((specType) => (

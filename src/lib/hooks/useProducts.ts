@@ -8,22 +8,25 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
   return {
     categoryId: searchParams.get("categoryId") || undefined,
     colorsId: searchParams.get("colorsId")?.split(",") || [],
+    brandsId: searchParams.get("brandsId")?.split(",") || [],
     specificationValuesId:
       searchParams.get("specificationValuesId")?.split(",") || [],
     price: searchParams.get("price")
       ? Number(searchParams.get("price"))
       : undefined,
+    specialOffer:
+      searchParams.get("specialOffer") === "true" ? true : undefined,
   };
 }
-export const useProducts = (categoryId?:string) => {
+export const useProducts = (categoryId?: string, page: number = 1, pageSize: number = 9) => {
   const locale = useLocale();
   const searchParams = useSearchParams();
   const filters = getFiltersFromUrl(searchParams);
   filters.categoryId = categoryId; // merge path + query
-  const searchQuery = searchParams.get("search") || undefined;
+  const searchQuery = searchParams.get("q") || undefined;
   return useSuspenseQuery({
-    queryKey: ["products", filters, searchQuery, locale], // React Query automatically serializes the filters object
-    queryFn: () => fetchProducts(locale, filters, searchQuery),
+    queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
+    queryFn: () => fetchProducts(locale, filters, searchQuery, undefined,page, pageSize),
     // staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
@@ -38,10 +41,10 @@ export const useSpecialOffers = (limit?: number) => {
   });
 };
 
-export const usePriceRange = (categoryId?:string) => {
+export const usePriceRange = (categoryId?: string) => {
   const locale = useLocale();
   return useSuspenseQuery({
-    queryKey: ["price-range", categoryId,locale],
+    queryKey: ["price-range", categoryId, locale],
     queryFn: async () => {
       const [minPrice, maxPrice] = await Promise.all([
         getMinPrice(locale, categoryId),
@@ -52,4 +55,3 @@ export const usePriceRange = (categoryId?:string) => {
     },
   });
 };
-

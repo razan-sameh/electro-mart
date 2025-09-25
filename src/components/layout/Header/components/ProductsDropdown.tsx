@@ -13,7 +13,7 @@ export default function ProductsDropdown() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>(
-    t("products")
+    t("chooseCategory")
   );
   const allCategories = [
     { id: "all", name: t("allCategories") },
