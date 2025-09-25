@@ -14,7 +14,11 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
   const [paginate, setPaginate] = useState(1);
   const pageSize = 18;
   const { data: category } = useCategoryById(categoryId!); // <- destructure `data` here
-  const { data: productsWithMeta } = useProducts(categoryId!, paginate, pageSize);
+  const { data: productsWithMeta } = useProducts(
+    categoryId!,
+    paginate,
+    pageSize
+  );
   const products = productsWithMeta?.data || [];
   const meta = productsWithMeta?.meta;
 
@@ -38,15 +42,14 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
           />
         ))}
       </div>
-      {
-        meta?.total > pageSize &&
-      <Pagination
-        setPaginate={setPaginate}
-        currentPage={paginate}
-        pageSize={pageSize}
-        productsLength={meta?.total || 0} // إجمالي المنتجات
-      />
-      }
+      {meta?.total > pageSize && (
+        <Pagination
+          setPaginate={setPaginate}
+          currentPage={paginate}
+          pageSize={pageSize}
+          productsLength={meta?.total || 0}
+        />
+      )}
     </main>
   );
 }
