@@ -1,7 +1,11 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 import { useCallback } from "react";
-import { fetchCategories, fetchCategoryById } from "../services/categories";
+import {
+  fetchCategories,
+  fetchCategoryById,
+  fetchCategoryByName,
+} from "../services/categories";
 
 export function useCategories() {
   const locale = useLocale();
@@ -16,7 +20,7 @@ export function useCategories() {
   });
 }
 
-export function useCategoryById(categoryId?:string) {
+export function useCategoryById(categoryId?: string) {
   const locale = useLocale();
   return useQuery({
     queryKey: categoryId
@@ -26,5 +30,15 @@ export function useCategoryById(categoryId?:string) {
       ? () => fetchCategoryById(categoryId, locale)
       : () => Promise.resolve(null), // Never actually called due to enabled
     enabled: !!categoryId,
+  });
+}
+
+export function useCategoryByName(slug: string) {
+  const locale = useLocale();
+
+  return useQuery({
+    queryKey: ["category-slug", slug, locale],
+    queryFn: () => fetchCategoryByName(slug, locale),
+    enabled: !!slug,
   });
 }

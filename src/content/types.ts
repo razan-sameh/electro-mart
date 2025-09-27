@@ -59,16 +59,33 @@ export type typColor = {
 // Product
 export type typProduct = {
   id: string;
-  imageUrl: string;
+  imagesUrl: string[];
   name: string;
   price: number;
-  category?: typCategory;
+  category: typCategory;
   brand: typBrand;
   description: string;
   stockQuantity: number;
   specialOffers?: typSpecialOffer[];
-  color?: typColor[];
+  colors?: typColor[];
   specificationValues?: typSpecificationValues[];
+  averageRating: number;
+  totalReviews: number;
+};
+
+export type typReview = {
+  id: string;
+  rating: number;
+  comment: string;
+  user: typUser;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type RatingBreakdown = {
+  star: number;
+  count: number;
+  percentage: number;
 };
 
 // User (Auth)

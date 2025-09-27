@@ -9,8 +9,8 @@ export const fetchProducts = async (
   filters?: typProductFilters,
   search?: string,
   limit?: number,
-  page?: number,   
-  pageSize?: number  
+  page?: number,
+  pageSize?: number
 ): Promise<{ data: typProduct[]; meta: any }> => {
   const queryParams: Record<string, any> = {
     "populate[brand]": true,
@@ -71,7 +71,7 @@ export const fetchProducts = async (
     queryParams["pagination[limit]"] = limit;
   }
 
-    if (page !== undefined && pageSize !== undefined) {
+  if (page !== undefined && pageSize !== undefined) {
     queryParams["pagination[page]"] = page;
     queryParams["pagination[pageSize]"] = pageSize;
     queryParams["pagination[withCount]"] = true;
@@ -82,6 +82,31 @@ export const fetchProducts = async (
     data: res.data.map((product: any) => productAdapter.adapt(product)),
     meta: res.meta.pagination,
   };
+};
+
+export const fetchProductById = async (locale: string, productId: string) => {
+  const queryParams: Record<string, any> = {
+    // "filters[documentId][$eq]": productId, // filter by product ID
+    "populate[brand]": true,
+    "populate[category]": true,
+    "populate[special_offers]": true,
+    "populate[ImageURL]": true,
+    "populate[product_colors]": true,
+    "populate[specification_values][populate]": "specification_type",
+  };
+
+  const res = await apiClient<any>(
+    `/products/${productId}`,
+    {},
+    queryParams,
+    locale
+  );
+
+  if (!res.data) {
+    throw new Error("Product not found");
+  }
+
+  return productAdapter.adapt(res.data);
 };
 
 export const getMinPrice = async (locale: string, categoryId?: string) => {
@@ -113,4 +138,31 @@ export const getMaxPrice = async (locale: string, categoryId?: string) => {
   const res = await apiClient<any>("/products", {}, queryParams, locale);
 
   return res.data[0]?.Price || 0;
+};
+
+export const fetchSimilarProducts = async (
+  locale: string,
+  productId: string,
+  categoryId: string,
+  brandId?: string,
+  limit: number = 5
+) => {
+  const queryParams: Record<string, any> = {
+    "filters[category][documentId][$eq]": categoryId,
+    "filters[documentId][$ne]": productId, // exclude current product
+    "populate[category]": true,
+    "populate[special_offers]": true,
+    "populate[brand]": true,
+    "populate[ImageURL]": true,
+    "populate[product_colors]": true,
+    "pagination[limit]": limit,
+  };
+
+  if (brandId) {
+    queryParams["filters[brand][documentId][$eq]"] = brandId;
+  }
+
+  const res = await apiClient<any>("/products", {}, queryParams, locale);
+
+  return res.data.map((p: any) => productAdapter.adapt(p));
 };

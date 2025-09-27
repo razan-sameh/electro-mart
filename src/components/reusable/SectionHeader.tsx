@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 
 type SectionHeaderProps = {
   title: string;
@@ -21,7 +21,7 @@ const SectionHeader: FC<SectionHeaderProps> = ({
     >
       <h2 className="text-xl font-semibold inline-block">{title}</h2>
       {linkText && (
-        <a href={linkHref} className="text-blue-600 hover:underline">
+        <a href={linkHref} className="text-primary hover:underline">
           {linkText}
         </a>
       )}

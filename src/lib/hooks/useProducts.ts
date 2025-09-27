@@ -1,5 +1,5 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { getMaxPrice, getMinPrice, fetchProducts } from "../services/products";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getMaxPrice, getMinPrice, fetchProducts, fetchProductById, fetchSimilarProducts } from "../services/products";
 import { useLocale } from "next-intl";
 import { typProductFilters } from "@/content/types";
 import { useSearchParams } from "next/navigation";
@@ -53,5 +53,28 @@ export const usePriceRange = (categoryId?: string) => {
 
       return { minPrice, maxPrice };
     },
+  });
+};
+
+export function useProductsById(productId:string) {
+  const locale = useLocale();
+
+  return useSuspenseQuery({
+    queryKey: ["product", locale,productId],
+    queryFn:() =>
+      fetchProductById(locale, productId), // filters: specialOffer only
+  });
+}
+
+export const useSimilarProducts = (
+  productId: string,
+  categoryId: string,
+  brandId?: string
+) => {
+  const locale = useLocale();
+
+  return useSuspenseQuery({
+    queryKey: ["similar-products", productId, categoryId, brandId, locale],
+    queryFn: () => fetchSimilarProducts(locale, productId, categoryId, brandId),
   });
 };

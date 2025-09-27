@@ -6,6 +6,7 @@ import { CategoryAdapter } from "./CategoryAdapter";
 import { SpecialOfferAdapter } from "./SpecialOfferAdapter";
 import { ColorAdapter } from "./ColorAdapter";
 import { SpecificationValueAdapter } from "./SpecificationValueAdapter";
+import { ReviewAdapter } from "./ReviewAdapter";
 
 export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
   private static instance: ProductAdapter;
@@ -13,6 +14,7 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
   private brandAdapter: BrandAdapter;
   private specialOfferAdapter: SpecialOfferAdapter;
   private colorAdapter: ColorAdapter;
+  private reviewAdapter: ReviewAdapter;
   private specificationValueAdapter: SpecificationValueAdapter;
 
   private constructor(strapiUrl: string) {
@@ -21,6 +23,7 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
     this.brandAdapter = BrandAdapter.getInstance(strapiUrl);
     this.specialOfferAdapter = SpecialOfferAdapter.getInstance(strapiUrl);
     this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
+    this.reviewAdapter = ReviewAdapter.getInstance(strapiUrl);
     this.specificationValueAdapter =
       SpecificationValueAdapter.getInstance(strapiUrl);
   }
@@ -39,15 +42,16 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
       description: this.handleNullUndefined(source.Description, ""),
       price: this.handleNullUndefined(source.Price, 0),
       stockQuantity: this.handleNullUndefined(source.StockQuantity, 0),
-      imageUrl: this.adaptImageUrl(source.ImageURL),
+      averageRating: this.handleNullUndefined(source.averageRating, 0),
+      totalReviews: this.handleNullUndefined(source.totalReviews, 0),
+      imagesUrl: this.adaptImageUrls(source.ImageURL),
       brand: this.brandAdapter.adapt(source.brand),
-      category: source.category
-        ? this.categoryAdapter.adapt(source.category)
-        : undefined,
+      category:  this.categoryAdapter.adapt(source.category),
       specialOffers: this.specialOfferAdapter.adaptMany(
         source.special_offers || []
       ),
-      color: this.colorAdapter.adaptMany(source.product_colors || []),
+      colors: this.colorAdapter.adaptMany(source.product_colors || []),
+      reviews: this.reviewAdapter.adaptMany(source.reviews || []),
       specificationValues: this.specificationValueAdapter.adaptMany(
         source.specification_values || []
       ),

@@ -59,7 +59,6 @@ export interface StrapiSpecialOffer {
 export interface StrapiBrand {
   id: number;
   documentId: string;
-
   Name: string;
   LogoURL?: StrapiImage;
   products?: StrapiProduct[];
@@ -75,7 +74,6 @@ export interface StrapiColor {
 
 export interface StrapiProduct {
   documentId: string;
-
   id: number;
   Name: string;
   Description: string;
@@ -83,11 +81,25 @@ export interface StrapiProduct {
   StockQuantity: number;
   ImageURL?: StrapiImage[];
   brand: StrapiBrand;
-  category?: StrapiCategory;
+  category: StrapiCategory;
   special_offers?: StrapiSpecialOffer[];
   product_colors?: StrapiColor[];
   specification_values?: StrapiSpecificationValue[];
+  averageRating: number;
+  totalReviews: number;
+  reviews?: StrapiReview[];
 }
+
+export type StrapiReview = {
+  documentId: string;
+  id: number;
+  Rating: number;
+  Comment: string;
+  product: StrapiProduct;
+  createdAt:string;
+  updatedAt:string;
+  // users_permissions_user:Strapiuser
+};
 
 export interface StrapiResponse<T> {
   data: T[];

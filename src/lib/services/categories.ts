@@ -28,3 +28,18 @@ export async function fetchCategoryById(id: string, locale: string) {
   return categoryAdapter.adapt(data.data);
 }
 
+export async function fetchCategoryByName(name: string, locale: string) {
+  const queryParams: Record<string, any> = {
+    "filters[CategoryName][$eq]": name, // $eqi → case-insensitive
+  };
+
+  const data = await apiClient<any>("/categories", {}, queryParams, locale);
+
+  if (!data.data?.[0]) {
+    throw new Error(`Category with name "${name}" not found`);
+  }
+
+  return categoryAdapter.adapt(data.data[0]);
+}
+
+

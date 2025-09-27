@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
-import SectionHeader from "./SectionHeader";
 import { useBrands } from "@/lib/hooks/useBrands";
+import SectionHeader from "@/components/reusable/SectionHeader";
 
 export default function Brands() {
   const { data: brands } = useBrands();

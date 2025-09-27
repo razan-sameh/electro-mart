@@ -25,7 +25,7 @@ export class CategoryAdapter extends BaseAdapter<StrapiCategory, typCategory> {
       // Handle both possible field names
       name: this.handleNullUndefined(source.CategoryName || source.name, ''),
       icon: source.icon,
-      imageUrl: this.adaptImageUrl(source.ImageURL || source.LogoURL),
+      imageUrl: this.adaptImageUrlSingle(source.ImageURL || source.LogoURL),
       specificationTypes: source.specification_types ? this.specificationTypeAdapter.adaptMany(source.specification_types) : undefined,
     };
   }

@@ -1,7 +1,8 @@
 'use client'
 import { useTranslations } from "next-intl";
-import SectionHeader from "./SectionHeader";
 import ProductCard from "@/components/reusable/ProductCard";
+import { typProduct } from "@/content/types";
+import SectionHeader from "@/components/reusable/SectionHeader";
 
 const bestSellers = [
   {
@@ -48,17 +49,12 @@ export default function BestSellers() {
       <SectionHeader title={t("bestSellersTitle")} linkText={t("viewAll")} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {bestSellers.map((item) => (
+        {/* {bestSellers.map((item : typProduct) => (
           <ProductCard
+            item={item}
             key={item.id}
-            title={item.title}
-            discount={item.discount}
-            price={item.price}
-            img={item.img}
-            rating={item.rating}
-            reviews={item.reviews}
-          />
-        ))}
+            />
+        ))} */}
       </div>
     </section>
   );

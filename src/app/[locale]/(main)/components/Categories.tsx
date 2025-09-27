@@ -1,8 +1,8 @@
 "use client";
 import { useTranslations } from "next-intl";
-import SectionHeader from "./SectionHeader";
 import { useCategories } from "@/lib/hooks/useCategories";
 import { Link } from "@/i18n/navigation"; // ✅ localized Link
+import SectionHeader from "@/components/reusable/SectionHeader";
 
 export default function Categories() {
   const { data: categories = [] } = useCategories();
