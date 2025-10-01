@@ -98,9 +98,10 @@ export type typUser = {
 
 // Cart
 export type typCartItem = {
-  id: string;
-  product: typProduct;
+  id: string;         
+  product: typProduct; 
   quantity: number;
+  selectedColor?: typColor; 
 };
 
 export type typCart = {

@@ -29,28 +29,4 @@ export class SpecialOfferAdapter extends BaseAdapter<StrapiSpecialOffer, typSpec
       // Don't adapt products here to avoid circular dependencies
     };
   }
-
-  isActive(offer: typSpecialOffer): boolean {
-    const now = new Date();
-    const startDate = offer.startDate ? new Date(offer.startDate) : null;
-    const endDate = offer.endDate ? new Date(offer.endDate) : null;
-
-    if (startDate && now < startDate) return false;
-    if (endDate && now > endDate) return false;
-    
-    return true;
-  }
-
-  calculateDiscountedPrice(originalPrice: number, offer: typSpecialOffer): number {
-    if (!this.isActive(offer)) return originalPrice;
-
-    switch (offer.discountType) {
-      case enmDiscountType.percentage:
-        return originalPrice * (1 - offer.discountValue / 100);
-      case enmDiscountType.fixed:
-        return Math.max(0, originalPrice - offer.discountValue);
-      default:
-        return originalPrice;
-    }
-  }
 }

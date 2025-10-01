@@ -1,32 +1,13 @@
-import { enmDiscountType } from "@/content/enums";
 import { typProduct } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { FaStar } from "react-icons/fa";
+import ProductPrice from "./ProductPrice";
 
 type ProductCardProps = {
   item: typProduct;
 };
 
 export default function ProductCard({ item }: ProductCardProps) {
-  // Calculate discounted price based on discount type
-  let discountedPrice = item.price;
-  if (item.specialOffers) {
-    if (item.specialOffers[0]?.discountType === enmDiscountType.percentage) {
-      discountedPrice =
-        item.price - item.price * (item.specialOffers[0].discountValue / 100);
-    } else if (item.specialOffers[0]?.discountType === enmDiscountType.fixed) {
-      discountedPrice = item.price - item.specialOffers[0].discountValue;
-    }
-  }
-
-  // Prevent negative prices
-  if (discountedPrice < 0) discountedPrice = 0;
-
-  const formattedDiscountedPrice =
-    discountedPrice.toLocaleString(undefined, {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }) + " €";
 
   return (
     <Link
@@ -53,14 +34,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
         <div className="flex justify-between items-center">
           {/* Price */}
-          <div className="flex gap-2 items-center mb-2">
-            {item.specialOffers?.[0] && (
-              <span className="text-gray-400 line-through">{item.price} €</span>
-            )}
-            <span className="text-lg font-bold text-secondary">
-              {formattedDiscountedPrice}
-            </span>
-          </div>
+          <ProductPrice item={item} />
 
           {/* Rating */}
           <div className="flex items-center text-sm text-gray-600">
