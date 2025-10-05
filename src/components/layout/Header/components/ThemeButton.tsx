@@ -4,6 +4,7 @@ import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import IconButton from "./IconButton";
 
 export default function UserButton() {
   const [mounted, setMounted] = useState(false);
@@ -26,11 +27,17 @@ export default function UserButton() {
 
   if (resolvedTheme === "dark") {
     return (
-      <MdOutlineLightMode fontSize={20} onClick={() => setTheme("light")} />
+      <IconButton onClick={() => setTheme("light")}>
+        <MdOutlineLightMode fontSize={20} />
+      </IconButton>
     );
   }
 
   if (resolvedTheme === "light") {
-    return <MdDarkMode fontSize={20} onClick={() => setTheme("dark")} />;
+    return (
+      <IconButton onClick={() => setTheme("dark")}>
+        <MdDarkMode fontSize={20} />
+      </IconButton>
+    );
   }
 }

@@ -2,12 +2,15 @@
 
 import { typCartItem } from "@/content/types";
 import { calculateDiscountedPrice } from "@/content/utils";
+import { useRouter } from "@/i18n/navigation";
 
 interface Props {
   items: typCartItem[];
 }
 
 export default function CartSummary({ items }: Props) {
+  const router = useRouter();
+
   // Subtotal before discounts
   const subtotal = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -16,8 +19,7 @@ export default function CartSummary({ items }: Props) {
 
   // Subtotal after discounts
   const discountedTotal = items.reduce(
-    (sum, item) =>
-      sum + calculateDiscountedPrice(item.product) * item.quantity,
+    (sum, item) => sum + calculateDiscountedPrice(item.product) * item.quantity,
     0
   );
 
@@ -27,6 +29,13 @@ export default function CartSummary({ items }: Props) {
   // Discount percentage (based on subtotal)
   const discountPercent =
     subtotal > 0 ? ((discount / subtotal) * 100).toFixed(0) : "0";
+
+  const handleCheckout = async () => {
+    const res = await fetch("/api/auth/me");
+    const data = await res.json();
+    if (!data.user) router.push("/login?redirect=/checkout");
+    else router.push("/checkout");
+  };
 
   return (
     <div className="border border-lightGray/60 rounded-lg px-6 bg-background min-h-[532px] flex flex-col justify-evenly">
@@ -55,7 +64,10 @@ export default function CartSummary({ items }: Props) {
       {/* Bottom Section (Button + Info) */}
       <div className="flex flex-col gap-6 mt-4">
         {/* Checkout Button */}
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">
+        <button
+          className="w-full bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium transition"
+          onClick={handleCheckout}
+        >
           Continue to order
         </button>
 

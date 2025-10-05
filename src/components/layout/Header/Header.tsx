@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import CategoriesNavBar from "@/components/reusable/CategoriesNavBar";
-import Logo from "./components/Logo";
+import Logo from "../../reusable/Logo";
 import MobileDrawer from "./components/MobileDrawer";
 import SearchBar from "./components/SearchBar";
 import IconButtonGroup from "./components/IconButtonGroup";

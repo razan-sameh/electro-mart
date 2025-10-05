@@ -1,5 +1,6 @@
 // apiClient.ts
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
 export const STRAPI_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
   "http://localhost:1337";
@@ -11,10 +12,10 @@ export async function apiClient<T>(
   locale?: string
 ): Promise<T> {
   const url = new URL(`${API_URL}${endpoint}`);
-  console.log({url});
-  
+  console.log({ url });
+
   const queryParams = locale ? { ...params, locale } : params || {};
-  
+
   Object.entries(queryParams).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       url.searchParams.append(key, String(value));
@@ -23,6 +24,7 @@ export async function apiClient<T>(
 
   const res = await fetch(url.toString(), {
     cache: "default",
+    credentials: "include", // ✅ مهم جدًا
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),

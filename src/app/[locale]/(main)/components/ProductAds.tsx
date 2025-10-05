@@ -20,7 +20,7 @@ export default function ProductAds() {
       description: t("ads.0.description"),
       image: "/ads/macbook.png",
       buttonText: t("ads.0.buttonText"),
-      href: `/categories`,
+      href: `/register`,
     },
     {
       title: t("ads.1.title"),
