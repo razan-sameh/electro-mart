@@ -1,37 +1,55 @@
 "use client";
+
 import { typProduct } from "@/content/types";
-import { FaStar } from "react-icons/fa";
-import { FiHeart } from "react-icons/fi";
-import { useReducer, useState } from "react";
-import { FiMinus, FiPlus } from "react-icons/fi";
-import { useCartStore } from "@/stores/cartStore";
+import { FaStar, FaCheckCircle } from "react-icons/fa";
+import { FiHeart, FiMinus, FiPlus } from "react-icons/fi";
+import { useReducer } from "react";
 import { calculateDiscountedPrice } from "@/content/utils";
 import { cartItemReducer } from "./cartItemReducer";
 import toast from "react-hot-toast";
-import { FaCheckCircle } from "react-icons/fa";
+import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
-  const { addToCart } = useCartStore();
+  const { cart, addItem ,updateQuantity} = useUnifiedCart(); // ✅ unified cart hook
 
   // useReducer instead of multiple useStates
   const [state, dispatch] = useReducer(cartItemReducer, {
     quantity: 1,
-    selectedColor: product.colors?.[0], // 👈 أول لون
+    selectedColor: product.colors?.[0], // 👈 default color
   });
 
   const discountedPrice = calculateDiscountedPrice(product);
+  const formattedDiscountedPrice = discountedPrice.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }) + " €";
 
-  const formattedDiscountedPrice =
-    discountedPrice.toLocaleString(undefined, {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }) + " €";
-const handleAddToCart = () => {
-  addToCart(product, state.quantity, state.selectedColor);
+
+const handleAddToCart = async () => {
+  if (!state.selectedColor) return;
+
+  // 1️⃣ Check if product + color already exists in cart
+  const existingItem = cart.find(
+    (i) =>
+      i.product.id === product.id &&
+      i.selectedColor?.id === state.selectedColor!.id
+  );
+
+  if (existingItem) {
+    // 2️⃣ Update quantity
+    await updateQuantity(existingItem, existingItem.quantity + state.quantity);
+  } else {
+    // 3️⃣ Add new item
+    await addItem({
+      product,
+      quantity: state.quantity,
+      selectedColor: state.selectedColor,
+    });
+  }
 
   toast.custom(
     (t) => (
@@ -46,9 +64,10 @@ const handleAddToCart = () => {
         </div>
       </div>
     ),
-    { position: "top-right" } // 👈 moved to bottom
+    { position: "bottom-left" }
   );
 };
+
 
   return (
     <div className="flex flex-col gap-6">

@@ -12,6 +12,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import InputField from "../../../../../components/reusable/InputField";
 import { typSignupData, SignupSchema } from "../components/schemas";
 import { Link } from "@/i18n/navigation";
+import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -29,7 +31,8 @@ export default function SignUpForm() {
       confirmPassword: "",
     },
   });
-
+  const { merge } = useMergeGuestCartToUser();
+  const { refetch } = useCart();
   const onSubmit = async (data: typSignupData) => {
     setIsLoading(true);
     setError("");
@@ -48,6 +51,10 @@ export default function SignUpForm() {
       if (!response.ok)
         throw new Error(result.error || "Failed to create user");
       router.push(redirect);
+      if (result.success && result.user) {
+        await merge();
+        await refetch();
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

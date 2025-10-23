@@ -71,6 +71,8 @@ export type typProduct = {
   specificationValues?: typSpecificationValues[];
   averageRating: number;
   totalReviews: number;
+  reviews?: typReview[];
+  
 };
 
 export type typReview = {
@@ -98,14 +100,14 @@ export type typUser = {
 
 // Cart
 export type typCartItem = {
-  id: string;         
+  id: number;      
+  documentId: string   
   product: typProduct; 
   quantity: number;
-  selectedColor?: typColor; 
+  selectedColor: typColor; 
 };
 
 export type typCart = {
   id: string;
-  userId: number;
   items: typCartItem[];
 };

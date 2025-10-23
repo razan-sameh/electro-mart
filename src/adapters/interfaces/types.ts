@@ -96,11 +96,24 @@ export type StrapiReview = {
   Rating: number;
   Comment: string;
   product: StrapiProduct;
-  createdAt:string;
-  updatedAt:string;
+  createdAt: string;
+  updatedAt: string;
   // users_permissions_user:Strapiuser
 };
 
+export type StrapiCartItem = {
+  documentId: string;
+  id: number;
+  product: StrapiProduct;
+  Quantity: number;
+  product_color: StrapiColor;
+};
+
+export type StrapiCart = {
+  documentId: string;
+  id: number;
+  cart_items: StrapiCartItem[];
+};
 export interface StrapiResponse<T> {
   data: T[];
   meta: {

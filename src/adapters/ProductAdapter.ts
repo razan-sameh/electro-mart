@@ -45,8 +45,14 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
       averageRating: this.handleNullUndefined(source.averageRating, 0),
       totalReviews: this.handleNullUndefined(source.totalReviews, 0),
       imagesUrl: this.adaptImageUrls(source.ImageURL),
-      brand: this.brandAdapter.adapt(source.brand),
-      category:  this.categoryAdapter.adapt(source.category),
+      // brand: this.brandAdapter.adapt(source.brand),
+      // category:  this.categoryAdapter.adapt(source.category),
+      brand: source.brand
+        ? this.brandAdapter.adapt(source.brand)
+        : { id: "unknown", name: "" },
+      category: source.category
+        ?this.categoryAdapter.adapt(source.category)
+        : { id: "unknown", name: "" },
       specialOffers: this.specialOfferAdapter.adaptMany(
         source.special_offers || []
       ),

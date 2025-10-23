@@ -5,9 +5,9 @@ import { typCartItem, typProduct, typColor } from "@/content/types";
 
 interface CartState {
   items: typCartItem[];
-  addToCart: (product: typProduct, quantity?: number, selectedColor?: typColor) => void;
-  removeFromCart: (id: string, selectedColor?: typColor) => void;
-  updateQuantity: (id: string, quantity: number, selectedColor?: typColor) => void;
+  addToCart: (product: typProduct, quantity: number, selectedColor: typColor) => void;
+  removeFromCart: (documentId: string, selectedColor: typColor) => void;
+  updateQuantity: (documentId: string, quantity: number, selectedColor: typColor) => void;
   clearCart: () => void;
 }
 
@@ -18,14 +18,14 @@ export const useCartStore = create<CartState>()(
       addToCart: (product, quantity = 1, selectedColor) => {
         const existing = get().items.find(
           (i) =>
-            i.id === product.id &&
+            i.documentId === product.id && // use documentId
             i.selectedColor?.id === selectedColor?.id
         );
 
         if (existing) {
           set({
             items: get().items.map((i) =>
-              i.id === product.id && i.selectedColor?.id === selectedColor?.id
+              i.documentId === product.id && i.selectedColor?.id === selectedColor?.id
                 ? { ...i, quantity: i.quantity + quantity }
                 : i
             ),
@@ -34,21 +34,21 @@ export const useCartStore = create<CartState>()(
           set({
             items: [
               ...get().items,
-              { id: product.id, product, quantity, selectedColor },
+              { documentId: product.id, product, quantity, selectedColor, id: 0 }, // id can be temporary
             ],
           });
         }
       },
-      removeFromCart: (id, selectedColor) =>
+      removeFromCart: (documentId, selectedColor) =>
         set({
           items: get().items.filter(
-            (i) => !(i.id === id && i.selectedColor?.id === selectedColor?.id)
+            (i) => !(i.documentId === documentId && i.selectedColor?.id === selectedColor?.id)
           ),
         }),
-      updateQuantity: (id, quantity, selectedColor) =>
+      updateQuantity: (documentId, quantity, selectedColor) =>
         set({
           items: get().items.map((i) =>
-            i.id === id && i.selectedColor?.id === selectedColor?.id
+            i.documentId === documentId && i.selectedColor?.id === selectedColor?.id
               ? { ...i, quantity }
               : i
           ),
@@ -56,7 +56,7 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [] }),
     }),
     {
-      name: "guest_cart", // مفتاح localStorage
+      name: "guest_cart",
       skipHydration: false,
     }
   )

@@ -1,38 +1,43 @@
 "use client";
+import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
-import { useCartStore } from "@/stores/cartStore";
 
 interface Props {
   onClose: () => void;
 }
 
 export default function CartDropdown({ onClose }: Props) {
-  const items = useCartStore((state) => state.items);
+  const { cart: items, isGuest, isLoading } = useUnifiedCart();
   const router = useRouter();
-  // Calculate total
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+
+  const total = Array.isArray(items)
+    ? items.reduce((sum, item) => {
+        const price = item?.product?.price ?? 0;
+        const quantity = item?.quantity ?? 0;
+        return sum + price * quantity;
+      }, 0)
+    : 0;
+
+  const handleCheckout = async () => {
+    onClose();
+    if (isGuest) router.push("/login?redirect=/checkout");
+    else router.push("/checkout");
+  };
 
   function handleReviewItems() {
     onClose();
     router.push("/cart");
   }
 
-  const handleCheckout = async () => {
-    onClose();
-    const res = await fetch("/api/auth/me");
-    const data = await res.json();
-    if (!data.user) router.push("/login?redirect=/checkout");
-    else router.push("/checkout");
-  };
-
   return (
     <div className="absolute right-0 mt-2 sm:w-96 md:w-[400px] bg-background shadow-xl rounded-lg p-4 z-50 max-w-md">
       {/* Items */}
       <div className="space-y-3 sm:space-y-4 max-h-60 sm:max-h-80 overflow-y-auto">
-        {items.length > 0 ? (
+        {isLoading ? (
+          <p className="text-center py-6 text-sm sm:text-base">
+            Loading cart...
+          </p>
+        ) : items.length > 0 ? (
           items.map((item) => (
             <div
               key={`${item.id}-${item.selectedColor?.id || "default"}`}

@@ -9,6 +9,8 @@ import InputField from "../../../../../components/reusable/InputField";
 import { Link } from "@/i18n/navigation";
 import { loginSchema, typLoginData } from "./schemas";
 import { FcGoogle } from "react-icons/fc";
+import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -24,6 +26,8 @@ export default function LoginForm() {
       password: "",
     },
   });
+  const { merge } = useMergeGuestCartToUser();
+  const { refetch } = useCart();
 
   const onSubmit = async (data: typLoginData) => {
     setIsLoading(true);
@@ -42,8 +46,11 @@ export default function LoginForm() {
       const result = text ? JSON.parse(text) : {};
 
       if (!response.ok) throw new Error(result.error || "Failed to login");
-
       router.push(redirect);
+      if (result.success && result.user) {
+        await merge();
+        await refetch();
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

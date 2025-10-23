@@ -1,7 +1,6 @@
 // lib/services/categories.ts
-import { typBrand, typColor } from "@/content/types";
+import {typColor } from "@/content/types";
 import { apiClient, STRAPI_URL } from "../apiClient";
-import { BrandAdapter } from "@/adapters/BrandAdapter";
 import { ColorAdapter } from "@/adapters/ColorAdapter";
 
 const colorAdapter = ColorAdapter.getInstance(STRAPI_URL);
