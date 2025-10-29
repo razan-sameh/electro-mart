@@ -30,7 +30,7 @@ export default function CartItem({ item }: Props) {
         {/* Product Image */}
         <div className="flex-shrink-0 flex items-center justify-center">
           <Link
-            href={`/products/${item.product.id}`} // adjust route to match your product page path
+            href={`/products/${item.product.documentId}`} // adjust route to match your product page path
             className="flex-shrink-0 flex items-center justify-center"
           >
             <img

@@ -11,7 +11,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
   return (
     <Link
-      href={`/products/${item.id}`}
+      href={`/products/${item.documentId}`}
       className="bg-lightGray/20 rounded-lg shadow hover:shadow-lg transition text-start w-full cursor-pointer"
     >
       {/* Discount badge */}

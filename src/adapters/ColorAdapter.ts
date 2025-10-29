@@ -19,7 +19,8 @@ export class ColorAdapter extends BaseAdapter<StrapiColor, typColor> {
 
   adapt(source: StrapiColor): typColor {
     return {
-      id: source.documentId,
+      id: source.id,
+      documentId: source.documentId,
       name: this.handleNullUndefined(source.name, ""),
       hexCode: this.handleNullUndefined(source.hex_code, ""),
       // Don't adapt products here to avoid circular dependencies

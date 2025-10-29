@@ -48,15 +48,15 @@ export function useCart() {
 
       const existing = prevCart.items.find(
         (i) =>
-          String(i.product.id) === String(product.id) &&
-          i.selectedColor?.id === selectedColor?.id
+          String(i.product.documentId) === String(product.documentId) &&
+          i.selectedColor?.documentId === selectedColor?.documentId
       );
 
       let newItems;
       if (existing) {
         newItems = prevCart.items.map((i) =>
-          String(i.product.id) === String(product.id) &&
-          i.selectedColor?.id === selectedColor?.id
+          String(i.product.documentId) === String(product.documentId) &&
+          i.selectedColor?.documentId === selectedColor?.documentId
             ? { ...i, quantity: i.quantity + quantity }
             : i
         );
@@ -65,7 +65,7 @@ export function useCart() {
           ...prevCart.items,
           {
             id: -1,
-            documentId: product.id,
+            documentId: product.documentId,
             product,
             quantity,
             selectedColor,
@@ -90,7 +90,7 @@ export function useCart() {
     },
   });
 
-  // ➕ Add item
+// ➕ Add item
   const addMutation = useMutation({
     mutationFn: ({
       product,
@@ -109,31 +109,13 @@ export function useCart() {
       queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
         if (!old) return old;
 
-        const existing = old.items.find(
-          (i) =>
-            String(i.product.id) === String(product.id) &&
-            i.selectedColor?.id === selectedColor?.id
-        );
-
-        if (existing) {
-          return {
-            ...old,
-            items: old.items.map((item) =>
-              String(item.product.id) === String(product.id) &&
-              item.selectedColor?.id === selectedColor?.id
-                ? { ...item, quantity: item.quantity + quantity }
-                : item
-            ),
-          };
-        }
-
         return {
           ...old,
           items: [
             ...old.items,
             {
               id: Date.now(), // temporary id
-              documentId: product.id,
+              documentId: product.documentId,
               product,
               quantity,
               selectedColor,
@@ -147,11 +129,30 @@ export function useCart() {
 
     onSuccess: (data) => {
       if (data) {
+        // ✅ Replace the temporary item with the real one from server
         queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
           if (!old) {
             return { id: "temp", items: [data] };
           }
 
+          // Find and replace the optimistic item with the server response
+          const existingIndex = old.items.findIndex(
+            (item) =>
+              String(item.product.documentId) === String(data.product.documentId) &&
+              item.selectedColor?.documentId === data.selectedColor?.documentId
+          );
+
+          if (existingIndex !== -1) {
+            // Replace the optimistic item with real server data
+            const newItems = [...old.items];
+            newItems[existingIndex] = data;
+            return {
+              ...old,
+              items: newItems,
+            };
+          }
+
+          // If not found (shouldn't happen), just add it
           return {
             ...old,
             items: [...old.items, data],
@@ -267,6 +268,8 @@ export function useCart() {
 
     onSuccess: (data) => {
       if (data) {
+        console.log({ data }, "sucess");
+
         queryClient.setQueryData<typCart>(CART_QUERY_KEY, data);
       }
     },

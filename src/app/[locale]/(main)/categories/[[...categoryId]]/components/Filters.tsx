@@ -70,14 +70,14 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
         <h3 className="text-xl mb-2">{t("color")}</h3>
         <div className="flex gap-2 flex-wrap">
           {colors?.map((color) => {
-            const selected = selectedColors.includes(color.id);
+            const selected = selectedColors.includes(color.documentId);
             return (
               <div
-                key={color.id}
+                key={color.documentId}
                 onClick={() => {
                   let newColors = new Set(selectedColors);
-                  if (selected) newColors.delete(color.id);
-                  else newColors.add(color.id);
+                  if (selected) newColors.delete(color.documentId);
+                  else newColors.add(color.documentId);
                   updateParam("colorsId", Array.from(newColors));
                 }}
                 className={`w-6 h-6 rounded-full border-2 cursor-pointer ${

@@ -11,7 +11,7 @@ export default function CartButton() {
   const buttonRef = useRef<HTMLDivElement>(null);
 
   // ✅ Use unified cart (works for both guest & logged-in users)
-  const { cart, isLoading } = useUnifiedCart();
+  const { cartItems: cart, isLoading } = useUnifiedCart();
 
   // ✅ Calculate total quantity
   const itemCount = cart?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;

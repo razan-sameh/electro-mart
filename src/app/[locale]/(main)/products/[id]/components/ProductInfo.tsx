@@ -8,14 +8,15 @@ import { calculateDiscountedPrice } from "@/content/utils";
 import { cartItemReducer } from "./cartItemReducer";
 import toast from "react-hot-toast";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
+import { useRouter } from "@/i18n/navigation";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
-  const { cart, addItem ,updateQuantity} = useUnifiedCart(); // ✅ unified cart hook
-
+  const { cartItems: cart, addItem, updateQuantity } = useUnifiedCart(); // ✅ unified cart hook
+  const router = useRouter();
   // useReducer instead of multiple useStates
   const [state, dispatch] = useReducer(cartItemReducer, {
     quantity: 1,
@@ -23,51 +24,77 @@ export default function ProductInfo({ product }: Props) {
   });
 
   const discountedPrice = calculateDiscountedPrice(product);
-  const formattedDiscountedPrice = discountedPrice.toLocaleString(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }) + " €";
+  const formattedDiscountedPrice =
+    discountedPrice.toLocaleString(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }) + " €";
 
+  const handleAddToCart = async () => {
+    if (!state.selectedColor) return;
 
-const handleAddToCart = async () => {
+    // 1️⃣ Check if product + color already exists in cart
+    const existingItem = cart.find(
+      (i) =>
+        i.product.documentId === product.documentId &&
+        i.selectedColor?.documentId === state.selectedColor!.documentId
+    );
+
+    if (existingItem) {
+      // 2️⃣ Update quantity
+      await updateQuantity(
+        existingItem,
+        existingItem.quantity + state.quantity
+      );
+    } else {
+      // 3️⃣ Add new item
+      await addItem({
+        product,
+        quantity: state.quantity,
+        selectedColor: state.selectedColor,
+      });
+    }
+
+    toast.custom(
+      (t) => (
+        <div
+          className={`${
+            t.visible ? "animate-enter" : "animate-leave"
+          } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center  p-4`}
+        >
+          <FaCheckCircle className="text-green-500 mb-2" size={32} />
+          <div className="text-green-600 font-medium text-center">
+            {`${product.name} successfully added`}
+          </div>
+        </div>
+      ),
+      { position: "bottom-left" }
+    );
+  };
+
+const handleBuyNow = async () => {
   if (!state.selectedColor) return;
 
-  // 1️⃣ Check if product + color already exists in cart
-  const existingItem = cart.find(
-    (i) =>
-      i.product.id === product.id &&
-      i.selectedColor?.id === state.selectedColor!.id
-  );
+  const body = {
+    productId: product.id,
+    colorId: state.selectedColor.id,
+  };
 
-  if (existingItem) {
-    // 2️⃣ Update quantity
-    await updateQuantity(existingItem, existingItem.quantity + state.quantity);
+  const res = await fetch("/api/buy-now", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const data = await res.json();
+
+  if (res.ok && data.success) {
+    // نضيف param عشان Checkout تعرف انها Buy Now
+    router.push("/checkout/shipping?isBuyNow=1");
   } else {
-    // 3️⃣ Add new item
-    await addItem({
-      product,
-      quantity: state.quantity,
-      selectedColor: state.selectedColor,
-    });
+    console.log(data.error || "Something went wrong");
   }
-
-  toast.custom(
-    (t) => (
-      <div
-        className={`${
-          t.visible ? "animate-enter" : "animate-leave"
-        } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center  p-4`}
-      >
-        <FaCheckCircle className="text-green-500 mb-2" size={32} />
-        <div className="text-green-600 font-medium text-center">
-          {`${product.name} successfully added`}
-        </div>
-      </div>
-    ),
-    { position: "bottom-left" }
-  );
 };
-
 
   return (
     <div className="flex flex-col gap-6">
@@ -101,12 +128,12 @@ const handleAddToCart = async () => {
           <div className="flex gap-2 flex-wrap">
             {product.colors.map((color) => (
               <div
-                key={color.id}
+                key={color.documentId}
                 onClick={() =>
                   dispatch({ type: "SELECT_COLOR", payload: color })
                 }
                 className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
-                  state.selectedColor?.id === color.id
+                  state.selectedColor?.documentId === color.documentId
                     ? "border-primary scale-110"
                     : "border-gray-300"
                 }`}
@@ -155,7 +182,10 @@ const handleAddToCart = async () => {
           Add to Cart
         </button>
 
-        <button className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition">
+        <button
+          onClick={handleBuyNow}
+          className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
+        >
           Buy Now
         </button>
         <button className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition">

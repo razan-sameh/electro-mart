@@ -11,7 +11,7 @@ interface Props {
 
 export default function SimilarProducts({ product }: Props) {
   const { data: similarProducts } = useSimilarProducts(
-    product.id,
+    product.documentId,
     product.category?.id
     // product.brand?.id
   );
@@ -25,7 +25,7 @@ export default function SimilarProducts({ product }: Props) {
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {similarProducts?.map((item: typProduct) => (
-          <ProductCard item={item} key={item.id} />
+          <ProductCard item={item} key={item.documentId} />
         ))}
       </div>
     </div>

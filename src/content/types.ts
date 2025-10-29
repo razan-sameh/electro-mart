@@ -50,7 +50,8 @@ export type typProductFilters = {
 };
 
 export type typColor = {
-  id: string;
+  id: number;
+  documentId: string;
   name: string;
   hexCode?: string;
   products?: typProduct[];
@@ -58,7 +59,8 @@ export type typColor = {
 
 // Product
 export type typProduct = {
-  id: string;
+  id: number;
+  documentId: string;
   imagesUrl: string[];
   name: string;
   price: number;
@@ -72,7 +74,6 @@ export type typProduct = {
   averageRating: number;
   totalReviews: number;
   reviews?: typReview[];
-  
 };
 
 export type typReview = {
@@ -100,11 +101,11 @@ export type typUser = {
 
 // Cart
 export type typCartItem = {
-  id: number;      
-  documentId: string   
-  product: typProduct; 
+  id: number;
+  documentId: string;
+  product: typProduct;
   quantity: number;
-  selectedColor: typColor; 
+  selectedColor: typColor;
 };
 
 export type typCart = {

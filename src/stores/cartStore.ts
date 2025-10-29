@@ -18,14 +18,15 @@ export const useCartStore = create<CartState>()(
       addToCart: (product, quantity = 1, selectedColor) => {
         const existing = get().items.find(
           (i) =>
-            i.documentId === product.id && // use documentId
-            i.selectedColor?.id === selectedColor?.id
+            i.documentId === product.documentId && // use documentId
+            i.selectedColor?.documentId === selectedColor?.documentId
         );
 
         if (existing) {
           set({
             items: get().items.map((i) =>
-              i.documentId === product.id && i.selectedColor?.id === selectedColor?.id
+              i.documentId === product.documentId &&
+              i.selectedColor?.documentId === selectedColor?.documentId
                 ? { ...i, quantity: i.quantity + quantity }
                 : i
             ),
@@ -34,7 +35,13 @@ export const useCartStore = create<CartState>()(
           set({
             items: [
               ...get().items,
-              { documentId: product.id, product, quantity, selectedColor, id: 0 }, // id can be temporary
+              {
+                documentId: product.documentId,
+                product,
+                quantity,
+                selectedColor,
+                id: 0,
+              }, // id can be temporary
             ],
           });
         }
@@ -42,13 +49,18 @@ export const useCartStore = create<CartState>()(
       removeFromCart: (documentId, selectedColor) =>
         set({
           items: get().items.filter(
-            (i) => !(i.documentId === documentId && i.selectedColor?.id === selectedColor?.id)
+            (i) =>
+              !(
+                i.documentId === documentId &&
+                i.selectedColor?.documentId === selectedColor?.documentId
+              )
           ),
         }),
       updateQuantity: (documentId, quantity, selectedColor) =>
         set({
           items: get().items.map((i) =>
-            i.documentId === documentId && i.selectedColor?.id === selectedColor?.id
+            i.documentId === documentId &&
+            i.selectedColor?.documentId === selectedColor?.documentId
               ? { ...i, quantity }
               : i
           ),

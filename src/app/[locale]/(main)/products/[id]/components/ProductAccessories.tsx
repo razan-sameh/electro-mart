@@ -19,7 +19,7 @@ export default function ProductAccessories() {
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {accessories.data.map((item) => (
-          <ProductCard key={item.id} item={item} />
+          <ProductCard key={item.documentId} item={item} />
         ))}
       </div>
     </div>

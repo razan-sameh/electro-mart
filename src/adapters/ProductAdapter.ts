@@ -37,7 +37,8 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
 
   adapt(source: StrapiProduct): typProduct {
     return {
-      id: source.documentId,
+      id: source.id,
+      documentId: source.documentId,
       name: this.handleNullUndefined(source.Name, ""),
       description: this.handleNullUndefined(source.Description, ""),
       price: this.handleNullUndefined(source.Price, 0),
@@ -51,7 +52,7 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
         ? this.brandAdapter.adapt(source.brand)
         : { id: "unknown", name: "" },
       category: source.category
-        ?this.categoryAdapter.adapt(source.category)
+        ? this.categoryAdapter.adapt(source.category)
         : { id: "unknown", name: "" },
       specialOffers: this.specialOfferAdapter.adaptMany(
         source.special_offers || []

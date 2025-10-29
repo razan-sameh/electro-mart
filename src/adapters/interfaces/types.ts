@@ -108,6 +108,14 @@ export type StrapiCartItem = {
   Quantity: number;
   product_color: StrapiColor;
 };
+export type StrapiBuyNow = {
+  documentId: string;
+  id: number;
+  product: StrapiProduct;
+  quantity: number;
+  product_color: StrapiColor;
+  expiresAt:string
+};
 
 export type StrapiCart = {
   documentId: string;

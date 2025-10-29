@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { typCart, typCartItem, typColor, typProduct } from "@/content/types";
 
 export function useUnifiedCart() {
-  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const {
     cart: serverCart,
     isLoading: isCartLoading,
@@ -29,7 +29,9 @@ export function useUnifiedCart() {
   const [isGuest, setIsGuest] = useState(true);
 
   // ✅ choose which one to show
-  const finalCart: typCart = isGuest ? guestCart : serverCart || { id: "empty", items: [] };
+  const finalCart: typCart = isGuest
+    ? guestCart
+    : serverCart || { id: "empty", items: [] };
 
   useEffect(() => {
     if (!isAuthLoading) {
@@ -56,7 +58,10 @@ export function useUnifiedCart() {
 
   const unifiedRemoveItem = async (item: typCartItem) => {
     if (isGuest) {
-      guestCartStore.removeFromCart(item.product.id, item.selectedColor);
+      guestCartStore.removeFromCart(
+        item.product.documentId,
+        item.selectedColor
+      );
     } else {
       await removeItem(item.id);
     }
@@ -64,7 +69,11 @@ export function useUnifiedCart() {
 
   const unifiedUpdateQuantity = async (item: typCartItem, quantity: number) => {
     if (isGuest) {
-      guestCartStore.updateQuantity(item.product.id, quantity, item.selectedColor);
+      guestCartStore.updateQuantity(
+        item.product.documentId,
+        quantity,
+        item.selectedColor
+      );
     } else {
       await updateItem({ itemId: item.id, quantity });
     }
@@ -79,7 +88,7 @@ export function useUnifiedCart() {
   };
 
   return {
-    cart: finalCart.items,
+    cartItems: finalCart.items,
     isGuest,
     isLoading: isAuthLoading || isCartLoading,
     isFetching,

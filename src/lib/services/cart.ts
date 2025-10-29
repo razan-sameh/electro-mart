@@ -46,9 +46,9 @@ export async function addCartItem(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      productId: product.id,
+      productId: product.documentId,
       quantity: quantity,
-      productColorId: selectedColor.id,
+      productColorId: selectedColor.documentId,
     }),
   });
 
