@@ -11,6 +11,7 @@ import Loader from "@/components/reusable/Loader";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter as useI18nRouter } from "@/i18n/navigation";
+import { useTheme } from "next-themes";
 
 const stripePromise = loadStripe(
   "pk_test_51SMBVSPaP6reRDRxVdU06TkBuK5OlJIuFzqRzxQ7YRWZpJrmdryXZpWgel5Q6nBnM3xpRCXGNBzL8qj4EhJ9uvWe00oDBet9nQ"
@@ -19,6 +20,8 @@ const stripePromise = loadStripe(
 export default function PaymentStep() {
   const t = useTranslations("Checkout");
   const locale = useLocale();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const router = useI18nRouter();
   const searchParams = useSearchParams();
 
@@ -30,22 +33,7 @@ export default function PaymentStep() {
   const isBuyNow = searchParams.get("isBuyNow") === "1";
   const itemsToCheckout = isBuyNow ? buyNowItems! : cartItems;
 
-  // useEffect(() => {
-  //   const createSetupIntent = async () => {
-  //     if (!shippingAddress) return router.back();
-
-  //     const res = await fetch("/api/create-setup-intent", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //     });
-
-  //     const data = await res.json();
-  //     if (data?.clientSecret) setClientSecret(data.clientSecret);
-  //   };
-  //   createSetupIntent();
-  // }, [shippingAddress]);
-
-    useEffect(() => {
+  useEffect(() => {
     const createSetupIntent = async () => {
       if (!shippingAddress)
         return isBuyNow
@@ -78,7 +66,16 @@ export default function PaymentStep() {
     <div className="space-y-4">
       <Elements
         stripe={stripePromise}
-        options={{ clientSecret, locale: `${locale}` }}
+        options={{
+          clientSecret,
+          locale: `${locale}`,
+          appearance: {
+            variables: {
+              colorBackground: isDark?"#000000" : "#FFFFFF",
+              colorText: isDark?"#ece7e7":"#4b4b4b",
+            },
+          },
+        }}
       >
         <CardForm
           clientSecret={clientSecret}

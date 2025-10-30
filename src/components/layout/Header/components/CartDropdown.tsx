@@ -2,7 +2,7 @@
 import CartItemCard from "@/components/reusable/CartItemCard";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface Props {
   onClose: () => void;
@@ -12,7 +12,8 @@ export default function CartDropdown({ onClose }: Props) {
   const { cartItems: items, isGuest, isLoading } = useUnifiedCart();
   const router = useRouter();
   const t = useTranslations("CartDropdown");
-
+  const locale = useLocale();
+  const isRTL = locale === "ar";
   const total = Array.isArray(items)
     ? items.reduce((sum, item) => {
         const price = item?.product?.price ?? 0;
@@ -33,7 +34,15 @@ export default function CartDropdown({ onClose }: Props) {
   }
 
   return (
-    <div className="absolute right-0 mt-2 sm:w-96 md:w-[400px] bg-background shadow-xl rounded-lg p-4 z-50 max-w-md">
+    <div
+      className={`
+    absolute mt-2 sm:w-96 md:w-[400px] bg-background shadow-xl rounded-lg p-4 z-50 max-w-md
+    ${isRTL ? "left-0" : "right-0"}
+    ${isRTL ? "text-right" : "text-left"}
+  `}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      {" "}
       {/* Items */}
       <div className="space-y-3 sm:space-y-4 max-h-60 sm:max-h-80 overflow-y-auto">
         {isLoading ? (
@@ -48,12 +57,9 @@ export default function CartDropdown({ onClose }: Props) {
             />
           ))
         ) : (
-          <p className="text-center py-6 text-sm sm:text-base">
-            {t("empty")}
-          </p>
+          <p className="text-center py-6 text-sm sm:text-base">{t("empty")}</p>
         )}
       </div>
-
       {/* Summary */}
       {items.length > 0 && (
         <>

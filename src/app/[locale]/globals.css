@@ -56,3 +56,9 @@ button{
 
 .animate-enter { animation: enter 0.3s ease-out; }
 .animate-leave { animation: leave 0.2s ease-in forwards; }
+
+/* Optional: align the arrow icon to the right in phone-input */
+[dir="rtl"] .phone-input-container .arrow {
+  left: auto !important;
+  right: 25 !important;
+}

@@ -149,7 +149,13 @@
     "TryAgain": "إعادة المحاولة",
     "Processing": "جاري المعالجة...",
     "PaymentSuccessful": "تم الدفع بنجاح",
-    "OrderID": "رقم الطلب"
+    "OrderID": "رقم الطلب",
+    "addressTitle": "العنوان",
+    "addressSubtitle": "تفاصيل التوصيل",
+    "paymentTitle": "الدفع",
+    "paymentSubtitle": "طريقة الدفع",
+    "overviewTitle": "مراجعة الطلب",
+    "overviewSubtitle": "تأكيد الطلب"
   },
   "CartDropdown": {
     "loading": "جاري تحميل السلة...",

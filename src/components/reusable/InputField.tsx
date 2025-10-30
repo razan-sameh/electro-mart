@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useState } from "react";
 import {
   FieldError,
@@ -22,7 +23,7 @@ interface Props<T extends FieldValues> {
   name: Path<T>;
   setValue?: UseFormSetValue<T>;
   isPhone?: boolean;
-  value?: string; 
+  value?: string;
 }
 
 export default function InputField<T extends FieldValues>({
@@ -34,11 +35,12 @@ export default function InputField<T extends FieldValues>({
   name,
   setValue,
   isPhone = false,
-  value
+  value,
 }: Props<T>) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
-
+  const locale = useLocale();
+  const isRTL = locale === "ar";
   return (
     <div>
       <div
@@ -47,18 +49,23 @@ export default function InputField<T extends FieldValues>({
         }`}
       >
         {/* 👇 Only show icon if NOT phone input */}
-        {Icon && <Icon className="w-5 h-5 text-gray-400 mr-2" />}
+        {Icon && <Icon className="w-5 h-5 text-gray-400 me-2" />}
 
         {/* 📱 Phone input */}
+
         {isPhone && setValue ? (
           <PhoneInput
             country={"eg"}
-            value={value || ""} // ✅ استخدم القيمة الممررة من AddressForm
+            value={value || ""}
+            containerClass="phone-input-container"
             inputStyle={{
               border: "none",
               width: "100%",
               fontSize: "14px",
               background: "transparent",
+              textAlign: isRTL ? "right" : "left",
+              direction: isRTL ? "rtl" : "ltr",
+              paddingInlineStart: "2.5rem", // swap padding for dial code
             }}
             buttonStyle={{
               border: "none",
@@ -68,8 +75,7 @@ export default function InputField<T extends FieldValues>({
               setValue(name, val as any, { shouldValidate: true })
             }
             placeholder={placeholder}
-            inputProps={{ required: true }}
-          />
+            />
         ) : (
           <>
             <input

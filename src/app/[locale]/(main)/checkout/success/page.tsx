@@ -26,7 +26,7 @@ export default function SuccessPage() {
   }, [router]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-160px)] bg-gray-50 px-4 py-10 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-160px)] bg-body px-4 py-10 overflow-hidden">
       {/* 🎇 Confetti animation */}
       <DotLottieReact
         src="/Confetti.lottie"
@@ -51,16 +51,16 @@ export default function SuccessPage() {
         {t("PaymentSuccessful")}
       </h1>
 
-      <p className="text-gray-600 mb-2 relative z-10">
+      <p className="text-content mb-2 relative z-10">
         <strong>{t("OrderID")}:</strong> {orderId}
       </p>
-      <p className="text-gray-600 mb-6 relative z-10">
+      <p className="text-content mb-6 relative z-10">
         <strong>{t("AmountPaid")}:</strong> €{amount}
       </p>
 
       <button
         onClick={() => router.push("/")}
-        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition-all relative z-10"
+        className="bg-primary hover:bg-primary/90 text-white py-2 px-6 rounded-lg transition-all relative z-10"
       >
         {t("GoHome")}
       </button>

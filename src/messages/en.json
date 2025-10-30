@@ -149,7 +149,13 @@
     "TryAgain": "Try again",
     "Processing": "Processing...",
     "PaymentSuccessful": "Payment Successful",
-    "OrderID": "Order ID"
+    "OrderID": "Order ID",
+    "addressTitle": "Address",
+    "addressSubtitle": "Delivery details",
+    "paymentTitle": "Payment",
+    "paymentSubtitle": "Payment method",
+    "overviewTitle": "Overview",
+    "overviewSubtitle": "Confirm order"
   },
   "CartDropdown": {
     "loading": "Loading cart...",
