@@ -5,7 +5,6 @@ export async function serverApiClient<T>(
   const baseUrl =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
   const url = `${baseUrl}${endpoint}`;
-  console.log("API Request:", { url, method: options.method, body: options.body });
 
   const res = await fetch(url, {
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
@@ -29,6 +28,5 @@ export async function serverApiClient<T>(
     );
   }
 
-  console.log("API Success:", responseData);
   return responseData;
 }

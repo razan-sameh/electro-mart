@@ -5,8 +5,6 @@ export async function POST(req: Request) {
   try {
     const { code, password, passwordConfirmation } = await req.json();
 
-    console.log("Reset password request:", { code, password, passwordConfirmation }); // ADD THIS
-
     const data = await serverApiClient<{ jwt: string; user: any }>(
       "/auth/reset-password",
       {
@@ -18,8 +16,6 @@ export async function POST(req: Request) {
         }),
       }
     );
-
-    console.log("Reset password success:", data); // ADD THIS
 
     return Response.json({ 
       message: "Password reset successfully",

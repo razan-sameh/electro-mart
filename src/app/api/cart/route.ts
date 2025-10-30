@@ -2,15 +2,19 @@ import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
 
 // GET /api/cart - Get user's cart
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("jwtToken")?.value;
+
     if (!token) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await serverApiClient("/cart/me", {
+    const { searchParams } = new URL(req.url);
+    const locale = searchParams.get("locale") || "en"; // fallback to English
+
+    const data = await serverApiClient(`/cart/me?locale=${locale}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -25,6 +29,7 @@ export async function GET() {
     );
   }
 }
+
 
 // POST /api/cart/merge - Merge multiple items at once
 export async function POST(req: Request) {

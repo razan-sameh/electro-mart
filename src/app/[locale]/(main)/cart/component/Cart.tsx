@@ -5,10 +5,12 @@ import CartList from "./CartList";
 import CartSummary from "../../../../../components/reusable/CartSummary";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 function Cart() {
   const { cartItems: cart, isGuest, isLoading } = useUnifiedCart();
   const router = useRouter();
+  const t = useTranslations("Cart");
 
   if (isLoading) {
     return <p className="text-gray-500 text-center mt-12">Loading cart...</p>;
@@ -19,7 +21,7 @@ function Cart() {
       <p className="text-gray-500 text-center mt-12">Your cart is empty</p>
     );
   }
-    const handleCheckout = async () => {
+  const handleCheckout = async () => {
     const res = await fetch("/api/auth/me");
     const data = await res.json();
     if (!data.user) router.push("/login?redirect=/checkout");
@@ -27,24 +29,27 @@ function Cart() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* 🛒 Cart Items */}
-        <div className="flex-1">
-          <CartList items={cart} />
-        </div>
+    <>
+      <h1 className="text-2xl font-bold mb-6">{t("title")}</h1>
+      <div className="px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* 🛒 Cart Items */}
+          <div className="flex-1">
+            <CartList items={cart} />
+          </div>
 
-        {/* 💳 Order Summary */}
-        <div className="w-full lg:w-[392px] flex-shrink-0">
-          <CartSummary items={cart} onButtonClick={handleCheckout}/>
-          {isGuest && (
-            <p className="text-sm text-gray-400 mt-4">
-              You’re shopping as a guest — log in to sync your cart.
-            </p>
-          )}
+          {/* 💳 Order Summary */}
+          <div className="w-full lg:w-[392px] flex-shrink-0">
+            <CartSummary items={cart} onButtonClick={handleCheckout} />
+            {isGuest && (
+              <p className="text-sm text-gray-400 mt-4">
+                You’re shopping as a guest — log in to sync your cart.
+              </p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -8,10 +8,10 @@ import {
   IoMailOutline,
   IoPersonOutline,
 } from "react-icons/io5";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import InputField from "../../../../../components/reusable/InputField";
 import { typSignupData, SignupSchema } from "../components/schemas";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
 import { useCart } from "@/lib/hooks/useCart";
 

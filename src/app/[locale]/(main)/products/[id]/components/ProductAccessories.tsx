@@ -13,7 +13,7 @@ export default function ProductAccessories() {
   return (
     <div className="mt-12">
       <SectionHeader
-        title={"Add these accessories to your order"}
+        title={t("accessoriesTitle")}
         linkText={t("viewAll")}
         linkHref={`/categories/${accessoriesCategory?.id}`}
       />

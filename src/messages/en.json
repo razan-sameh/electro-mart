@@ -16,7 +16,9 @@
     "bestSellersTitle": "Best Sellers",
     "categoriesTitle": "Categories",
     "brandsTitle": "Brands",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "similarTitle": "Similar Picks for You",
+    "accessoriesTitle": "Add these accessories to your order"
   },
   "Features": {
     "freeShipping": "Free shipping",
@@ -98,5 +100,79 @@
       "imprint": "Imprint"
     },
     "placeholder": "Your email..."
+  },
+  "CartSummary": {
+    "subtotal": "Subtotal",
+    "shippingCost": "Shipping Cost",
+    "free": "Free",
+    "discountAmount": "Discount amount",
+    "total": "Total",
+    "continueButton": "Continue to order",
+    "info1": "✔ Free shipping for all orders over €50",
+    "info2": "✔ 30 days returns for an exchange product",
+    "info3": "✔ Free with select orders",
+    "info4": "✔ Support 24/7"
+  },
+  "Cart": {
+    "title": "Shopping Cart",
+    "brand": "Brand",
+    "color": "Color"
+  },
+  "Checkout": {
+    "deliveryDetails": "Delivery Details",
+    "phoneNumber": "Phone number",
+    "country": "Country",
+    "city": "City / Place",
+    "postalCode": "Postal code",
+    "streetAddress": "Street address",
+    "continueButton": "Continue",
+    "preparingPayment": "Preparing payment...",
+    "paymentDetails": "Payment Details",
+    "saveAndContinue": "Save and Continue",
+    "back": "Back",
+    "cardValidationFailed": "Card validation failed",
+    "somethingWentWrong": "Something went wrong",
+    "DeliveryAddressTitle": "Delivery and billing address",
+    "Address": "Address",
+    "Email": "Email",
+    "Phone": "Phone",
+    "OrderSummary": "Order summary",
+    "PaymentMethod": "Payment method",
+    "SubmitAndPay": "Submit and Pay",
+    "SuccessfulPayment": "Successful payment",
+    "PaymentFailed": "Payment failed",
+    "PaymentFailedMessage": "Your payment was not successful. Please try again.",
+    "PhoneNumber": "Phone number",
+    "OrderCode": "Order code",
+    "AmountPaid": "Amount paid",
+    "GoHome": "Go to Home",
+    "TryAgain": "Try again",
+    "Processing": "Processing...",
+    "PaymentSuccessful": "Payment Successful",
+    "OrderID": "Order ID"
+  },
+  "CartDropdown": {
+    "loading": "Loading cart...",
+    "empty": "Your cart is empty",
+    "shippingFee": "Shipping fee:",
+    "free": "Free",
+    "totalAmount": "Total amount:",
+    "reviewItems": "Review Items",
+    "checkout": "Checkout"
+  },
+  "ProductDetails": {
+    "description": "Description",
+    "specifications": "Specifications",
+    "customerReviews": "Customer reviews",
+    "noReviews": "No reviews yet.",
+    "shareFeedback": "Share your feedback and create a better shopping experience for everyone. Thank you for taking the time to share your opinion.",
+    "writeReview": "Write a review",
+    "chooseColor": "Choose Color:",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "yourNextFavorite": "Your next favorite find",
+    "clickAway": "is just a click away!",
+    "viewAll": "View all",
+    "successAdded": "{product} successfully added"
   }
 }

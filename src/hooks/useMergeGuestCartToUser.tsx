@@ -16,8 +16,6 @@ export function useMergeGuestCartToUser() {
         selectedColor: item.selectedColor,
       });
     }
-
-    console.log("🛒 Guest cart merged successfully!");
   }
 
   return { merge };

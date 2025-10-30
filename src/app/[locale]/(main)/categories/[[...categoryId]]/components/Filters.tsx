@@ -1,11 +1,12 @@
 "use client";
 import { useColors } from "@/lib/hooks/useColors";
 import { useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { usePriceRange } from "@/lib/hooks/useProducts";
 import { useSpecification } from "@/lib/hooks/useSpecification";
 import { useBrands } from "@/lib/hooks/useBrands";
 import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
 
 interface FiltersProps {
   categoryId?: string;

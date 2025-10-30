@@ -1,14 +1,14 @@
 "use client";
-
 import { useProductsById } from "@/lib/hooks/useProducts";
 import ProductInfo from "./ProductInfo";
 import ProductImages from "./ProductImages";
 import ProductSpecs from "./ProductSpecs";
 import ProductReviews from "./ProductReviews";
-import { useReviewsByProductId } from "@/lib/hooks/useReview";
 import SimilarProducts from "./SimilarProducts";
 import ProductAccessories from "./ProductAccessories";
 import ProductAds from "./ProductAds";
+import { useReviewsByProductId } from "@/lib/hooks/useReview";
+import { useTranslations } from "next-intl";
 
 interface ProductDetailsProps {
   productId: string;
@@ -16,12 +16,13 @@ interface ProductDetailsProps {
 
 export default function ProductDetails({ productId }: ProductDetailsProps) {
   const { data: product } = useProductsById(productId);
-  const { data: reviewsWithMeta } = useReviewsByProductId(productId); // first 5 reviews
+  const { data: reviewsWithMeta } = useReviewsByProductId(productId);
   const reviews = reviewsWithMeta?.data || [];
+  const t = useTranslations("ProductDetails");
 
   return (
     <div className="mx-auto py-8 space-y-12">
-      {/* Flex container for images + info with consistent spacing */}
+      {/* Images + Info */}
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="flex-1">
           <ProductImages images={product.imagesUrl} name={product.name} />
@@ -31,10 +32,10 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
         </div>
       </div>
 
-      {/* Flex container for Description + Specifications */}
+      {/* Description + Specifications */}
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="flex-1">
-          <h2 className="text-xl font-semibold mb-2">Description</h2>
+          <h2 className="text-xl font-semibold mb-2">{t("description")}</h2>
           <p>{product.description}</p>
         </div>
         {product?.specificationValues?.length ? (
@@ -44,10 +45,10 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
         ) : null}
       </div>
 
-      {/* Optional sections */}
-      <ProductReviews reviews={reviews} averageRating={product.averageRating}/>
-      <SimilarProducts product={product}/>
-      <ProductAds/>
+      {/* Extra sections */}
+      <ProductReviews reviews={reviews} averageRating={product.averageRating} />
+      <SimilarProducts product={product} />
+      <ProductAds />
       <ProductAccessories />
     </div>
   );

@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoLockClosedOutline } from "react-icons/io5";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import InputField from "@/components/reusable/InputField";
 import { resetPasswordSchema, typResetPasswordData } from "./schemas";
+import { useRouter } from "@/i18n/navigation";
 
 export default function ResetPasswordForm() {
   const router = useRouter();

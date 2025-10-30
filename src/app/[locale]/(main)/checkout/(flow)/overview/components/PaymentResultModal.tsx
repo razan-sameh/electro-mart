@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 export default function PaymentResultModal({
   status,
@@ -11,7 +12,8 @@ export default function PaymentResultModal({
   onRetry,
   onGoHome,
 }: any) {
-  
+  const t = useTranslations("Checkout");
+
   return (
     <AnimatePresence>
       {status && (
@@ -27,7 +29,6 @@ export default function PaymentResultModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
           >
-            {/* ✅ Icon */}
             {status === "success" ? (
               <div className="w-14 h-14 bg-green-100 mx-auto rounded-full flex items-center justify-center mb-4">
                 <svg
@@ -54,38 +55,37 @@ export default function PaymentResultModal({
               </div>
             )}
 
-            {/* ✅ Title */}
             <h2
               className={`text-2xl font-semibold mb-4 ${
                 status === "success" ? "text-green-600" : "text-red-600"
               }`}
             >
-              {status === "success" ? "Successful payment" : "Payment failed"}
+              {status === "success"
+                ? t("SuccessfulPayment")
+                : t("PaymentFailed")}
             </h2>
 
-            {/* ✅ Details */}
             {status === "success" ? (
               <div className="text-left space-y-2 text-sm border-t border-gray-200 pt-4">
                 <p>
-                  <strong>Phone number:</strong> {shippingAddress?.phone}
+                  <strong>{t("PhoneNumber")}:</strong> {shippingAddress?.phone}
                 </p>
                 <p>
-                  <strong>Email:</strong> {shippingAddress?.email}
+                  <strong>{t("Email")}:</strong> {shippingAddress?.email}
                 </p>
                 <p>
-                  <strong>Order code:</strong> {orderId}
+                  <strong>{t("OrderCode")}:</strong> {orderId}
                 </p>
                 <p>
-                  <strong>Amount paid:</strong> €{amount}
+                  <strong>{t("AmountPaid")}:</strong> €{amount}
                 </p>
               </div>
             ) : (
               <p className="text-gray-600 text-sm border-t border-gray-200 pt-4">
-                Your payment was not successful. Please try again.
+                {t("PaymentFailedMessage")}
               </p>
             )}
 
-            {/* ✅ Button */}
             <div className="mt-6 flex justify-center">
               <button
                 onClick={status === "success" ? onGoHome : onRetry}
@@ -118,12 +118,12 @@ export default function PaymentResultModal({
                         d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 018 8h-4l3 3 3-3h-4a8 8 0 01-8 8z"
                       ></path>
                     </svg>
-                    Processing...
+                    {t("Processing")}
                   </>
                 ) : status === "success" ? (
-                  "Go to Home"
+                  t("GoHome")
                 ) : (
-                  "Try again"
+                  t("TryAgain")
                 )}
               </button>
             </div>

@@ -25,7 +25,6 @@ export async function POST(req: Request) {
 
     // Set JWT if exists
     if (data.jwt) {
-      console.log("🍪 Setting jwtToken cookie");
       const cookieStore = await cookies();
       cookieStore.set("jwtToken", data.jwt, {
         httpOnly: true,
@@ -35,7 +34,7 @@ export async function POST(req: Request) {
         maxAge: 7 * 24 * 60 * 60,
       });
     } else {
-      console.log("⚠️ No JWT returned - email confirmation likely required");
+      console.error("⚠️ No JWT returned - email confirmation likely required");
     }
 
     // ✅ Always respond with success

@@ -12,7 +12,6 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    console.log("📦 Request body:", body);
 
     const { productId, quantity, productColorId } = body;
 
@@ -23,8 +22,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
-    console.log("➕ Adding to cart:", { productId, quantity, productColorId });
 
     // ✅ Call your Strapi endpoint with correct field names
     const data = await serverApiClient("/cart/items", {
@@ -39,8 +36,6 @@ export async function POST(req: Request) {
         productColorId, // Strapi expects this (optional)
       }),
     });
-
-    console.log("✅ Item added:", data);
 
     return Response.json(data);
   } catch (error: any) {

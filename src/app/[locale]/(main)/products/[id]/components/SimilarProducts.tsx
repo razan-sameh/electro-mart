@@ -19,7 +19,7 @@ export default function SimilarProducts({ product }: Props) {
   return (
     <div className="mt-12">
       <SectionHeader
-        title={"Similar Picks for You"}
+        title={t("similarTitle")}
         linkText={t("viewAll")}
         linkHref={`/categories/${product.category?.id}`}
       />

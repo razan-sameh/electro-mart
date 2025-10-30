@@ -6,6 +6,7 @@ import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Props {
   item: typCartItem;
@@ -14,6 +15,7 @@ interface Props {
 export default function CartItem({ item }: Props) {
   const { updateQuantity, removeItem } = useUnifiedCart();
   const [loadingItemId, setLoadingItemId] = useState<number | null>(null);
+    const t = useTranslations("Cart");
 
   const handleUpdateQuantity = async (newQuantity: number) => {
     try {
@@ -59,11 +61,11 @@ export default function CartItem({ item }: Props) {
           {/* Brand + Color */}
           <div className="space-y-1 mt-2">
             <p className="text-sm text-gray-500">
-              Brand: {item.product.brand.name}
+              {t("brand")}: {item.product.brand.name}
             </p>
             {item.selectedColor && (
               <p className="text-sm text-gray-500">
-                Color: {item.selectedColor.name}
+                {t("color")}: {item.selectedColor.name}
               </p>
             )}
           </div>

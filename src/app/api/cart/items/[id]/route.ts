@@ -20,8 +20,6 @@ export async function PUT(
     const body = await req.json();
     const { quantity } = body;
 
-    console.log("Updating cart item:", { id, quantity });
-
     const data = await serverApiClient(`/cart/items/${id}`, {
       method: "PUT",
       headers: {

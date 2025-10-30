@@ -2,6 +2,7 @@
 import CartItemCard from "@/components/reusable/CartItemCard";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Props {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface Props {
 export default function CartDropdown({ onClose }: Props) {
   const { cartItems: items, isGuest, isLoading } = useUnifiedCart();
   const router = useRouter();
+  const t = useTranslations("CartDropdown");
 
   const total = Array.isArray(items)
     ? items.reduce((sum, item) => {
@@ -36,7 +38,7 @@ export default function CartDropdown({ onClose }: Props) {
       <div className="space-y-3 sm:space-y-4 max-h-60 sm:max-h-80 overflow-y-auto">
         {isLoading ? (
           <p className="text-center py-6 text-sm sm:text-base">
-            Loading cart...
+            {t("loading")}
           </p>
         ) : items.length > 0 ? (
           items.map((item) => (
@@ -47,7 +49,7 @@ export default function CartDropdown({ onClose }: Props) {
           ))
         ) : (
           <p className="text-center py-6 text-sm sm:text-base">
-            Your cart is empty
+            {t("empty")}
           </p>
         )}
       </div>
@@ -55,13 +57,13 @@ export default function CartDropdown({ onClose }: Props) {
       {/* Summary */}
       {items.length > 0 && (
         <>
-          <div className="mt-3 sm:mt-4 pt-3 text-xs sm:text-sm  border-t border-lightGray/60">
+          <div className="mt-3 sm:mt-4 pt-3 text-xs sm:text-sm border-t border-lightGray/60">
             <div className="flex justify-between">
-              <span>Shipping fee:</span>
-              <span className="text-green-600 font-semibold">Free</span>
+              <span>{t("shippingFee")}</span>
+              <span className="text-green-600 font-semibold">{t("free")}</span>
             </div>
             <div className="flex justify-between font-semibold mt-2">
-              <span>Total amount:</span>
+              <span>{t("totalAmount")}</span>
               <span>€ {total}</span>
             </div>
           </div>
@@ -72,13 +74,13 @@ export default function CartDropdown({ onClose }: Props) {
               className="flex-1 border border-primary text-primary rounded-lg py-2 text-xs sm:text-sm font-medium transition"
               onClick={handleReviewItems}
             >
-              Review Items
+              {t("reviewItems")}
             </button>
             <button
               className="flex-1 rounded-lg py-2 text-xs sm:text-sm font-medium bg-primary text-white hover:bg-primary/90 transition"
               onClick={handleCheckout}
             >
-              Checkout
+              {t("checkout")}
             </button>
           </div>
         </>

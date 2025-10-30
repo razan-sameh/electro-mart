@@ -3,26 +3,26 @@ import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typCartItem } from "@/content/types";
+import { useTranslations } from "next-intl";
 
 export function CardForm({
   clientSecret,
   onSaved,
-  items
+  items,
 }: {
   clientSecret: string;
   onSaved: (pm: any) => void;
-  items: typCartItem[]
+  items: typCartItem[];
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("Checkout");
 
   const handleSaveCard = async () => {
     if (!stripe || !elements) return;
 
     setLoading(true);
-    setError(null);
 
     try {
       const result = await stripe.confirmSetup({
@@ -32,12 +32,12 @@ export function CardForm({
       });
 
       if (result.error) {
-        setError(result.error.message || "Card validation failed");
+        console.error(result.error.message);
       } else if (result.setupIntent?.payment_method) {
         onSaved({ id: result.setupIntent.payment_method, clientSecret });
       }
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      console.error(err.message || t("somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -47,17 +47,16 @@ export function CardForm({
     <div className="grid lg:grid-cols-3 gap-8 mt-6">
       {/* LEFT SIDE (Payment Form) */}
       <div className="lg:col-span-2 space-y-6">
-        <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
+        <h2 className="text-xl font-semibold mb-4">{t("paymentDetails")}</h2>
         <PaymentElement />
-
         <button onClick={handleSaveCard} className="hidden" />
       </div>
 
-      {/* RIGHT SIDE (Cart Summary with external button) */}
+      {/* RIGHT SIDE (Cart Summary) */}
       <div>
         <CartSummary
-          items={items} // 🧩 pass your cart items here
-          buttonText={"Save and Continue"}
+          items={items}
+          buttonText={t("saveAndContinue")}
           onButtonClick={handleSaveCard}
           loading={loading}
         />

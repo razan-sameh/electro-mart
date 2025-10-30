@@ -1,56 +1,110 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+
+import React, { useEffect, useState } from "react";
 import CartSummary from "@/components/reusable/CartSummary";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
+import CartItemCard from "@/components/reusable/CartItemCard";
 import DeliverySection from "./DeliverySection";
 import PaymentMethodSection from "./PaymentMethodSection";
 import PaymentResultModal from "./PaymentResultModal";
-import CartItemCard from "@/components/reusable/CartItemCard";
+import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useRouter as useI18nRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { useBuyNow } from "@/lib/hooks/useBuyNow";
 
-export default function OverviewStep({
-  items,
-  shippingAddress,
-  paymentMethod,
-  isClearCart,
-}: any) {
+export default function OverviewStep() {
+  const t = useTranslations("Checkout");
+  const router = useI18nRouter();
+  const searchParams = useSearchParams();
+  const isBuyNow = searchParams.get("isBuyNow") === "1";
+
+  const { cartItems, clearCart } = useUnifiedCart();
+  const { data: buyNowItems } = useBuyNow();
+  const {
+    shippingAddress,
+    paymentMethod,
+    setCardInfo,
+    setLoadingCardInfo,
+    resetCheckout,
+  } = useCheckoutStore();
+
   const [loading, setLoading] = useState(false);
   const [retryLoading, setRetryLoading] = useState(false);
   const [status, setStatus] = useState<"success" | "failed" | null>(null);
-  const { clearCart } = useUnifiedCart();
-  const router = useRouter();
-  const { resetCheckout } = useCheckoutStore();
 
+  const itemsToCheckout = isBuyNow ? buyNowItems : cartItems;
+
+  // 🔁 Verify previous steps and fetch card info
+  useEffect(() => {
+    if (!shippingAddress) {
+      isBuyNow
+        ? router.push("/checkout/shipping?isBuyNow=1")
+        : router.push("/checkout/shipping");
+      return;
+    }
+
+    if (!paymentMethod?.id) {
+      isBuyNow
+        ? router.push("/checkout/payment?isBuyNow=1")
+        : router.push("/checkout/payment");
+      return;
+    }
+
+    const fetchCardInfo = async () => {
+      setLoadingCardInfo(true);
+      try {
+        const res = await fetch(`/api/payment-method/${paymentMethod.id}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Failed");
+
+        setCardInfo({
+          brand: data.brand,
+          last4: data.last4,
+          exp_month: data.exp_month,
+          exp_year: data.exp_year,
+        });
+      } catch (err) {
+        console.error("Failed to fetch card info:", err);
+        setCardInfo(null);
+      } finally {
+        setLoadingCardInfo(false);
+      }
+    };
+
+    fetchCardInfo();
+  }, [shippingAddress, paymentMethod]);
+
+  // 💳 Confirm Order
   const handleConfirmOrder = async (isRetry = false) => {
-    if (!paymentMethod) return alert("No payment method found");
+    if (!paymentMethod) return alert(t("noPaymentMethod"));
 
-    if (isRetry) setRetryLoading(true);
-    else setLoading(true);
+    isRetry ? setRetryLoading(true) : setLoading(true);
 
     try {
       const res = await fetch("/api/pay-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          cartItems: items,
+          cartItems: itemsToCheckout,
           shippingAddress,
           paymentMethodId: paymentMethod.id,
         }),
       });
 
       const data = await res.json();
+
       if (data.success) {
         router.replace(
           `/checkout/success?orderId=${data.orderId}&amount=${data.amount}`
         );
 
+        // 🧹 Clean up cart and checkout state
         setTimeout(async () => {
-          if (isClearCart) await clearCart();
+          if (!isBuyNow) await clearCart();
           resetCheckout();
         }, 500);
       } else {
-        // ❌ لو فشل، أظهري المودال
         setStatus("failed");
       }
     } catch (err) {
@@ -64,11 +118,14 @@ export default function OverviewStep({
     <>
       <div className="grid lg:grid-cols-3 gap-8 mt-6">
         <div className="lg:col-span-2 space-y-10">
+          {/* 🚚 Delivery info */}
           <DeliverySection shippingAddress={shippingAddress} />
+
+          {/* 🧾 Order summary */}
           <section>
-            <h2 className="font-semibold text-lg mb-4">Order summary</h2>
+            <h2 className="font-semibold text-lg mb-4">{t("OrderSummary")}</h2>
             <div className="space-y-4">
-              {items.map((item: any) => (
+              {itemsToCheckout?.map((item: any) => (
                 <CartItemCard
                   key={`${item.id}-${item.selectedColor?.id || "default"}`}
                   item={item}
@@ -76,21 +133,25 @@ export default function OverviewStep({
               ))}
             </div>
           </section>
+
+          {/* 💳 Payment method */}
           <PaymentMethodSection />
         </div>
 
+        {/* 🧮 Cart Summary & Submit */}
         <div>
           <CartSummary
-            items={items}
-            buttonText={"Submit and Pay"}
+            items={itemsToCheckout!}
+            buttonText={t("SubmitAndPay")}
             onButtonClick={() => handleConfirmOrder(false)}
             loading={loading}
           />
         </div>
       </div>
 
+      {/* ❌ Payment Failure Modal */}
       <PaymentResultModal
-        status={status === "failed" ? "failed" : null} // ❗ يعرض فقط عند الفشل
+        status={status === "failed" ? "failed" : null}
         shippingAddress={shippingAddress}
         retryLoading={retryLoading}
         onRetry={() => handleConfirmOrder(true)}

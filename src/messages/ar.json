@@ -16,7 +16,9 @@
     "bestSellersTitle": "الأكثر مبيعًا",
     "categoriesTitle": "تسوق حسب الفئة",
     "brandsTitle": "الماركات",
-    "viewAll": "عرض الكل"
+    "viewAll": "عرض الكل",
+    "similarTitle": "اختيارات مشابهة لك",
+    "accessoriesTitle": "أضف هذه الإكسسوارات إلى طلبك"
   },
   "Features": {
     "freeShipping": "شحن مجاني",
@@ -98,5 +100,79 @@
       "imprint": "البيان القانوني"
     },
     "placeholder": "بريدك الإلكتروني..."
+  },
+  "CartSummary": {
+    "subtotal": "الإجمالي الفرعي",
+    "shippingCost": "تكلفة الشحن",
+    "free": "مجانًا",
+    "discountAmount": "قيمة الخصم",
+    "total": "الإجمالي",
+    "continueButton": "متابعة الطلب",
+    "info1": "✔ شحن مجاني لجميع الطلبات التي تزيد عن 50 يورو",
+    "info2": "✔ إرجاع خلال 30 يومًا لتبديل المنتج",
+    "info3": "✔ مجاني مع بعض الطلبات",
+    "info4": "✔ دعم فني 24/7"
+  },
+  "Cart": {
+    "title": "سلة التسوق",
+    "brand": "ماركة",
+    "color": "اللون"
+  },
+  "Checkout": {
+    "deliveryDetails": "تفاصيل التوصيل",
+    "phoneNumber": "رقم الهاتف",
+    "country": "البلد",
+    "city": "المدينة / المنطقة",
+    "postalCode": "الرمز البريدي",
+    "streetAddress": "عنوان الشارع",
+    "continueButton": "متابعة",
+    "preparingPayment": "جارٍ تجهيز الدفع...",
+    "paymentDetails": "تفاصيل الدفع",
+    "saveAndContinue": "حفظ ومتابعة",
+    "back": "رجوع",
+    "cardValidationFailed": "فشل التحقق من البطاقة",
+    "somethingWentWrong": "حدث خطأ ما",
+    "DeliveryAddressTitle": "عنوان التوصيل والفاتورة",
+    "Address": "العنوان",
+    "Email": "البريد الإلكتروني",
+    "Phone": "رقم الهاتف",
+    "OrderSummary": "ملخص الطلب",
+    "PaymentMethod": "طريقة الدفع",
+    "SubmitAndPay": "إرسال والدفع",
+    "SuccessfulPayment": "تم الدفع بنجاح",
+    "PaymentFailed": "فشل الدفع",
+    "PaymentFailedMessage": "لم تنجح عملية الدفع. يرجى المحاولة مرة أخرى.",
+    "PhoneNumber": "رقم الهاتف",
+    "OrderCode": "رمز الطلب",
+    "AmountPaid": "المبلغ المدفوع",
+    "GoHome": "العودة إلى الصفحة الرئيسية",
+    "TryAgain": "إعادة المحاولة",
+    "Processing": "جاري المعالجة...",
+    "PaymentSuccessful": "تم الدفع بنجاح",
+    "OrderID": "رقم الطلب"
+  },
+  "CartDropdown": {
+    "loading": "جاري تحميل السلة...",
+    "empty": "سلتك فارغة",
+    "shippingFee": "رسوم الشحن:",
+    "free": "مجاني",
+    "totalAmount": "المبلغ الإجمالي:",
+    "reviewItems": "مراجعة العناصر",
+    "checkout": "إتمام الشراء"
+  },
+  "ProductDetails": {
+    "description": "الوصف",
+    "specifications": "المواصفات",
+    "customerReviews": "آراء العملاء",
+    "noReviews": "لا توجد مراجعات بعد.",
+    "shareFeedback": "شارك رأيك وساعدنا على تحسين تجربة التسوق للجميع. شكرًا لك على وقتك.",
+    "writeReview": "اكتب مراجعتك",
+    "chooseColor": "اختر اللون:",
+    "addToCart": "أضف إلى السلة",
+    "buyNow": "اشترِ الآن",
+    "yourNextFavorite": "اكتشف منتجك المفضل القادم",
+    "clickAway": "على بُعد نقرة واحدة فقط!",
+    "viewAll": "عرض الكل",
+    "successAdded": "تمت إضافة {product} بنجاح"
   }
 }

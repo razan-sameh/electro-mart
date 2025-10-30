@@ -10,9 +10,6 @@ export async function POST(req: NextRequest) {
     const cookieStore = await cookies();
     const token = cookieStore.get("jwtToken")?.value;
 
-    console.log("📦 Sending to Strapi:", body);
-    console.log("🔑 Token:", token ? "Exists" : "Missing");
-
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

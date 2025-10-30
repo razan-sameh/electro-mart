@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await res.json();
-    console.log("Strapi response:", data); // 🧾 add this
 
     if (!res.ok) {
       return NextResponse.json(

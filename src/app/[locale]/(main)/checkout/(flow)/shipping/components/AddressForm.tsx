@@ -1,9 +1,9 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  FaPhoneAlt,
   FaMapMarkerAlt,
   FaFlag,
   FaCity,
@@ -12,75 +12,83 @@ import {
 import InputField from "@/components/reusable/InputField";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typAddressData, AddressSchema } from "./schema";
+import { useUnifiedCart } from "@/hooks/useUnifiedCart";
+import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useBuyNow } from "@/lib/hooks/useBuyNow";
+import { useTranslations } from "next-intl";
+import { useRouter as useI18nRouter } from "@/i18n/navigation";
 
-interface AddressFormProps {
-  initial?: typAddressData | null;
-  onNext: (data: typAddressData) => void;
-  items: any[]; // 🧩 cart items passed from parent
-}
+export default function AddressForm() {
+  const t = useTranslations("Checkout");
+  const router = useI18nRouter();
+  const searchParams = useSearchParams();
 
-export default function AddressForm({
-  initial,
-  onNext,
-  items,
-}: AddressFormProps) {
+  const { cartItems } = useUnifiedCart();
+  const { data: buyNowItems } = useBuyNow();
+  const { setShippingAddress, shippingAddress } = useCheckoutStore();
+
+  const isBuyNow = searchParams.get("isBuyNow") === "1";
+  const itemsToCheckout = isBuyNow ? buyNowItems! : cartItems;
+
   const {
     register,
     handleSubmit,
-    setValue, // ✅ add this line
+    setValue,
     formState: { errors },
   } = useForm<typAddressData>({
     resolver: zodResolver(AddressSchema),
-    defaultValues: initial || {},
+    defaultValues: shippingAddress || {},
   });
 
-  // ✅ Instead of form submit button, we’ll trigger this manually from CartSummary
   const onSubmit = (data: typAddressData) => {
-    onNext(data);
+    setShippingAddress(data);
+    if (isBuyNow) {
+      router.push("/checkout/payment?isBuyNow=1");
+    } else {
+      router.push("/checkout/payment");
+    }
   };
 
   return (
     <div className="grid lg:grid-cols-[2fr_1fr] gap-6 mt-6">
       {/* LEFT SIDE — Address Form Fields */}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        id="address-form"
-      >
-        <h2 className="text-xl font-semibold mb-4">Delivery Details</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id="address-form">
+        <h2 className="text-xl font-semibold mb-4">
+          {t("deliveryDetails")}
+        </h2>
 
         <InputField
-          placeholder="Phone number"
+          placeholder={t("phoneNumber")}
           register={register}
           name="phone"
           error={errors.phone}
           isPhone
-          setValue={setValue} // ✅ add this line
-          value={initial?.phone} 
+          setValue={setValue}
+          value={shippingAddress?.phone}
         />
         <InputField
-          placeholder="Country"
+          placeholder={t("country")}
           icon={FaFlag}
           register={register}
           name="country"
           error={errors.country}
         />
         <InputField
-          placeholder="City / Place"
+          placeholder={t("city")}
           icon={FaCity}
           register={register}
           name="city"
           error={errors.city}
         />
         <InputField
-          placeholder="Postal code"
+          placeholder={t("postalCode")}
           icon={FaMailBulk}
           register={register}
           name="postalCode"
           error={errors.postalCode}
         />
         <InputField
-          placeholder="Street address"
+          placeholder={t("streetAddress")}
           icon={FaMapMarkerAlt}
           register={register}
           name="streetAddress"
@@ -88,11 +96,11 @@ export default function AddressForm({
         />
       </form>
 
-      {/* RIGHT SIDE — Cart Summary with external button */}
+      {/* RIGHT SIDE — Cart Summary */}
       <div className="self-start">
         <CartSummary
-          items={items}
-          buttonText="Continue"
+          items={itemsToCheckout}
+          buttonText={t("continueButton")}
           onButtonClick={handleSubmit(onSubmit)}
         />
       </div>

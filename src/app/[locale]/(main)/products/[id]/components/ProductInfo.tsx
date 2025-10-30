@@ -9,6 +9,7 @@ import { cartItemReducer } from "./cartItemReducer";
 import toast from "react-hot-toast";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Props {
   product: typProduct;
@@ -22,6 +23,7 @@ export default function ProductInfo({ product }: Props) {
     quantity: 1,
     selectedColor: product.colors?.[0], // 👈 default color
   });
+  const t = useTranslations("ProductDetails");
 
   const discountedPrice = calculateDiscountedPrice(product);
   const formattedDiscountedPrice =
@@ -56,15 +58,15 @@ export default function ProductInfo({ product }: Props) {
     }
 
     toast.custom(
-      (t) => (
+      (tToast) => (
         <div
           className={`${
-            t.visible ? "animate-enter" : "animate-leave"
+            tToast.visible ? "animate-enter" : "animate-leave"
           } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center  p-4`}
         >
           <FaCheckCircle className="text-green-500 mb-2" size={32} />
           <div className="text-green-600 font-medium text-center">
-            {`${product.name} successfully added`}
+            {t("successAdded", { product: product.name })}
           </div>
         </div>
       ),
@@ -92,7 +94,7 @@ const handleBuyNow = async () => {
     // نضيف param عشان Checkout تعرف انها Buy Now
     router.push("/checkout/shipping?isBuyNow=1");
   } else {
-    console.log(data.error || "Something went wrong");
+    console.error(data.error || "Something went wrong");
   }
 };
 
@@ -124,7 +126,7 @@ const handleBuyNow = async () => {
       {/* Colors */}
       {product.colors?.length && (
         <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-medium">Choose Color:</h3>
+          <h3 className="text-lg font-medium">{t("chooseColor")}</h3>
           <div className="flex gap-2 flex-wrap">
             {product.colors.map((color) => (
               <div
@@ -179,14 +181,14 @@ const handleBuyNow = async () => {
           onClick={handleAddToCart}
           className="flex-1 px-6 py-3 bg-primary text-white rounded-lg shadow hover:bg-primary/90 transition"
         >
-          Add to Cart
+          {t("addToCart")}
         </button>
 
         <button
           onClick={handleBuyNow}
           className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
         >
-          Buy Now
+          {t("buyNow")}
         </button>
         <button className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition">
           <FiHeart size={20} />

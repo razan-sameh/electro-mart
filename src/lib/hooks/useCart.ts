@@ -12,6 +12,7 @@ import {
 import type { typCart, typColor, typProduct } from "@/content/types";
 import { useCartStore } from "@/stores/cartStore";
 import { useAuth } from "./useAuth";
+import { useLocale } from "next-intl";
 
 type MergeCartInput = {
   product: typProduct;
@@ -24,12 +25,13 @@ export const CART_QUERY_KEY = ["cart"];
 export function useCart() {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
+  const locale = useLocale();
 
   // 🧾 Fetch cart
   const cartQuery = useQuery<typCart>({
     queryKey: CART_QUERY_KEY,
     queryFn: async () => {
-      const data: typCart = await fetchCart();
+      const data: typCart = await fetchCart(locale);
       // Normalize: ensure we always return a typCart object
       return data ?? { id: "empty", items: [] };
     },
@@ -268,8 +270,6 @@ export function useCart() {
 
     onSuccess: (data) => {
       if (data) {
-        console.log({ data }, "sucess");
-
         queryClient.setQueryData<typCart>(CART_QUERY_KEY, data);
       }
     },

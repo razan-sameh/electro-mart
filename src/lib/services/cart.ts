@@ -23,8 +23,8 @@ export async function mergeCart(cartItems: typCartItem[]) {
   return cartRes.json();
 }
 
-export async function fetchCart() {
-  const res = await fetch("/api/cart");
+export async function fetchCart(locale: string) {
+  const res = await fetch(`/api/cart?locale=${locale}`);
   if (!res.ok) throw new Error("Failed to fetch cart");
   const data = await res.json();
   if (!data.data) {
