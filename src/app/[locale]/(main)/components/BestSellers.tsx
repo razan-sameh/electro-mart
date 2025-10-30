@@ -9,7 +9,7 @@ const bestSellers = [
     id: 1,
     title: "Philips Airfryer XL",
     price: 99,
-    oldPrice: "140 €",
+    oldPrice: "140 E£",
     img: "/best/airfryer.png",
     discount: "-30%",
     rating: 4.8,

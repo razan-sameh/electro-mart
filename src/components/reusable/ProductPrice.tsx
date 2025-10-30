@@ -11,12 +11,12 @@ function ProductPrice({ item }: ProductPriceProps) {
     discountedPrice.toLocaleString(undefined, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }) + " €";
+    }) + " E£";
 
   return (
     <div className="flex gap-2 items-center mb-2">
       {item.specialOffers?.[0] && (
-        <span className="text-gray-400 line-through">{item.price} €</span>
+        <span className="text-gray-400 line-through">{item.price} E£</span>
       )}
       <span className="text-lg font-bold text-secondary">
         {formattedDiscountedPrice}

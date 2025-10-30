@@ -30,7 +30,7 @@ export default function ProductInfo({ product }: Props) {
     discountedPrice.toLocaleString(undefined, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }) + " €";
+    }) + " E£";
 
   const handleAddToCart = async () => {
     if (!state.selectedColor) return;
@@ -74,29 +74,29 @@ export default function ProductInfo({ product }: Props) {
     );
   };
 
-const handleBuyNow = async () => {
-  if (!state.selectedColor) return;
+  const handleBuyNow = async () => {
+    if (!state.selectedColor) return;
 
-  const body = {
-    productId: product.id,
-    colorId: state.selectedColor.id,
+    const body = {
+      productId: product.id,
+      colorId: state.selectedColor.id,
+    };
+
+    const res = await fetch("/api/buy-now", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      // نضيف param عشان Checkout تعرف انها Buy Now
+      router.push("/checkout/shipping?isBuyNow=1");
+    } else {
+      console.error(data.error || "Something went wrong");
+    }
   };
-
-  const res = await fetch("/api/buy-now", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json();
-
-  if (res.ok && data.success) {
-    // نضيف param عشان Checkout تعرف انها Buy Now
-    router.push("/checkout/shipping?isBuyNow=1");
-  } else {
-    console.error(data.error || "Something went wrong");
-  }
-};
 
   return (
     <div className="flex flex-col gap-6">
@@ -115,7 +115,7 @@ const handleBuyNow = async () => {
       <div className="flex items-baseline gap-3">
         {product.specialOffers?.[0] && (
           <span className="text-gray-400 line-through text-lg">
-            {product.price} €
+            {product.price} E£
           </span>
         )}
         <span className="text-2xl font-bold text-secondary">

@@ -22,7 +22,7 @@
   },
   "Features": {
     "freeShipping": "Free shipping",
-    "freeShippingDesc": "On orders over €50",
+    "freeShippingDesc": "On orders over E£50",
     "easyReturns": "Easy returns",
     "easyReturnsDesc": "Free within 30 days",
     "specialGifts": "Special gifts",
@@ -108,7 +108,7 @@
     "discountAmount": "Discount amount",
     "total": "Total",
     "continueButton": "Continue to order",
-    "info1": "✔ Free shipping for all orders over €50",
+    "info1": "✔ Free shipping for all orders over E£50",
     "info2": "✔ 30 days returns for an exchange product",
     "info3": "✔ Free with select orders",
     "info4": "✔ Support 24/7"

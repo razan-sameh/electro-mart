@@ -43,7 +43,11 @@ export default function SuccessPage() {
           strokeWidth="2.5"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 13l4 4L19 7"
+          />
         </svg>
       </div>
 
@@ -55,7 +59,7 @@ export default function SuccessPage() {
         <strong>{t("OrderID")}:</strong> {orderId}
       </p>
       <p className="text-content mb-6 relative z-10">
-        <strong>{t("AmountPaid")}:</strong> €{amount}
+        <strong>{t("AmountPaid")}:</strong> E£{amount}
       </p>
 
       <button

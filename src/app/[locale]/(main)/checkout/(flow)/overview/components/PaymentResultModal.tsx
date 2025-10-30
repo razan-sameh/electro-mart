@@ -38,7 +38,11 @@ export default function PaymentResultModal({
                   strokeWidth="2.5"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
             ) : (
@@ -50,7 +54,11 @@ export default function PaymentResultModal({
                   strokeWidth="2.5"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </div>
             )}
@@ -77,7 +85,7 @@ export default function PaymentResultModal({
                   <strong>{t("OrderCode")}:</strong> {orderId}
                 </p>
                 <p>
-                  <strong>{t("AmountPaid")}:</strong> €{amount}
+                  <strong>{t("AmountPaid")}:</strong> E£{amount}
                 </p>
               </div>
             ) : (

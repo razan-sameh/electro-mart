@@ -40,7 +40,7 @@ export default function CartSummary({
       <div className="space-y-4 text-sm">
         <p className="flex justify-between border-b border-lightGray/60 pb-2">
           <span>{t("subtotal")}</span>
-          <span>€{subtotal.toFixed(2)}</span>
+          <span>E£{subtotal.toFixed(2)}</span>
         </p>
         <p className="flex justify-between border-b border-lightGray/60 pb-2">
           <span>{t("shippingCost")}</span>
@@ -49,12 +49,12 @@ export default function CartSummary({
         <p className="flex justify-between text-red-600 border-b border-lightGray/60 pb-2">
           <span>{t("discountAmount")}</span>
           <span>
-            -€{discount.toFixed(2)} ({discountPercent}%)
+            -E£{discount.toFixed(2)} ({discountPercent}%)
           </span>
         </p>
         <p className="flex justify-between font-semibold text-lg">
           <span>{t("total")}</span>
-          <span>€{discountedTotal.toFixed(2)}</span>
+          <span>E£{discountedTotal.toFixed(2)}</span>
         </p>
       </div>
 
@@ -65,7 +65,11 @@ export default function CartSummary({
           onClick={onButtonClick}
           disabled={loading}
         >
-          {loading ? <Loader size={20} color="#fff" /> : buttonText || t("continueButton")}
+          {loading ? (
+            <Loader size={20} color="#fff" />
+          ) : (
+            buttonText || t("continueButton")
+          )}
         </button>
 
         {showInfoList && (

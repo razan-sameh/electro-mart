@@ -70,7 +70,7 @@ export default function CartDropdown({ onClose }: Props) {
             </div>
             <div className="flex justify-between font-semibold mt-2">
               <span>{t("totalAmount")}</span>
-              <span>€ {total}</span>
+              <span>E£ {total}</span>
             </div>
           </div>
 

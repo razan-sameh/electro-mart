@@ -31,7 +31,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
         </div>
       </div>
       <p className="font-semibold text-sm sm:text-base ml-2 flex-shrink-0">
-        € {price * quantity}
+        E£ {price * quantity}
       </p>
     </div>
   );

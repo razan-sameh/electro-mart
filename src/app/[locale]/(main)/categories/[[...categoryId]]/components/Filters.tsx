@@ -98,7 +98,7 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
           <h3 className="text-xl mb-2">{t("price")}</h3>
           <div className="flex text-sm text-gray-500 mt-1">
             <span className="text-icon">
-              €{minPrice} - €{tempPrice}
+              E£{minPrice} - E£{tempPrice}
             </span>
           </div>
           <div className="flex items-center gap-2">
