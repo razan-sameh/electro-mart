@@ -93,10 +93,29 @@ export type RatingBreakdown = {
 
 // User (Auth)
 export type typUser = {
-  id: string;
+  id: number;
+  documentId: string;
   username: string;
   email: string;
   token?: string; // for JWT
+  phone: typPhone;
+  address: typAddress[];
+};
+
+export type typAddress = {
+  id: string;
+  streetAddress: string;
+  postalCode: number;
+  city: string;
+  country: string;
+};
+
+export type typPhone = {
+  id: number;
+  documentId: string;
+  dailcode: string;
+  number: number;
+  countryCode: string;
 };
 
 // Cart

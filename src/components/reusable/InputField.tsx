@@ -8,6 +8,7 @@ import {
   UseFormRegister,
   Path,
   UseFormSetValue,
+  PathValue,
 } from "react-hook-form";
 import { IconType } from "react-icons";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
@@ -24,6 +25,11 @@ interface Props<T extends FieldValues> {
   setValue?: UseFormSetValue<T>;
   isPhone?: boolean;
   value?: string;
+  readOnly?: boolean;
+  iconAction?: React.ReactNode;
+  onIconClick?: () => void;
+  /** ✅ whether to allow showing/hiding password (default: true) */
+  canShowPassword?: boolean;
 }
 
 export default function InputField<T extends FieldValues>({
@@ -36,55 +42,64 @@ export default function InputField<T extends FieldValues>({
   setValue,
   isPhone = false,
   value,
+  readOnly = false,
+  iconAction,
+  onIconClick,
+  canShowPassword = true, // ✅ default true
 }: Props<T>) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
   const locale = useLocale();
   const isRTL = locale === "ar";
+
   return (
     <div>
       <div
         className={`flex items-center border border-lightGray rounded-md px-3 py-2 ${
           error ? "border-red-500" : ""
-        }`}
+        } ${readOnly ? "bg-lightGray cursor-not-allowed" : ""}`}
       >
-        {/* 👇 Only show icon if NOT phone input */}
         {Icon && <Icon className="w-5 h-5 text-gray-400 me-2" />}
 
-        {/* 📱 Phone input */}
-
-        {isPhone && setValue ? (
-          <PhoneInput
-            country={"eg"}
-            value={value || ""}
-            containerClass="phone-input-container"
-            inputStyle={{
-              border: "none",
-              width: "100%",
-              fontSize: "14px",
-              background: "transparent",
-              textAlign: isRTL ? "right" : "left",
-              direction: isRTL ? "rtl" : "ltr",
-              paddingInlineStart: "2.5rem", // swap padding for dial code
-            }}
-            buttonStyle={{
-              border: "none",
-              background: "transparent",
-            }}
-            onChange={(val) =>
-              setValue(name, val as any, { shouldValidate: true })
-            }
-            placeholder={placeholder}
+        {/* --- Input or PhoneInput --- */}
+        <div className="flex-1 flex items-center justify-between gap-2">
+          {isPhone && setValue ? (
+            <PhoneInput
+              country={"eg"}
+              value={value || ""}
+              inputStyle={{
+                border: "none",
+                width: "100%",
+                fontSize: "14px",
+                background: "transparent",
+                textAlign: isRTL ? "right" : "left",
+                direction: isRTL ? "rtl" : "ltr",
+              }}
+              buttonStyle={{
+                border: "none",
+                background: "transparent",
+              }}
+              onChange={(val) =>
+                setValue(name, `+${val}` as PathValue<T, Path<T>>, {
+                  shouldValidate: true,
+                })
+              }
+              placeholder={placeholder}
+              disabled={readOnly}
             />
-        ) : (
-          <>
+          ) : (
             <input
               type={isPassword && showPassword ? "text" : type}
               placeholder={placeholder}
               className="flex-1 outline-none text-sm bg-transparent"
               {...register(name)}
+              readOnly={readOnly}
             />
-            {isPassword && (
+          )}
+
+          {/* 👁️ or ✅ / ✏️ icon */}
+          <div className="flex items-center gap-2 ml-2">
+            {isPassword && canShowPassword && !readOnly && (
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -97,8 +112,18 @@ export default function InputField<T extends FieldValues>({
                 )}
               </button>
             )}
-          </>
-        )}
+
+            {iconAction && (
+              <button
+                type="button"
+                onClick={onIconClick}
+                className="text-primary focus:outline-none"
+              >
+                {iconAction}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}

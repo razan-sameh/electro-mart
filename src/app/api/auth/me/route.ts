@@ -7,9 +7,13 @@ export async function GET() {
   const token = cookieStore.get("jwtToken")?.value;
 
   try {
-    const user = await serverApiClient("/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+const user = await serverApiClient(
+  "/users/me?populate[phone]=*&populate[addresses]=*",
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+
 
     return Response.json({ user });
   } catch (error) {

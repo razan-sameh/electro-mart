@@ -26,7 +26,7 @@ export default function IconButtonGroup({ layout, cartItemCount }: Props) {
     {
       key: "cart",
       showOn: ["desktop", "mobile"],
-      component: <CartButton itemCount={cartItemCount} />,
+      component: <CartButton />,
     },
     {
       key: "theme",

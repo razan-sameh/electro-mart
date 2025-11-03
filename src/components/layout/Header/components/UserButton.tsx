@@ -1,11 +1,13 @@
 // components/UserButton.tsx
 import { FaUser } from "react-icons/fa";
 import IconButton from "./IconButton";
+import { useRouter } from "@/i18n/navigation";
 
 export default function UserButton() {
+  const router = useRouter();
+
   const handleUserClick = () => {
-    console.log("Go to profile");
-    // Add your user profile logic here
+    router.push("/profile");
   };
 
   return (
