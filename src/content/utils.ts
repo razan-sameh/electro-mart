@@ -3,8 +3,15 @@ import moment from "moment";
 import "moment/locale/ar"; // import Arabic locale explicitly
 import { enmDiscountType } from "./enums";
 
-export function formatDateTime(date: string | Date, locale: string): string {
-  return moment(date).locale(locale).format("D MMMM YYYY");
+export function formatDateTime(
+  date: string | Date,
+  locale: string,
+  showTime: boolean = false
+): string {
+  const m = moment(date).locale(locale);
+  return showTime
+    ? m.format("D MMMM YYYY, h:mm A") // with time
+    : m.format("D MMMM YYYY"); // date only
 }
 
 export function getRatingTable(reviews: typReview[]): RatingBreakdown[] {
@@ -33,7 +40,8 @@ export function calculateDiscountedPrice(product: typProduct): number {
     const offer = product.specialOffers[0];
 
     if (offer?.discountType === enmDiscountType.percentage) {
-      discountedPrice = product.price - product.price * (offer.discountValue / 100);
+      discountedPrice =
+        product.price - product.price * (offer.discountValue / 100);
     } else if (offer?.discountType === enmDiscountType.fixed) {
       discountedPrice = product.price - offer.discountValue;
     }

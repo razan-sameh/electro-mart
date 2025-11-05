@@ -4,7 +4,7 @@ import ProductCard from "@/components/reusable/ProductCard";
 import { typProduct } from "@/content/types";
 import { useCategoryById } from "@/lib/hooks/useCategories";
 import { useProducts } from "@/lib/hooks/useProducts";
-import Pagination from "./Pagination";
+import Pagination from "../../../../../../components/reusable/Pagination";
 import { useState } from "react";
 
 interface ShopProductsProps {
@@ -43,7 +43,7 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
             setPaginate={setPaginate}
             currentPage={paginate}
             pageSize={pageSize}
-            productsLength={meta?.total || 0}
+            itemsLength={meta?.total || 0}
           />
         )}
       </div>

@@ -4,14 +4,14 @@ interface PaginationProps {
   setPaginate: (value: number) => void;
   currentPage: number;
   pageSize: number;
-  productsLength: number;
+  itemsLength: number;
 }
 
 export default function Pagination({
   setPaginate,
   currentPage,
   pageSize,
-  productsLength,
+  itemsLength: productsLength,
 }: PaginationProps) {
   const totalPages = Math.ceil(productsLength / pageSize);
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);

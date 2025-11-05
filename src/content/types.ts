@@ -1,4 +1,8 @@
-import { enmDiscountType } from "./enums";
+import {
+  enmStrapiPaymentMethod,
+  enmStrapiPaymentStatus,
+} from "@/adapters/interfaces/enms";
+import { enmDiscountType, enmOrderStatus } from "./enums";
 
 // Category
 export type typCategory = {
@@ -130,4 +134,31 @@ export type typCartItem = {
 export type typCart = {
   id: string;
   items: typCartItem[];
+};
+
+export type typOrderItem = {
+  id: number;
+  documentId: string;
+  product: typProduct;
+  quantity: number;
+  UnitPrice: number;
+};
+
+export type typPayment = {
+  id: number;
+  documentId: string;
+  totalPayment: number;
+  paymentStatus: enmStrapiPaymentStatus;
+  paymentMethod: enmStrapiPaymentMethod;
+};
+
+export type typOrder = {
+  id: number;
+  documentId: string;
+  orderItems: typOrderItem[];
+  date: string;
+  totalPayment: number;
+  orderStatus: enmOrderStatus;
+  ShippingAddress: typAddress;
+  payment: typPayment;
 };

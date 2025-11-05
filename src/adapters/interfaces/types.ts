@@ -1,3 +1,9 @@
+import {
+  enmStrapiPaymentStatus,
+  enmStrapiPaymentMethod,
+  enmOrderStatus,
+} from "./enms";
+
 export interface StrapiImage {
   id: number;
   documentId: string;
@@ -63,6 +69,34 @@ export interface StrapiBrand {
   LogoURL?: StrapiImage;
   products?: StrapiProduct[];
 }
+
+export interface StrapiPayment {
+  id: number;
+  documentId: string;
+  Amount: number;
+  payment_status: enmStrapiPaymentStatus;
+  PaymentMethod: enmStrapiPaymentMethod;
+}
+
+export interface StrapiOrderItem {
+  id: number;
+  documentId: string;
+  Quantity: number;
+  UnitPrice: number;
+  product: StrapiProduct;
+}
+
+export interface StrapiOrder {
+  id: number;
+  documentId: string;
+  order_status: enmOrderStatus;
+  order_items: StrapiOrderItem[];
+  payment: StrapiPayment;
+  ShippingAddress: {};
+  TotalAmount: number;
+  createdAt:string
+}
+
 export interface StrapiColor {
   documentId: string;
 
@@ -114,7 +148,7 @@ export type StrapiBuyNow = {
   product: StrapiProduct;
   quantity: number;
   product_color: StrapiColor;
-  expiresAt:string
+  expiresAt: string;
 };
 
 export type StrapiCart = {
