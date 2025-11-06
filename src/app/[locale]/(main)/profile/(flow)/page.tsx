@@ -19,10 +19,10 @@ export default function ProfilePage() {
         {/* Overlay content */}
         <div className="absolute inset-0 flex flex-col justify-center items-center p-6">
           <div className="max-w-md">
-            <h2 className="text-2xl font-semibold p-4 text-center">
+            <h2 className="text-2xl font-semibold p-4 text-gray-700">
               ELECTRIC.MART Customer Club
             </h2>
-            <p className="text-md text-content pb-4">
+            <p className="text-md text-gray-700 pb-4">
               Membership in Electric.mart’s Customer Club entitles you to discounts
               on selected member purchases, as well as early access to our
               offers.

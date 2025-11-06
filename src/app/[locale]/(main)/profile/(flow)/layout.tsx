@@ -21,9 +21,11 @@ export default function ProfileLayout({
         {/* Main content */}
         <main className="py-8">
           {/* Make children + button on same line (only for mobile) */}
-          <div className="md:hidden flex items-start mb-4">
+          <div className="md:hidden mb-4">
+            <div className="flex mb-4 justify-end">
+              <MobileSidebar />
+            </div>
             <div className="flex-1">{children}</div>
-            <MobileSidebar />
           </div>
 
           {/* Show normal children layout for desktop */}

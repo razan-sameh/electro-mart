@@ -7,6 +7,7 @@ import { enmOrderTab, enmOrderStatus } from "@/content/enums";
 import { useOrders } from "@/lib/hooks/useOrders";
 import { typOrder } from "@/content/types";
 import Pagination from "@/components/reusable/Pagination";
+import { OrderCard } from "./OrderCard";
 
 const OrderManagement = () => {
   const [activeTab, setActiveTab] = useState<enmOrderTab>(enmOrderTab.ALL);
@@ -69,11 +70,9 @@ const OrderManagement = () => {
     { key: enmOrderTab.RETURNED, label: "Returned" },
   ];
 
-
-
   return (
     <div className="w-full mx-auto">
-      <div className="flex gap-8 border-b border-gray-200 mb-6">
+      <ul className="flex flex-row gap-4 overflow-y-auto scrollbar-hide">
         {tabs.map((tab) => (
           <Tab
             key={tab.key}
@@ -83,24 +82,46 @@ const OrderManagement = () => {
             onClick={() => setActiveTab(tab.key)}
           />
         ))}
-      </div>
+      </ul>
 
-      <TableHeader />
-
-      <div className="divide-y divide-gray-200">
+      {/* Mobile View - Cards */}
+      <div className="lg:hidden">
         {filteredOrders.length > 0 ? (
-          filteredOrders.map((order: typOrder) => (
-            <OrderRow
-              key={order.id}
-              order={order}
-            />
+          filteredOrders.map((order: typOrder, index) => (
+            <div key={order.id}>
+              <OrderCard order={order} />
+              {index !== filteredOrders.length - 1 && (
+                <div className="border-b border-gray-200 my-4" />
+              )}
+            </div>
           ))
         ) : (
           <div className="px-4 py-8 text-center text-gray-500">
-            No orders found for this category
+            You have not placed any orders yet
           </div>
         )}
       </div>
+
+      {/* Table Header - Desktop only */}
+      <div className="hidden lg:block overflow-x-auto">
+        <table className="min-w-full table-fixed border-spacing-y-2">
+          <TableHeader />
+          <tbody className="divide-y divide-lightGray">
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
+                <OrderRow key={order.id} order={order} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center py-8 text-gray-500">
+                  You have not placed any orders yet
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
       <div className="mt-auto">
         {meta?.total > pageSize && (
           <Pagination

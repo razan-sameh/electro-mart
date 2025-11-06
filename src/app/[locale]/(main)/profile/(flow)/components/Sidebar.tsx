@@ -21,7 +21,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const normalizedPath = pathname.replace(/^\/[a-z]{2}(\/|$)/, "/");
 
   return (
-    <div className="py-8 w-60">
+    <div className="md:py-8 w-60">
       <h2 className="text-lg font-semibold mb-6">Hi, Emma</h2>
       <nav className="space-y-1">
         {menuItems.map((item) => {

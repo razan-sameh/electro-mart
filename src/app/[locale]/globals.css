@@ -43,6 +43,10 @@ button{
   cursor: pointer;
 }
 
+li{
+  cursor: pointer;
+}
+
 
 @keyframes enter {
   0% { opacity: 0; transform: translateY(-20px); }
@@ -61,4 +65,12 @@ button{
 [dir="rtl"] .phone-input-container .arrow {
   left: auto !important;
   right: 25 !important;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }

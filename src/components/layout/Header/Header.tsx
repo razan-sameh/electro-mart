@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import CategoriesNavBar from "@/components/reusable/CategoriesNavBar";
 import Logo from "../../reusable/Logo";
-import MobileDrawer from "./components/MobileDrawer";
+import CategoriesDrawer from "./components/CategoriesDrawer";
 import SearchBar from "./components/SearchBar";
 import IconButtonGroup from "./components/IconButtonGroup";
 
@@ -23,11 +23,13 @@ export default function Header() {
     : "relative mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
 
   return (
-    <header className={`w-full ${isLanding ? 'px-4 absolute top-6 left-0  z-20' : 'mt-6'}`}>
+    <header
+      className={`w-full ${
+        isLanding ? "px-4 absolute top-6 left-0  z-20" : "mt-6"
+      }`}
+    >
       <div
-        className={`${
-          isLanding ? "bg-background/60" : "bg-background"
-        } 
+        className={`${isLanding ? "bg-background/60" : "bg-background"} 
         ${containerClasses}`}
       >
         <div className="relative flex items-center justify-between">
@@ -51,7 +53,7 @@ export default function Header() {
         )}
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-        {menuOpen && <MobileDrawer setMenuOpen={setMenuOpen} />}
+        {menuOpen && <CategoriesDrawer setMenuOpen={setMenuOpen} isOpen={menuOpen} />}
       </Suspense>
     </header>
   );

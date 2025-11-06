@@ -25,8 +25,6 @@ export async function GET(req: Request) {
       locale
     );
 
-    console.log("Orders fetched successfully:", JSON.stringify(data, null, 2));
-
     return Response.json(data);
   } catch (error: any) {
     console.error("Get orders error:", error);
