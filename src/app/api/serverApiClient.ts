@@ -19,7 +19,6 @@ export async function serverApiClient<T>(
       url.searchParams.append(key, String(value));
     }
   });
-console.log('url',url.toString());
 
   // Make the request
   const res = await fetch(url.toString(), {

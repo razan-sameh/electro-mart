@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FaMapMarkerAlt, FaFlag, FaCity, FaMailBulk } from "react-icons/fa";
 import InputField from "@/components/reusable/InputField";
 import CartSummary from "@/components/reusable/CartSummary";
-import { typAddressData, AddressSchema } from "./schema";
+import { typAddressFormData, AddressSchema } from "./schema";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useBuyNow } from "@/lib/hooks/useBuyNow";
@@ -29,13 +29,29 @@ export default function AddressForm() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
-  } = useForm<typAddressData>({
+  } = useForm<typAddressFormData>({
     resolver: zodResolver(AddressSchema),
-    defaultValues: shippingAddress || {},
+    defaultValues: {
+      phone: shippingAddress?.phone,
+      country: shippingAddress?.country || "",
+      city: shippingAddress?.city || "",
+      postalCode: shippingAddress?.postalCode || "",
+      streetAddress: shippingAddress?.streetAddress || "",
+    },
   });
 
-  const onSubmit = (data: typAddressData) => {
+  const phoneValue = watch("phone");
+
+  // Convert phone object to string for display
+  const phoneString = phoneValue
+    ? `${phoneValue.dialCode}${phoneValue.number}`
+    : "";
+
+  const onSubmit = (data: typAddressFormData) => {
+    console.log({ data });
+
     setShippingAddress(data);
     if (isBuyNow) {
       router.push("/checkout/payment?isBuyNow=1");
@@ -58,11 +74,16 @@ export default function AddressForm() {
           placeholder={t("phoneNumber")}
           register={register}
           name="phone"
-          error={errors.phone}
+          error={
+            errors.phone?.number || // ✅ main field check
+            errors.phone?.dialCode ||
+            errors.phone?.countryCode
+          }
           isPhone
           setValue={setValue}
-          value={shippingAddress?.phone}
+          value={phoneString}
         />
+
         <InputField
           placeholder={t("country")}
           icon={FaFlag}

@@ -1,8 +1,11 @@
 import React from "react";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 import { typOrder } from "@/content/types";
 import { formatDateTime } from "@/content/utils";
-import { useLocale } from "next-intl";
 import { OrderItemsList } from "./OrderItemsList";
+import { HiOutlineChevronRight, HiOutlineChevronLeft } from "react-icons/hi";
+import { usePrefetchOrder } from "@/lib/hooks/useOrders";
 
 interface OrderCardProps {
   order: typOrder;
@@ -10,6 +13,11 @@ interface OrderCardProps {
 
 export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const locale = useLocale();
+  const isRTL = locale === "ar"; // ✅ adjust if you support more RTL languages
+  const prefetchOrder = usePrefetchOrder();
+  const handleClick = () => {
+    prefetchOrder(order.documentId, locale);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -51,24 +59,19 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             </span>
             <span className="text-xs text-gray-500">Total</span>
             <span className="text-sm text-gray-900 font-medium">
-              E£ {order.totalPayment.toFixed(0)}
+              E£ {order.total.toFixed(0)}
             </span>
           </div>
         </div>
 
-        <svg
-          className="w-5 h-5 text-gray-500 mt-1"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
+        {/* ✅ Locale-based arrow inside Link */}
+        <Link href={`/profile/orders/${order.documentId}`} onClick={handleClick}>
+          {isRTL ? (
+            <HiOutlineChevronLeft className="w-5 h-5 text-gray-500 mt-1" />
+          ) : (
+            <HiOutlineChevronRight className="w-5 h-5 text-gray-500 mt-1" />
+          )}
+        </Link>
       </div>
 
       {/* Product Cards */}

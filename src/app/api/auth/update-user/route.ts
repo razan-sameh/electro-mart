@@ -34,9 +34,8 @@ export async function PUT(req: Request) {
 
       const existingPhone = existingPhoneRes.data;
 
-
       if (existingPhone && existingPhone.length > 0) {
-        phoneId = existingPhone[0].documentId;
+        phoneId = existingPhone[0].documentId!;
 
         await serverApiClient(`/phones/${phoneId}`, {
           method: "PUT",
@@ -78,7 +77,6 @@ export async function PUT(req: Request) {
     if (newData.email) payload.email = newData.email;
 
     if (Object.keys(payload).length > 0) {
-
       const updatedUser = await serverApiClient(`/users/${user.id}`, {
         method: "PUT",
         headers: {

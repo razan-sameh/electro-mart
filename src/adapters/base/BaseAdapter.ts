@@ -39,4 +39,5 @@ export abstract class BaseAdapter<TSource, TTarget>
       return images[0] ? `${this.STRAPI_URL}${images[0].url}` : "";
     return `${this.STRAPI_URL}${images.url}`;
   }
+  
 }

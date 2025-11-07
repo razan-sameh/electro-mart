@@ -1,5 +1,6 @@
 "use client";
 
+import { typPhone } from "@/content/types";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 import {
@@ -14,6 +15,7 @@ import { IconType } from "react-icons";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { parsePhoneNumberFromString, PhoneNumber } from "libphonenumber-js";
 
 interface Props<T extends FieldValues> {
   placeholder: string;
@@ -79,11 +81,21 @@ export default function InputField<T extends FieldValues>({
                 border: "none",
                 background: "transparent",
               }}
-              onChange={(val) =>
-                setValue(name, `+${val}` as PathValue<T, Path<T>>, {
+              onChange={(val, data: any) => {
+                const phoneNumber: PhoneNumber | undefined =
+                  parsePhoneNumberFromString(`+${val}`);
+
+                const phoneObject: typPhone = {
+                  dialCode: phoneNumber?.countryCallingCode || "",
+                  number: phoneNumber?.nationalNumber || "",
+                  countryCode: phoneNumber?.country || "",
+                };
+
+                // 👇 send object instead of string
+                setValue(name, phoneObject as PathValue<T, Path<T>>, {
                   shouldValidate: true,
-                })
-              }
+                });
+              }}
               placeholder={placeholder}
               disabled={readOnly}
             />

@@ -21,8 +21,6 @@ export async function PUT(req: Request) {
       );
     }
 
-    console.log("🔐 Changing password...");
-
     // ✅ Strapi requires POST here
     const response = await serverApiClient(`/auth/change-password`, {
       method: "POST",
@@ -36,8 +34,6 @@ export async function PUT(req: Request) {
         passwordConfirmation,
       }),
     });
-
-    console.log("✅ Password changed successfully:", response);
 
     return NextResponse.json(
       { message: "Password changed successfully" },

@@ -1,9 +1,17 @@
 import React from "react";
 import { FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTranslations } from "next-intl";
+import { typShippingAddress } from "@/content/types";
+import { useAuth } from "@/lib/hooks/useAuth";
 
-export default function DeliverySection({ shippingAddress }: any) {
+interface DeliverySectionProps {
+  shippingAddress: typShippingAddress | null;
+}
+export default function DeliverySection({
+  shippingAddress,
+}: DeliverySectionProps) {
   const t = useTranslations("Checkout");
+  const { user } = useAuth();
 
   return (
     <section>
@@ -11,7 +19,7 @@ export default function DeliverySection({ shippingAddress }: any) {
         {t("DeliveryAddressTitle")}
       </h2>
       <div className="text-sm space-y-3 border border-lightGray/60 rounded-lg p-5">
-        <p className="font-bold">{shippingAddress?.name}</p>
+        <p className="font-bold">{user?.username}</p>
 
         <div>
           <div className="flex items-center gap-2">
@@ -31,7 +39,7 @@ export default function DeliverySection({ shippingAddress }: any) {
             <FaEnvelope className="text-gray-500" />
             <strong>{t("Email")}:</strong>
           </div>
-          <p>{shippingAddress?.email}</p>
+          <p>{user?.email}</p>
         </div>
 
         <div>
@@ -39,7 +47,10 @@ export default function DeliverySection({ shippingAddress }: any) {
             <FaPhone className="text-gray-500" />
             <strong>{t("Phone")}:</strong>
           </div>
-          <p>{shippingAddress?.phone}</p>
+          <p>
+            {shippingAddress?.phone.dialCode}
+            {shippingAddress?.phone.number}
+          </p>
         </div>
       </div>
     </section>

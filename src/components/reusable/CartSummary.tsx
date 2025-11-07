@@ -9,6 +9,7 @@ interface Props {
   items: typCartItem[];
   buttonText?: string;
   onButtonClick?: () => void;
+  showButton?: boolean;
   showInfoList?: boolean;
   loading?: boolean;
 }
@@ -17,6 +18,7 @@ export default function CartSummary({
   items,
   buttonText,
   onButtonClick,
+  showButton = true,
   showInfoList = true,
   loading = false,
 }: Props) {
@@ -35,7 +37,7 @@ export default function CartSummary({
     subtotal > 0 ? ((discount / subtotal) * 100).toFixed(0) : "0";
 
   return (
-    <div className="border border-lightGray/60 rounded-lg px-6 bg-background min-h-[532px] flex flex-col justify-evenly">
+    <div className="border border-lightGray/60 rounded-lg px-6 bg-background py-8 flex flex-col justify-evenly">
       {/* Summary */}
       <div className="space-y-4 text-sm">
         <p className="flex justify-between border-b border-lightGray/60 pb-2">
@@ -59,28 +61,32 @@ export default function CartSummary({
       </div>
 
       {/* Button + Info */}
-      <div className="flex flex-col gap-6 mt-4">
-        <button
-          className="w-full bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium transition flex items-center justify-center"
-          onClick={onButtonClick}
-          disabled={loading}
-        >
-          {loading ? (
-            <Loader size={20} color="#fff" />
-          ) : (
-            buttonText || t("continueButton")
+      {(showButton || showInfoList) && (
+        <div className="flex flex-col gap-6 mt-4">
+          {showButton && (
+            <button
+              className="w-full bg-primary hover:bg-primary/80 text-white py-2 my-4 rounded-lg font-medium transition flex items-center justify-center"
+              onClick={onButtonClick}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader size={20} color="#fff" />
+              ) : (
+                buttonText || t("continueButton")
+              )}
+            </button>
           )}
-        </button>
 
-        {showInfoList && (
-          <ul className="text-xs text-gray-500 space-y-1">
-            <li className="pb-2">{t("info1")}</li>
-            <li className="pb-2">{t("info2")}</li>
-            <li className="pb-2">{t("info3")}</li>
-            <li className="pb-2">{t("info4")}</li>
-          </ul>
-        )}
-      </div>
+          {showInfoList && (
+            <ul className="text-xs text-gray-500 space-y-1">
+              <li className="pb-2">{t("info1")}</li>
+              <li className="pb-2">{t("info2")}</li>
+              <li className="pb-2">{t("info3")}</li>
+              <li className="pb-2">{t("info4")}</li>
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

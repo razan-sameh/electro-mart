@@ -1,7 +1,7 @@
 import {
   enmStrapiPaymentStatus,
-  enmStrapiPaymentMethod,
-  enmOrderStatus,
+  enmStrapiOrderStatus,
+  enmStrapiDiscountType,
 } from "./enms";
 
 export interface StrapiImage {
@@ -69,13 +69,21 @@ export interface StrapiBrand {
   LogoURL?: StrapiImage;
   products?: StrapiProduct[];
 }
-
+export type StrapiPaymentMethod = {
+  id: number;
+  documentId: string;
+  brand: string;
+  last4: string;
+  token: string;
+  exp_month: number;
+  exp_year: number;
+};
 export interface StrapiPayment {
   id: number;
   documentId: string;
   Amount: number;
   payment_status: enmStrapiPaymentStatus;
-  PaymentMethod: enmStrapiPaymentMethod;
+  payment_method: StrapiPaymentMethod;
 }
 
 export interface StrapiOrderItem {
@@ -84,26 +92,56 @@ export interface StrapiOrderItem {
   Quantity: number;
   UnitPrice: number;
   product: StrapiProduct;
+  discount_value: number;
+  selected_color: StrapiColor;
+  total: number;
+  subtotal:number
+}
+
+export interface StrapiUser {
+  id: number;
+  documentId: string;
+  email: string;
+  username: string;
+  phone?: StrapiPhone;
 }
 
 export interface StrapiOrder {
   id: number;
   documentId: string;
-  order_status: enmOrderStatus;
+  order_status: enmStrapiOrderStatus;
   order_items: StrapiOrderItem[];
   payment: StrapiPayment;
-  ShippingAddress: {};
-  TotalAmount: number;
-  createdAt:string
+  address: StrapiAddress;
+  Total: number;
+  subtotal: number;
+  discount_total: number;
+  createdAt: string;
+  user: StrapiUser;
 }
 
 export interface StrapiColor {
   documentId: string;
-
   id: number;
   name: string;
   hex_code: string;
-  products?: StrapiProduct[];
+}
+export interface StrapiPhone {
+  documentId: string;
+  id: number;
+  dailcode: string;
+  number: string;
+  countryCode: string;
+}
+
+export interface StrapiAddress {
+  documentId: string;
+  id: number;
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  phone: StrapiPhone;
 }
 
 export interface StrapiProduct {

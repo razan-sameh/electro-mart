@@ -1,8 +1,11 @@
+"use client";
 import React from "react";
 import { typOrder } from "@/content/types";
 import { formatDateTime } from "@/content/utils";
 import { useLocale } from "next-intl";
 import { OrderItemsList } from "./OrderItemsList";
+import { useRouter } from "next/navigation";
+import { usePrefetchOrder } from "@/lib/hooks/useOrders";
 
 interface OrderRowProps {
   order: typOrder;
@@ -10,9 +13,19 @@ interface OrderRowProps {
 
 export const OrderRow: React.FC<OrderRowProps> = ({ order }) => {
   const locale = useLocale();
+  const router = useRouter();
+  const prefetchOrder = usePrefetchOrder();
+
+  const handleClick = () => {
+    router.push(`/profile/orders/${order.documentId}`);
+    prefetchOrder(order.documentId, locale);
+  };
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
+    <tr
+      onClick={handleClick}
+      className="hover:bg-lightGray/40 transition-colors cursor-pointer"
+    >
       <td className="py-4 px-4 text-sm font-medium text-gray-900 text-left">
         #{order.id}
       </td>
@@ -26,7 +39,7 @@ export const OrderRow: React.FC<OrderRowProps> = ({ order }) => {
       </td>
 
       <td className="py-4 px-4 text-center text-sm font-medium text-gray-900">
-        E£ {order.totalPayment.toFixed(2)}
+        E£ {order.total.toFixed(2)}
       </td>
 
       <td className="py-4 px-4 text-center text-xs text-gray-600 capitalize">

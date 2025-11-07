@@ -1,7 +1,4 @@
-import {
-  enmStrapiPaymentMethod,
-  enmStrapiPaymentStatus,
-} from "@/adapters/interfaces/enms";
+import { enmStrapiPaymentStatus } from "@/adapters/interfaces/enms";
 import { enmDiscountType, enmOrderStatus } from "./enums";
 
 // Category
@@ -57,8 +54,7 @@ export type typColor = {
   id: number;
   documentId: string;
   name: string;
-  hexCode?: string;
-  products?: typProduct[];
+  hexCode: string;
 };
 
 // Product
@@ -102,23 +98,35 @@ export type typUser = {
   username: string;
   email: string;
   token?: string; // for JWT
-  phone: typPhone;
-  address: typAddress[];
+  phone?: typPhone;
+  address?: typShippingAddress[];
+  paymentMethods?: typPaymentMethod[];
+};
+export type typPaymentMethod = {
+  id: number;
+  documentId: string;
+  brand: string;
+  last4: string;
+  token: string; // for JWT
+  expMonth: number;
+  expYear: number;
 };
 
-export type typAddress = {
-  id: string;
+export type typShippingAddress = {
+  documentId?: string;
+  id?: number;
   streetAddress: string;
-  postalCode: number;
+  postalCode: string;
   city: string;
+  phone: typPhone;
   country: string;
 };
 
 export type typPhone = {
-  id: number;
-  documentId: string;
-  dailcode: string;
-  number: number;
+  id?: number;
+  documentId?: string;
+  dialCode: string;
+  number: string;
   countryCode: string;
 };
 
@@ -142,6 +150,10 @@ export type typOrderItem = {
   product: typProduct;
   quantity: number;
   UnitPrice: number;
+  selectedColor: typColor;
+  discountValue: number;
+  total: number;
+  subtotal:number
 };
 
 export type typPayment = {
@@ -149,7 +161,7 @@ export type typPayment = {
   documentId: string;
   totalPayment: number;
   paymentStatus: enmStrapiPaymentStatus;
-  paymentMethod: enmStrapiPaymentMethod;
+  paymentMethod: typPaymentMethod;
 };
 
 export type typOrder = {
@@ -157,8 +169,11 @@ export type typOrder = {
   documentId: string;
   orderItems: typOrderItem[];
   date: string;
-  totalPayment: number;
+  total: number;
+  subtotal: number;
+  discountTotal: number;
   orderStatus: enmOrderStatus;
-  ShippingAddress: typAddress;
+  ShippingAddress: typShippingAddress;
   payment: typPayment;
+  user: typUser;
 };

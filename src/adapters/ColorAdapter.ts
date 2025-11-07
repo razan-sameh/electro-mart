@@ -23,7 +23,6 @@ export class ColorAdapter extends BaseAdapter<StrapiColor, typColor> {
       documentId: source.documentId,
       name: this.handleNullUndefined(source.name, ""),
       hexCode: this.handleNullUndefined(source.hex_code, ""),
-      // Don't adapt products here to avoid circular dependencies
     };
   }
 }

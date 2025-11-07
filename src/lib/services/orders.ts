@@ -19,10 +19,25 @@ export async function fetchOrders(locale: string, page = 1, pageSize = 10) {
   if (!res.ok) throw new Error("Failed to fetch orders");
 
   const data = await res.json();
+
   const orders = orderAdapter.adaptMany(data.data);
 
   return {
     orders,
     meta: data.meta,
   };
+}
+// Fetch a single order by ID
+export async function fetchOrderById(locale: string, id: string) {
+  const res = await fetch(`/api/orders/${id}?locale=${locale}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch order");
+
+  const data = await res.json();
+  console.log({ data });
+  return orderAdapter.adapt(data.data);
 }

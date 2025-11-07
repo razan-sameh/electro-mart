@@ -1,4 +1,5 @@
 // stores/checkoutStore.ts
+import { typShippingAddress } from "@/content/types";
 import { create } from "zustand";
 
 interface PaymentMethod {
@@ -20,7 +21,7 @@ interface PaymentResult {
 
 interface CheckoutState {
   step: number;
-  shippingAddress: any | null;
+  shippingAddress: typShippingAddress | null;
   clientSecret: string | null;
   paymentMethod: PaymentMethod | null;
   paymentResult: PaymentResult | null;
@@ -31,7 +32,7 @@ interface CheckoutState {
   setStep: (step: number) => void;
   nextStep: () => void;
   prevStep: () => void;
-  setShippingAddress: (address: any) => void;
+  setShippingAddress: (address: typShippingAddress) => void;
   setClientSecret: (secret: string | null) => void;
   setPaymentMethod: (pm: PaymentMethod | null) => void;
   setPaymentResult: (res: PaymentResult | null) => void;

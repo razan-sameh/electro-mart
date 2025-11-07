@@ -12,7 +12,7 @@ export default function CartItemCard({ item }: CartItemCardProps) {
   return (
     <div
       key={`${item.id}-${item.selectedColor?.id || "default"}`}
-      className="flex items-center justify-between border border-lightGray/60 rounded-lg p-3 sm:p-4 hover:shadow-sm transition"
+      className="flex items-center justify-between border border-lightGray/60 rounded-lg p-3 sm:p-4 hover:shadow-sm transition mb-4"
     >
       <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
         <img

@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProfileSchema, typProfileData } from "./schemas";
 import { BsPencilSquare } from "react-icons/bs";
-import { FiCheck } from "react-icons/fi";
+import { FiCheck, FiX } from "react-icons/fi";
 import InputField from "@/components/reusable/InputField";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "@/i18n/navigation";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
-import { FiX } from "react-icons/fi";
+import { typPhone } from "@/content/types";
 
 export default function ProfileForm() {
   const [editingFields, setEditingFields] = useState<string[]>([]);
@@ -23,53 +22,54 @@ export default function ProfileForm() {
   const form = useForm<typProfileData>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      username: user?.username,
-      email: user?.email,
-      phone: user?.phone ? `${user.phone.dailcode}${user.phone.number}` : "", // ✅ convert to string
+      username: user?.username || "",
+      email: user?.email || "",
+      phone: user?.phone,
       password: "********",
     },
   });
 
+  // ✅ watch for live changes in phone
+  const { watch, reset, setValue, register, formState } = form;
+  const phoneValue = watch("phone");
+
+  // ✅ rebuild display string dynamically
+  const phoneString = phoneValue
+    ? `${phoneValue.dialCode}${phoneValue.number}`
+    : "";
+
+  // ✅ update form when user changes (from useAuth)
   useEffect(() => {
     if (user) {
-      form.reset({
+      reset({
         username: user.username,
         email: user.email,
-        phone: user.phone ? `${user.phone.dailcode}${user.phone.number}` : "",
+        phone: user.phone,
         password: "********",
       });
     }
-  }, [user, form]);
+  }, [user, reset]);
 
   const handleSave = async (field: keyof typProfileData) => {
     let value = form.getValues(field);
-
-    // Clean invisible characters
-    const cleanValue = value.replace(/[\u202A-\u202E\u200E\u200F]/g, "").trim();
-
     setIsLoading(true);
     setSuccess("");
     setError("");
 
     try {
-      // Map form field to Strapi field
       const payload: Record<string, any> = {};
 
       if (field === "phone") {
-        // Ensure the number starts with "+"
-        const formattedValue = cleanValue.startsWith("+")
-          ? cleanValue
-          : `+${cleanValue}`;
-
-        const phoneNumber = parsePhoneNumberFromString(formattedValue);
-        if (!phoneNumber) throw new Error("Invalid phone number format");
-
+        const phone: typPhone = form.getValues("phone");
         payload.phone = {
-          dailcode: phoneNumber.countryCallingCode, // e.g. "20"
-          number: phoneNumber.nationalNumber, // e.g. "1501092044"
-          countryCode: phoneNumber.country, // e.g. "EG"
+          dailcode: phone.dialCode,
+          number: phone.number,
+          countryCode: phone.countryCode || "",
         };
       } else {
+        const cleanValue = String(value)
+          .replace(/[\u202A-\u202E\u200E\u200F]/g, "")
+          .trim();
         payload[field] = cleanValue;
       }
 
@@ -84,7 +84,7 @@ export default function ProfileForm() {
 
       setSuccess(`${field} updated successfully!`);
       setEditingFields((prev) => prev.filter((f) => f !== field));
-      form.setValue(field, value);
+      setValue(field, value);
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -93,31 +93,26 @@ export default function ProfileForm() {
   };
 
   const handleCancel = (field: keyof typProfileData) => {
-    // Reset the field back to the original user value
     if (user) {
-      form.setValue(
+      setValue(
         field,
         field === "phone"
-          ? user.phone
-            ? `${user.phone.dailcode}${user.phone.number}`
-            : ""
+          ? {
+              dialCode: user.phone?.dialCode || "",
+              number: user.phone?.number || "",
+              countryCode: user.phone?.countryCode || "",
+            }
           : (user as any)[field] || ""
       );
     }
-    // Exit edit mode
     setEditingFields((prev) => prev.filter((f) => f !== field));
   };
 
-  const handlePassword = async () => {
-    router.push("/profile/change-password");
-  };
+  const handlePassword = () => router.push("/profile/change-password");
 
   const toggleEditing = (field: keyof typProfileData) => {
-    setEditingFields(
-      (prev) =>
-        prev.includes(field)
-          ? prev.filter((f) => f !== field) // disable if already editing
-          : [...prev, field] // add if not editing
+    setEditingFields((prev) =>
+      prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]
     );
   };
 
@@ -132,7 +127,6 @@ export default function ProfileForm() {
     >
       {Object.entries(form.getValues()).map(([key]) => {
         const isEditing = editingFields.includes(key);
-
         const fieldLabels: Record<string, string> = {
           username: "User name",
           email: "Email",
@@ -148,10 +142,18 @@ export default function ProfileForm() {
             <InputField
               canShowPassword={false}
               placeholder={fieldLabels[key] || key}
-              register={form.register}
+              register={register}
               name={key as keyof typProfileData}
               type={key === "password" ? "password" : "text"}
-              error={form.formState.errors[key as keyof typProfileData]}
+              error={
+                key === "phone"
+                  ? (formState.errors.phone?.number as FieldError) ||
+                    (formState.errors.phone?.dialCode as FieldError) ||
+                    (formState.errors.phone?.countryCode as FieldError)
+                  : (formState.errors[
+                      key as keyof typProfileData
+                    ] as FieldError)
+              }
               readOnly={!isEditing}
               iconAction={
                 isEditing ? (
@@ -180,8 +182,12 @@ export default function ProfileForm() {
                 )
               }
               isPhone={key === "phone"}
-              setValue={form.setValue}
-              value={form.getValues(key as keyof typProfileData)}
+              setValue={setValue}
+              value={
+                key === "phone"
+                  ? phoneString // ✅ dynamic string from watch
+                  : String(form.getValues(key as keyof typProfileData) ?? "")
+              }
             />
           </div>
         );

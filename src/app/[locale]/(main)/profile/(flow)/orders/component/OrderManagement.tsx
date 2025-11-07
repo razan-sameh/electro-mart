@@ -72,7 +72,7 @@ const OrderManagement = () => {
 
   return (
     <div className="w-full mx-auto">
-      <ul className="flex flex-row gap-4 overflow-y-auto scrollbar-hide">
+      <ul className="flex flex-row gap-4 overflow-y-auto scrollbar-hide shadow-md/5 rounded-md p-2">
         {tabs.map((tab) => (
           <Tab
             key={tab.key}

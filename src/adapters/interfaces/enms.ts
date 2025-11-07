@@ -1,15 +1,16 @@
-export enum enmOrderStatus {
+export enum enmStrapiOrderStatus {
   Pending = "Pending",
   Shipped = "Shipped",
   Delivered = "Delivered",
   Cancelled = "Cancelled",
 }
-export enum enmStrapiPaymentMethod {
-  Cash = "Cash",
-  Card = "Card",
-}
+
 export enum enmStrapiPaymentStatus {
   processing = "processing",
   succeeded = "succeeded",
   failed = "failed",
+}
+export const enum enmStrapiDiscountType {
+  percentage = "percentage",
+  fixed = "fixed",
 }
