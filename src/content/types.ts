@@ -144,6 +144,18 @@ export type typCart = {
   items: typCartItem[];
 };
 
+export type typWishlistItem = {
+  id: number;
+  documentId: string;
+  product: typProduct;
+  selectedColor: typColor;
+};
+
+export type typWishlist = {
+  id: string;
+  items: typWishlistItem[];
+};
+
 export type typOrderItem = {
   id: number;
   documentId: string;

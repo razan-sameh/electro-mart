@@ -194,6 +194,20 @@ export type StrapiCart = {
   id: number;
   cart_items: StrapiCartItem[];
 };
+
+export type StrapiWishlistItem = {
+  documentId: string;
+  id: number;
+  product: StrapiProduct;
+  product_color: StrapiColor;
+};
+
+export type StrapiWishlist = {
+  documentId: string;
+  id: number;
+  wishlist_items: StrapiWishlistItem[];
+};
+
 export interface StrapiResponse<T> {
   data: T[];
   meta: {

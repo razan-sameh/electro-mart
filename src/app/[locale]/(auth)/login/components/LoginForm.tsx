@@ -11,6 +11,8 @@ import { loginSchema, typLoginData } from "./schemas";
 import { FcGoogle } from "react-icons/fc";
 import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
 import { useCart } from "@/lib/hooks/useCart";
+import { useMergeGuestWishlistToUser } from "@/hooks/useMergeGuestWishlistToUser";
+import { useWishlist } from "@/lib/hooks/useWishlist";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -26,8 +28,10 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const { merge } = useMergeGuestCartToUser();
-  const { refetch } = useCart();
+  const { merge: mergeCart } = useMergeGuestCartToUser();
+  const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
+  const { refetch: refreshCart } = useCart();
+  const { refetch: refreshWishlist } = useWishlist();
 
   const onSubmit = async (data: typLoginData) => {
     setIsLoading(true);
@@ -47,9 +51,11 @@ export default function LoginForm() {
 
       if (!response.ok) throw new Error(result.error || "Failed to login");
       router.push(redirect);
-      if (result.success && result.user) {
-        await merge();
-        await refetch();
+      if (result.success && result.user) {        
+        await mergeCart();
+        await refreshCart();
+        await mergeWishlist();
+        await refreshWishlist();
       }
     } catch (err: any) {
       setError(err.message);

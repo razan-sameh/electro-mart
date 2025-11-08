@@ -6,7 +6,7 @@ import { CartItemsAdapter } from "@/adapters/CartItemsAdapter";
 const cartAdapter = CartAdapter.getInstance(STRAPI_URL);
 const cartItemsAdapter = CartItemsAdapter.getInstance(STRAPI_URL);
 
-export async function mergeCart(cartItems: typCartItem[]) {
+export async function mergeCart(cartItems: typCartItem[]) {  
   const cartRes = await fetch("/api/cart", {
     method: "POST",
     credentials: "include",

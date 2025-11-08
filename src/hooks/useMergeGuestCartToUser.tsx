@@ -9,7 +9,7 @@ export function useMergeGuestCartToUser() {
     const cartItems = useCartStore.getState().items;
     if (cartItems.length === 0) return;
 
-    for (const item of cartItems) {
+    for (const item of cartItems) {      
       await mergeMutation({
         product: item.product,
         quantity: item.quantity,

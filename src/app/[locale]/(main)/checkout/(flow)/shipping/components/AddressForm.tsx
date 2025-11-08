@@ -50,8 +50,6 @@ export default function AddressForm() {
     : "";
 
   const onSubmit = (data: typAddressFormData) => {
-    console.log({ data });
-
     setShippingAddress(data);
     if (isBuyNow) {
       router.push("/checkout/payment?isBuyNow=1");

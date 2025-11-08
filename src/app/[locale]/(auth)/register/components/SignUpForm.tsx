@@ -14,6 +14,8 @@ import { typSignupData, SignupSchema } from "../components/schemas";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
 import { useCart } from "@/lib/hooks/useCart";
+import { useWishlist } from "@/lib/hooks/useWishlist";
+import { useMergeGuestWishlistToUser } from "@/hooks/useMergeGuestWishlistToUser";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -31,8 +33,11 @@ export default function SignUpForm() {
       confirmPassword: "",
     },
   });
-  const { merge } = useMergeGuestCartToUser();
-  const { refetch } = useCart();
+  const { merge: mergeCart } = useMergeGuestCartToUser();
+  const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
+  const { refetch: refreshCart } = useCart();
+  const { refetch: refreshWishlist } = useWishlist();
+
   const onSubmit = async (data: typSignupData) => {
     setIsLoading(true);
     setError("");
@@ -52,8 +57,10 @@ export default function SignUpForm() {
         throw new Error(result.error || "Failed to create user");
       router.push(redirect);
       if (result.success && result.user) {
-        await merge();
-        await refetch();
+        await mergeCart();
+        await refreshCart();
+        await mergeWishlist();
+        await refreshWishlist();
       }
     } catch (err: any) {
       setError(err.message);

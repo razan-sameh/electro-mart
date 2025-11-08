@@ -38,6 +38,5 @@ export async function fetchOrderById(locale: string, id: string) {
   if (!res.ok) throw new Error("Failed to fetch order");
 
   const data = await res.json();
-  console.log({ data });
   return orderAdapter.adapt(data.data);
 }

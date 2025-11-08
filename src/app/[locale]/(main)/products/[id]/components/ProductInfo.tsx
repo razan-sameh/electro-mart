@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
+import { FaHeart } from "react-icons/fa";
 
 interface Props {
   product: typProduct;
@@ -24,6 +26,11 @@ export default function ProductInfo({ product }: Props) {
     selectedColor: product.colors?.[0], // 👈 default color
   });
   const t = useTranslations("ProductDetails");
+  const {
+    wishlistItems: wishlist,
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+  } = useUnifiedWishlist();
 
   const discountedPrice = calculateDiscountedPrice(product);
   const formattedDiscountedPrice =
@@ -31,6 +38,11 @@ export default function ProductInfo({ product }: Props) {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }) + " E£";
+  const isInWishlist = wishlist.some(
+    (i) =>
+      i.product.documentId === product.documentId &&
+      i.selectedColor?.documentId === state.selectedColor?.documentId
+  );
 
   const handleAddToCart = async () => {
     if (!state.selectedColor) return;
@@ -74,6 +86,44 @@ export default function ProductInfo({ product }: Props) {
     );
   };
 
+  const handleAddToWishlist = async () => {
+    if (!state.selectedColor) return;
+
+    // 1️⃣ Check if product + color already exists in wishlist
+    const existingItem = wishlist.find(
+      (i) =>
+        i.product.documentId === product.documentId &&
+        i.selectedColor?.documentId === state.selectedColor!.documentId
+    );
+
+    if (existingItem) {
+      // 2️⃣ Add new item
+      await removeFromWishlist(existingItem);
+    } else {
+      // 2️⃣ Add new item
+      await addToWishlist({
+        product,
+        selectedColor: state.selectedColor,
+      });
+    }
+
+    toast.custom(
+      (tToast) => (
+        <div
+          className={`${
+            tToast.visible ? "animate-enter" : "animate-leave"
+          } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center p-4`}
+        >
+          <FaCheckCircle className="text-green-600 mb-2" size={32} />
+          <div className="text-green-600font-medium text-center">
+            {product.name}
+            {/* {t("successAddedToWishlist", { product: product.name })} */}
+          </div>
+        </div>
+      ),
+      { position: "bottom-left" }
+    );
+  };
   const handleBuyNow = async () => {
     if (!state.selectedColor) return;
 
@@ -190,8 +240,15 @@ export default function ProductInfo({ product }: Props) {
         >
           {t("buyNow")}
         </button>
-        <button className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition">
-          <FiHeart size={20} />
+        <button
+          onClick={handleAddToWishlist}
+          className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
+        >
+          {isInWishlist ? (
+            <FaHeart size={20} className="text-secondary" />
+          ) : (
+            <FiHeart size={20} />
+          )}
         </button>
       </div>
     </div>
