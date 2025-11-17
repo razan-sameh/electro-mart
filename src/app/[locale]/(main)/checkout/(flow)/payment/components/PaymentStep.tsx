@@ -10,7 +10,7 @@ import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import Loader from "@/components/reusable/Loader";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { useRouter as useI18nRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
 
 const stripePromise = loadStripe(
@@ -22,7 +22,7 @@ export default function PaymentStep() {
   const locale = useLocale();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
-  const router = useI18nRouter();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const { cartItems } = useUnifiedCart();

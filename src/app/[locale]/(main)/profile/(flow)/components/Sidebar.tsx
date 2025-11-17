@@ -12,7 +12,7 @@ import {
 const menuItems = [
   { label: "My profile", href: "/profile", icon: FiUser },
   { label: "Orders", href: "/profile/orders", icon: FiShoppingBag },
-  { label: "My favorite", href: "/profile/favorites", icon: FiHeart },
+  { label: "My favorite", href: "/profile/wishlist", icon: FiHeart },
   { label: "Addresses", href: "/profile/addresses", icon: FiMapPin },
 ];
 

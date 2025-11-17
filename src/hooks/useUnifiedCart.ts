@@ -43,7 +43,7 @@ export function useUnifiedCart() {
   const unifiedAddItem = async ({
     product,
     quantity,
-    selectedColor,
+    selectedColor
   }: {
     product: typProduct;
     quantity: number;

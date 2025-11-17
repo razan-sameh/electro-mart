@@ -29,7 +29,7 @@ export default function ProfilePage() {
             </p>
           </div>
 
-          <Link href="/categories?specialOffer=true" className=" p-4 md:mt-0 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+          <Link href="/categories?specialOffer=true" className=" p-4 md:mt-0 bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition">
             See offers
           </Link>
         </div>
