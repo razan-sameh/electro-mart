@@ -1,73 +1,113 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useOrder } from "@/lib/hooks/useOrders";
+import { formatDateTime } from "@/content/utils";
+import { useLocale } from "next-intl";
+import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function SuccessPage() {
-  const t = useTranslations("Checkout");
   const params = useSearchParams();
   const router = useRouter();
   const orderId = params.get("orderId");
-  const amount = params.get("amount");
+  const isBuyNow = params.get("isBuyNow") === "1";
+  const { data: order, isLoading, error } = useOrder(orderId!);
+  const locale = useLocale();
+  const { resetCheckout } = useCheckoutStore();
+  const { clearCart } = useCart();
 
   useEffect(() => {
     const handlePopState = () => {
-      router.replace("/"); // redirect to home if they press Back
+      router.replace("/");
     };
 
     window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", handlePopState);
 
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
+    return () => window.removeEventListener("popstate", handlePopState);
   }, [router]);
 
-  return (
-    <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-160px)] bg-body px-4 py-10 overflow-hidden">
-      {/* 🎇 Confetti animation */}
-      <DotLottieReact
-        src="/Confetti.lottie"
-        autoplay
-        loop={false}
-        className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-      />
+  useLayoutEffect(() => {
+    async function clear() {
+      if (!isBuyNow) await clearCart();
+      resetCheckout();
+    }
+    clear();
+  }, []);
 
-      <div className="w-16 h-16 bg-green-100 mx-auto rounded-full flex items-center justify-center mb-4 relative z-10">
-        <svg
-          className="w-8 h-8 text-green-600"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
+        <p className="text-gray-500">Loading...</p>
       </div>
+    );
+  }
 
-      <h1 className="text-2xl font-semibold text-green-600 mb-3 relative z-10">
-        {t("PaymentSuccessful")}
-      </h1>
+  if (error || !order) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
+        <p className="text-red-500">Something went wrong. Please try again.</p>
+      </div>
+    );
+  }
 
-      <p className="text-content mb-2 relative z-10">
-        <strong>{t("OrderID")}:</strong> {orderId}
-      </p>
-      <p className="text-content mb-6 relative z-10">
-        <strong>{t("AmountPaid")}:</strong> E£{amount}
-      </p>
+  return (
+    <div className="flex items-center justify-center min-h-[calc(100vh-160px)] bg-[#f9f9f9] px-4 py-10">
+      {/* Card */}
+      <div className="bg-white rounded-xl shadow-md p-8 w-full max-w-md text-center">
+        {/* Blue icon */}
+        <div className="flex justify-center mb-4">
+          <img
+            src="/order-success-icon.png"
+            alt="Success"
+            className="w-20 h-20"
+          />
+        </div>
 
-      <button
-        onClick={() => router.push("/")}
-        className="bg-primary hover:bg-primary/90 text-white py-2 px-6 rounded-lg transition-all relative z-10"
-      >
-        {t("GoHome")}
-      </button>
+        {/* Title */}
+        <h1 className="text-xl font-semibold mb-1">
+          Thanks for your purchase!
+        </h1>
+
+        <p className="text-gray-500 text-sm mb-6">
+          Your order is confirmed and on its way soon.
+        </p>
+
+        {/* Order Details */}
+        <div className="text-sm space-y-4 mb-6">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Order date</span>
+            <span className="font-medium">
+              {formatDateTime(order.date, locale, true)}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Order number</span>
+            <span className="font-medium">{orderId}</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Total price</span>
+            <span className="font-medium">E£{order.total}</span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Total items</span>
+            <span className="font-medium">{order.orderItems?.length ?? 0}</span>
+          </div>
+        </div>
+
+        {/* Go Home Button */}
+        <button
+          onClick={() => router.push("/")}
+          className="w-full bg-primary hover:bg-primary/90 text-white py-2.5 rounded-lg transition-all"
+        >
+          Go Home
+        </button>
+      </div>
     </div>
   );
 }

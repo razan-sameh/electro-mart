@@ -19,7 +19,7 @@ export default function OverviewStep() {
   const searchParams = useSearchParams();
   const isBuyNow = searchParams.get("isBuyNow") === "1";
 
-  const { cartItems, clearCart } = useUnifiedCart();
+  const { cartItems } = useUnifiedCart();
   const { data: buyNowItems } = useBuyNow();
   const {
     shippingAddress,
@@ -54,7 +54,7 @@ export default function OverviewStep() {
     const fetchCardInfo = async () => {
       setLoadingCardInfo(true);
       try {
-        const res = await fetch(`/api/payment-method/${paymentMethod.id}`);
+        const res = await fetch(`/api/payment-method/${paymentMethod?.id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || "Failed");
 
@@ -95,15 +95,11 @@ export default function OverviewStep() {
       const data = await res.json();
 
       if (data.success) {
-        router.replace(
-          `/checkout/success?orderId=${data.orderId}&amount=${data.amount}`
-        );
-
-        // 🧹 Clean up cart and checkout state
-        setTimeout(async () => {
-          if (!isBuyNow) await clearCart();
-          resetCheckout();
-        }, 500);
+        isBuyNow
+          ? router.replace(
+              `/checkout/success?isBuyNow=1&orderId=${data.orderId}`
+            )
+          : router.replace(`/checkout/success?orderId=${data.orderId}`);
       } else {
         setStatus("failed");
       }
