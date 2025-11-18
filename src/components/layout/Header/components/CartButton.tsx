@@ -38,7 +38,7 @@ export default function CartButton() {
 
       {/* ✅ Show cart count if not loading */}
       {!isLoading && itemCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
           {itemCount > 99 ? "99+" : itemCount}
         </span>
       )}

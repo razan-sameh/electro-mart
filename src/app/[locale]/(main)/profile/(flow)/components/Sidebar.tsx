@@ -1,24 +1,27 @@
 "use client";
+import { useRouter } from "@/i18n/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  FiUser,
-  FiShoppingBag,
-  FiHeart,
-  FiMapPin,
-  FiLogOut,
-} from "react-icons/fi";
+import { FiUser, FiShoppingBag, FiHeart, FiLogOut } from "react-icons/fi";
 
 const menuItems = [
   { label: "My profile", href: "/profile", icon: FiUser },
   { label: "Orders", href: "/profile/orders", icon: FiShoppingBag },
   { label: "My favorite", href: "/profile/wishlist", icon: FiHeart },
-  { label: "Addresses", href: "/profile/addresses", icon: FiMapPin },
 ];
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const normalizedPath = pathname.replace(/^\/[a-z]{2}(\/|$)/, "/");
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+  async function handleLogout(): Promise<void> {
+    await fetch("/api/auth/logout", { method: "POST" });
+    queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+    router.push("/login");
+  }
 
   return (
     <div className="md:py-8 w-60">
@@ -44,7 +47,10 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
       </nav>
 
       <div className="mt-4 border-t border-gray-300 pt-4">
-        <button className="flex items-center gap-3 text-content text-sm hover:text-primary transition">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 text-content text-sm hover:text-primary transition"
+        >
           <FiLogOut size={18} />
           Log out
         </button>
