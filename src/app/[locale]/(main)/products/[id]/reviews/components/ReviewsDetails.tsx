@@ -126,10 +126,6 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
           <option value={2}>2 {t("stars")}</option>
           <option value={1}>1 {t("star")}</option>
         </select>
-
-        <button className="border border-lightGray px-4 py-2 rounded w-full sm:w-auto transition">
-          {t("translateReviews")}
-        </button>
       </div>
 
       {/* Reviews */}
