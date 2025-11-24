@@ -77,7 +77,8 @@ export type typProduct = {
 };
 
 export type typReview = {
-  id: string;
+  id: number;
+  documentId: string;
   rating: number;
   comment: string;
   user: typUser;
@@ -165,7 +166,7 @@ export type typOrderItem = {
   selectedColor: typColor;
   discountValue: number;
   total: number;
-  subtotal:number
+  subtotal: number;
 };
 
 export type typPayment = {

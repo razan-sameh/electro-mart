@@ -157,7 +157,7 @@ export default function ProductInfo({ product }: Props) {
       <div className="flex items-center gap-2 text-sm text-gray-600">
         <FaStar size={16} className="fill-secondary" />
         <span className="text-content">
-          {product.averageRating} ({product.totalReviews})
+          {product.averageRating.toFixed(2)} ({product.totalReviews})
         </span>
       </div>
 

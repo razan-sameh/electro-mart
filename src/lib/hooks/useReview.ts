@@ -1,93 +1,152 @@
+"use client";
+
 import {
+  useQuery,
   useMutation,
-  UseMutationResult,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
-import { typProduct, typReview } from "@/content/types";
-import { AddReviewInput, addReviewToProduct, fetchReviewsByProductId } from "../services/review";
-import { v4 as uuidv4 } from 'uuid';
-import { useLocale } from "next-intl";
+import { typReview } from "@/content/types";
+import { createReview, fetchReviewsByProductId } from "../services/review";
+import { v4 as uuidv4 } from "uuid";
+import { useSearchParams } from "next/navigation";
 
+type CreateReviewInput = {
+  productId: string;
+  rating: number;
+  comment: string;
+};
 
-export function useReviewsByProductId(productId: string, page: number = 1, pageSize: number = 10) {
-  const locale = useLocale();
-
-  return useSuspenseQuery({
-    queryKey: ["reviews", locale, productId, page, pageSize],
-    queryFn: () => fetchReviewsByProductId(locale, productId, page, pageSize),
-  });
-}
-
-export const useAddReview = (): UseMutationResult<
-  typReview,
-  Error,
-  AddReviewInput,
-  () => void
-> => {
+export function useReviews(
+  productId: string,
+  pageSize: number = 10,
+) {
   const queryClient = useQueryClient();
-  const locale = useLocale();
+  const searchParams = useSearchParams();
 
-  return useMutation({
-    mutationFn: addReviewToProduct,
+  // Get page, search, rating from URL
+  const page = parseInt(searchParams.get("page") || "1");
+  const searchComment = searchParams.get("search") || undefined;
+  const ratingFilter = searchParams.get("rating")
+    ? parseInt(searchParams.get("rating")!)
+    : undefined;
+
+  const reviewsQuery = useQuery<{ data: typReview[]; meta: any }>({
+    queryKey: ["reviews", productId, page, pageSize, searchComment, ratingFilter],
+    queryFn: () =>
+      fetchReviewsByProductId(productId, page, pageSize, searchComment, ratingFilter),
+    enabled: !!productId,
+  });
+
+  // ➕ Create review
+  const createMutation = useMutation({
+    mutationFn: ({ productId, rating, comment }: CreateReviewInput) =>
+      createReview(productId, rating, comment),
 
     onMutate: async (data) => {
-      const page = 1;
-      const pageSize = 10;
-
-      // Cancel outgoing review queries
+      // Cancel current review queries
       await queryClient.cancelQueries({
-        queryKey: ["reviews", locale, data.productId, page, pageSize],
+        queryKey: ["reviews", data.productId, page, pageSize],
       });
 
-      // Snapshot previous reviews
+      // Snapshot before optimistic update
       const previousReviews = queryClient.getQueryData<{
         data: typReview[];
         meta: any;
-      }>(["reviews", locale, data.productId, page, pageSize]);
+      }>(["reviews", data.productId, page, pageSize]);
 
-      // Optimistic new review
-      const newReview: typReview = {
-        id: uuidv4(),
+      // Optimistic review structure
+      const optimisticReview: typReview = {
+        id: Date.now(), // temporary ID
+        documentId: uuidv4(),
         rating: data.rating,
         comment: data.comment,
-        user: { id: data.userId, username: "You", email: "" },
-      };
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        // Add any other required fields from typReview with defaults
+      } as typReview;
 
+      // Insert optimistic review at the top
       if (previousReviews) {
-        queryClient.setQueryData(["reviews", locale, data.productId, page, pageSize], {
-          ...previousReviews,
-          data: [newReview, ...previousReviews.data],
-          meta: {
-            ...previousReviews.meta,
-            total: previousReviews.meta.total + 1,
-          },
-        });
+        queryClient.setQueryData(
+          ["reviews", data.productId, page, pageSize],
+          {
+            ...previousReviews,
+            data: [optimisticReview, ...previousReviews.data],
+            meta: {
+              ...previousReviews.meta,
+              total: previousReviews.meta.total + 1,
+            },
+          }
+        );
       }
 
-      // Return rollback function
-      return () => {
+      return { previousReviews };
+    },
+
+    onSuccess: (data, variables) => {
+      const { productId } = variables;
+
+      // Replace optimistic review with real server data
+      queryClient.setQueryData<{ data: typReview[]; meta: any }>(
+        ["reviews", productId, page, pageSize],
+        (old) => {
+          if (!old) return old;
+
+          // Find and replace the optimistic review
+          const newData = old.data.map((review) =>
+            review.id === data.id ? data : review
+          );
+
+          // If the new review isn't found (shouldn't happen), add it
+          const reviewExists = newData.some((r) => r.id === data.id);
+          if (!reviewExists) {
+            newData.unshift(data);
+          }
+
+          return {
+            ...old,
+            data: newData,
+          };
+        }
+      );
+
+      // Refresh product stats (averageRating + totalReviews)
+      queryClient.invalidateQueries({
+        queryKey: ["product", productId],
+      });
+
+      // Invalidate all review pages for this product
+      queryClient.invalidateQueries({
+        queryKey: ["reviews", productId],
+      });
+    },
+
+    onError: (_error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousReviews) {
         queryClient.setQueryData(
-          ["reviews", locale, data.productId, page, pageSize],
-          previousReviews
+          ["reviews", _variables.productId, page, pageSize],
+          context.previousReviews
         );
-      };
-    },
-
-    onError: (_error, _data, rollback) => {
-      if (rollback) rollback();
-    },
-
-    onSuccess: (_data, variables) => {
-      // Invalidate product to refresh averageRating & totalReviews
-      queryClient.invalidateQueries({
-        queryKey: ["product", locale, variables.productId],
-      });
-
-      // Invalidate reviews to sync with server
-      queryClient.invalidateQueries({
-        queryKey: ["reviews", locale, variables.productId],
-      });
+      }
     },
   });
-};
+
+  return {
+    // Query data
+    reviews: reviewsQuery.data?.data || [],
+    meta: reviewsQuery.data?.meta,
+    isLoading: reviewsQuery.isLoading,
+    isError: reviewsQuery.isError,
+    error: reviewsQuery.error,
+    refetch: reviewsQuery.refetch,
+    isFetching: reviewsQuery.isFetching,
+
+    // Actions
+    createReview: createMutation.mutateAsync,
+
+    // Mutation states
+    isCreating: createMutation.isPending,
+    createError: createMutation.error,
+  };
+}

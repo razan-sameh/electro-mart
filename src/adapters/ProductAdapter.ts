@@ -6,7 +6,6 @@ import { CategoryAdapter } from "./CategoryAdapter";
 import { SpecialOfferAdapter } from "./SpecialOfferAdapter";
 import { ColorAdapter } from "./ColorAdapter";
 import { SpecificationValueAdapter } from "./SpecificationValueAdapter";
-import { ReviewAdapter } from "./ReviewAdapter";
 
 export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
   private static instance: ProductAdapter;
@@ -14,7 +13,6 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
   private brandAdapter: BrandAdapter;
   private specialOfferAdapter: SpecialOfferAdapter;
   private colorAdapter: ColorAdapter;
-  private reviewAdapter: ReviewAdapter;
   private specificationValueAdapter: SpecificationValueAdapter;
 
   private constructor(strapiUrl: string) {
@@ -23,7 +21,6 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
     this.brandAdapter = BrandAdapter.getInstance(strapiUrl);
     this.specialOfferAdapter = SpecialOfferAdapter.getInstance(strapiUrl);
     this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
-    this.reviewAdapter = ReviewAdapter.getInstance(strapiUrl);
     this.specificationValueAdapter =
       SpecificationValueAdapter.getInstance(strapiUrl);
   }
@@ -35,7 +32,7 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
     return ProductAdapter.instance;
   }
 
-  adapt(source: StrapiProduct): typProduct {
+  adapt(source: StrapiProduct): typProduct {    
     return {
       id: source.id,
       documentId: source.documentId,
@@ -46,8 +43,6 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
       averageRating: this.handleNullUndefined(source.averageRating, 0),
       totalReviews: this.handleNullUndefined(source.totalReviews, 0),
       imagesUrl: this.adaptImageUrls(source.ImageURL),
-      // brand: this.brandAdapter.adapt(source.brand),
-      // category:  this.categoryAdapter.adapt(source.category),
       brand: source.brand
         ? this.brandAdapter.adapt(source.brand)
         : { id: "unknown", name: "" },
@@ -58,7 +53,6 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
         source.special_offers || []
       ),
       colors: this.colorAdapter.adaptMany(source.product_colors || []),
-      reviews: this.reviewAdapter.adaptMany(source.reviews || []),
       specificationValues: this.specificationValueAdapter.adaptMany(
         source.specification_values || []
       ),

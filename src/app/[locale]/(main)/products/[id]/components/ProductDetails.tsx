@@ -7,7 +7,6 @@ import ProductReviews from "./ProductReviews";
 import SimilarProducts from "./SimilarProducts";
 import ProductAccessories from "./ProductAccessories";
 import ProductAds from "./ProductAds";
-import { useReviewsByProductId } from "@/lib/hooks/useReview";
 import { useTranslations } from "next-intl";
 
 interface ProductDetailsProps {
@@ -16,8 +15,6 @@ interface ProductDetailsProps {
 
 export default function ProductDetails({ productId }: ProductDetailsProps) {
   const { data: product } = useProductsById(productId);
-  const { data: reviewsWithMeta } = useReviewsByProductId(productId);
-  const reviews = reviewsWithMeta?.data || [];
   const t = useTranslations("ProductDetails");
 
   return (
@@ -46,7 +43,7 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
       </div>
 
       {/* Extra sections */}
-      <ProductReviews reviews={reviews} averageRating={product.averageRating} />
+      <ProductReviews productId={productId} averageRating={product.averageRating} />
       <SimilarProducts product={product} />
       <ProductAds />
       <ProductAccessories />

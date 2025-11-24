@@ -170,7 +170,7 @@ export type StrapiReview = {
   product: StrapiProduct;
   createdAt: string;
   updatedAt: string;
-  // users_permissions_user:Strapiuser
+  user:StrapiUser
 };
 
 export type StrapiCartItem = {

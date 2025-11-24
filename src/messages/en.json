@@ -179,6 +179,27 @@
     "yourNextFavorite": "Your next favorite find",
     "clickAway": "is just a click away!",
     "viewAll": "View all",
-    "successAdded": "{product} successfully added"
+    "successAdded": "{product} successfully added",
+    "reviewsHaeder": "User ratings and reviews"
+  },
+  "Review": {
+    "rateProduct": "Rate Our Product",
+    "provideFeedback": "Provide us with feedback for the product.",
+    "yourRating": "Your Rating",
+    "productName": "Product Name",
+    "productReview": "Product Review",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "provideDetailedReview": "Provide a detailed review..."
+  },
+  "ReviewDetails": {
+    "searchPlaceholder": "Search customer reviews",
+    "searchButton": "Search",
+    "allStars": "All stars",
+    "stars": "stars",
+    "star": "star",
+    "translateReviews": "Translate all reviews to English",
+    "loadingReviews": "Loading reviews...",
+    "noReviews": "No reviews found."
   }
 }

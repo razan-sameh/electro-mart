@@ -14,7 +14,7 @@ function ProductPrice({ item }: ProductPriceProps) {
     }) + " E£";
 
   return (
-    <div className="flex gap-2 items-center mb-2">
+    <div className="flex gap-2 items-center mb-2 flex-wrap">
       {item.specialOffers?.[0] && (
         <span className="text-gray-400 line-through">{item.price} E£</span>
       )}

@@ -1,3 +1,4 @@
+import { useLocale } from "next-intl";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 
@@ -16,6 +17,8 @@ export const StarRating = ({
 }: StarRatingProps) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [currentRating, setCurrentRating] = useState(rating);
+  const locale = useLocale();
+  const isRTL = locale === "ar";
 
   const handleClick = (clickedRating: number) => {
     if (readonly) return;
@@ -62,7 +65,9 @@ export const StarRating = ({
             {/* Filled star overlay */}
             {(isFilled || isHalfFilled) && (
               <div
-                className="absolute top-0 left-0 overflow-hidden"
+                className={`absolute top-0 ${
+                  isRTL ? " right-0 " : "left-0"
+                }overflow-hidden`}
                 style={{
                   width: isHalfFilled ? "50%" : "100%",
                 }}

@@ -8,7 +8,6 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({ item }: ProductCardProps) {
-
   return (
     <Link
       href={`/products/${item.documentId}`}
@@ -35,12 +34,12 @@ export default function ProductCard({ item }: ProductCardProps) {
         <div className="flex justify-between items-center">
           {/* Price */}
           <ProductPrice item={item} />
+        </div>
 
-          {/* Rating */}
-          <div className="flex items-center text-sm text-gray-600">
-            <FaStar className="w-4 h-4 fill-black mr-1" />
-            {item.averageRating} ({item.totalReviews})
-          </div>
+        {/* Rating */}
+        <div className="flex items-center justify-end text-sm text-gray-600">
+          <FaStar className="w-4 h-4 fill-black mr-1" />
+          {item.averageRating.toFixed(2)} ({item.totalReviews})
         </div>
       </div>
     </Link>

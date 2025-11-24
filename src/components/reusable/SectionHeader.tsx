@@ -1,5 +1,6 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { FC } from "react";
 
 type SectionHeaderProps = {
@@ -21,9 +22,9 @@ const SectionHeader: FC<SectionHeaderProps> = ({
     >
       <h2 className="text-xl font-semibold inline-block">{title}</h2>
       {linkText && (
-        <a href={linkHref} className="text-primary hover:underline">
+        <Link href={linkHref} className="text-primary hover:underline">
           {linkText}
-        </a>
+        </Link>
       )}
     </div>
   );

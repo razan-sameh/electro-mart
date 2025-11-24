@@ -179,6 +179,27 @@
     "yourNextFavorite": "اكتشف منتجك المفضل القادم",
     "clickAway": "على بُعد نقرة واحدة فقط!",
     "viewAll": "عرض الكل",
-    "successAdded": "تمت إضافة {product} بنجاح"
+    "successAdded": "تمت إضافة {product} بنجاح",
+    "reviewsHaeder": "تقييمات ومراجعات المستخدمين"
+  },
+  "Review": {
+    "rateProduct": "قيّم منتجنا",
+    "provideFeedback": "قدّم لنا ملاحظاتك حول المنتج.",
+    "yourRating": "تقييمك",
+    "productName": "اسم المنتج",
+    "productReview": "مراجعة المنتج",
+    "submit": "إرسال",
+    "cancel": "إلغاء",
+    "provideDetailedReview": "قدّم مراجعة تفصيلية..."
+  },
+  "ReviewDetails": {
+    "searchPlaceholder": "ابحث في مراجعات العملاء",
+    "searchButton": "بحث",
+    "allStars": "جميع التقييمات",
+    "stars": "تقيممات",
+    "star": "تقيم",
+    "translateReviews": "ترجمة جميع المراجعات إلى الإنجليزية",
+    "loadingReviews": "جارٍ تحميل المراجعات...",
+    "noReviews": "لا توجد مراجعات."
   }
 }

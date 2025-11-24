@@ -1,13 +1,16 @@
 // File: adapters/BrandAdapter.ts
 import { typBrand, typReview } from "@/content/types";
-import { BaseAdapter } from './base/BaseAdapter';
+import { BaseAdapter } from "./base/BaseAdapter";
 import { StrapiReview } from "./interfaces/types";
+import { UserAdapter } from "./UserAdapter";
 
 export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
   private static instance: ReviewAdapter;
+  private userAdapter: UserAdapter;
 
   private constructor(strapiUrl: string) {
     super(strapiUrl);
+    this.userAdapter = UserAdapter.getInstance(strapiUrl);
   }
 
   public static getInstance(strapiUrl: string): ReviewAdapter {
@@ -19,17 +22,13 @@ export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
 
   adapt(source: StrapiReview): typReview {
     return {
-    id: source.documentId,
-    rating: this.handleNullUndefined(source.Rating, 0),
-    comment: this.handleNullUndefined(source.Comment, ''),
-    user: {
-        id: "",
-        username: "",
-        email: "",
-        token: undefined
-    },
-    createdAt:this.handleNullUndefined(source.createdAt, ''),
-    updatedAt:this.handleNullUndefined(source.updatedAt, '')
-};
+      id: source.id,
+      documentId: source.documentId,
+      rating: this.handleNullUndefined(source.Rating, 0),
+      comment: this.handleNullUndefined(source.Comment, ""),
+      user: this.userAdapter.adapt(source.user),
+      createdAt: this.handleNullUndefined(source.createdAt, ""),
+      updatedAt: this.handleNullUndefined(source.updatedAt, ""),
+    };
   }
 }
