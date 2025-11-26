@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const NEXT_PUBLIC_API_URL =
-  "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
+  process.env.NEXT_PUBLIC_API_URL || "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
 
 export async function POST(req: NextRequest) {
   try {
