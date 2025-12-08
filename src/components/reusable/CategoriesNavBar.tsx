@@ -1,10 +1,10 @@
 // components/CategoriesNavBar.tsx
 "use client";
 import { useLocale } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useCategories } from "@/lib/hooks/useCategories";
-import { typCategory } from "@/content/types";
-import { renderIcon } from "@/content/iconMap";
+import { usePathname } from "@/i18n/navigation";
+import CategoriesNavBarList from "./CategoriesNavBarList";
+import { Suspense } from "react";
+import CategoryNavBarSkeleton from "../ui/CategoryNavBarSkeleton";
 
 interface CategoriesNavBarProps {
   absolute?: boolean; // if true → overlay mode
@@ -16,12 +16,10 @@ export default function CategoriesNavBar({
   const pathname = usePathname();
   const locale = useLocale();
   const isLanding = pathname === `/${locale}` || pathname === "/";
-  const { data: categories } = useCategories();
   // ✅ Dynamic container classes based on pathname
   const containerClasses = isLanding
     ? "rounded-lg shadow-md" // full rounded when on homepage
     : "rounded-b-lg border-t border-gray-200"; // only bottom rounded when NOT homepage
-  const router = useRouter();
 
   return (
     <div
@@ -35,16 +33,9 @@ export default function CategoriesNavBar({
         }`}
       >
         <div className="flex flex-wrap justify-between items-center py-2 overflow-x-auto ">
-          {categories.map((item: typCategory) => (
-            <Link
-              key={item.id}
-              href={`/categories/${item.id}`}
-              className="flex flex-col items-center justify-center whitespace-nowrap px-3 py-2 text-sm font-medium hover:text-blue-600 transition-colors"
-            >
-              {isLanding && item.icon && renderIcon(item.icon, 20)}
-              <span className="mt-1">{item.name}</span>
-            </Link>
-          ))}
+          <Suspense fallback={<CategoryNavBarSkeleton />}>
+            <CategoriesNavBarList />
+          </Suspense>
         </div>
       </div>
     </div>

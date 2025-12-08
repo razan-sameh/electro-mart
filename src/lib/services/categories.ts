@@ -2,6 +2,7 @@
 import { typCategory } from "@/content/types";
 import { apiClient, STRAPI_URL } from "../apiClient";
 import { CategoryAdapter } from "@/adapters/CategoryAdapter";
+import { notFound } from "next/navigation";
 
 const categoryAdapter = CategoryAdapter.getInstance(STRAPI_URL);
 
@@ -12,7 +13,9 @@ export async function fetchCategories(locale: string): Promise<typCategory[]> {
     { populate: "*" },
     locale
   );
-
+if (!data) {
+  notFound()
+}
   return data.data.map((category: any) => categoryAdapter.adapt(category));
 }
 

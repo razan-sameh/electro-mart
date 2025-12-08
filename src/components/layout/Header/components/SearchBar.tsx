@@ -1,6 +1,6 @@
 // components/Header/SearchBar.tsx
 import { FaSearch, FaBars } from "react-icons/fa";
-import ProductsDropdown from "./ProductsDropdown";
+import CategoriesDropdown from "./CategoriesDropdown";
 import { useLocale } from "next-intl";
 import { Suspense } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -49,9 +49,7 @@ export default function SearchBar({
           <FaBars size={22} className="text-icon" />
         </button>
       )}
-      <Suspense fallback={<div>Loading...</div>}>
-        {!isMobile && <ProductsDropdown />}
-      </Suspense>
+        {!isMobile && <CategoriesDropdown />}
       <div
         className={`relative flex-1 ${
           isMobile ? "" : "w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl"

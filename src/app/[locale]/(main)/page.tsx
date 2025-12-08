@@ -1,4 +1,3 @@
-
 import Features from "@/app/[locale]/(main)/components/Features";
 import ProductAds from "@/app/[locale]/(main)/components/ProductAds";
 import { Suspense } from "react";
@@ -12,22 +11,13 @@ export default function Home() {
   return (
     <div className="bg-background">
       <Hero />
-      {/* <div className="container m-auto"> */}
-        <Container>
-        <Suspense fallback={<div>Loading...</div>}>
-          <SpecialOffers />
-        </Suspense>
+      <Container>
+        <SpecialOffers />
         <Features />
-        <Suspense fallback={<div>Loading...</div>}>
-          <Categories />
-        </Suspense>
+        <Categories />
         <ProductAds />
-        {/* <BestSellers /> */}
-        <Suspense fallback={<div>Loading...</div>}>
-          <Brands />
-        </Suspense>
-        </Container>
-      {/* </div> */}
+        <Brands />
+      </Container>
     </div>
   );
 }

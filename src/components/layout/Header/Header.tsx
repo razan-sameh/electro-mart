@@ -8,6 +8,7 @@ import Logo from "../../reusable/Logo";
 import CategoriesDrawer from "./components/CategoriesDrawer";
 import SearchBar from "./components/SearchBar";
 import IconButtonGroup from "./components/IconButtonGroup";
+import CategoryNavBarSkeleton from "@/components/ui/CategoryNavBarSkeleton";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -45,16 +46,15 @@ export default function Header() {
         setMenuOpen={setMenuOpen}
         placeholder={t("searchPlaceholder")}
       />
-      <Suspense fallback={<div>Loading...</div>}>
+
         {pathname !== "/" && (
           <div className="hidden md:block ">
             <CategoriesNavBar />
           </div>
         )}
-      </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
-        {menuOpen && <CategoriesDrawer setMenuOpen={setMenuOpen} isOpen={menuOpen} />}
-      </Suspense>
+      {menuOpen && (
+        <CategoriesDrawer setMenuOpen={setMenuOpen} isOpen={menuOpen} />
+      )}
     </header>
   );
 }
