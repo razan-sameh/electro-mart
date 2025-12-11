@@ -9,13 +9,14 @@ import { reviewSchema, ReviewSchemaType } from "./schema";
 import { useReviews } from "@/lib/hooks/useReview";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface ReviewFormProps {
   productId: string;
 }
 
 export default function ReviewForm({ productId }: ReviewFormProps) {
-  const { data: product } = useProductsById(productId);
+  const { data: product ,isFetching} = useProductsById(productId);
   const { createReview } = useReviews(productId);
   const router = useRouter();
   const t = useTranslations("Review");
@@ -58,7 +59,7 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
     reset();
   };
 
-  if (!product) return <p>Loading...</p>;
+  if (isFetching) return <LoadingSpinner/>;
 
   return (
     <div className="min-h-screen bg-body flex items-center justify-center p-4">

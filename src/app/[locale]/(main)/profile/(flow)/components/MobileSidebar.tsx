@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import { FiX, FiMenu } from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 import Sidebar from "./Sidebar";
 import MobileDrawer from "@/components/reusable/MobileDrawer";
-import Link from "next/link";
 
 export default function MobileSidebar() {
   const [open, setOpen] = useState(false);

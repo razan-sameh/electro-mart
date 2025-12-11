@@ -7,8 +7,11 @@ import { IoLockClosedOutline } from "react-icons/io5";
 import InputField from "@/components/reusable/InputField";
 import { resetPasswordSchema, typResetPasswordData } from "./schemas";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ResetPasswordForm() {
+  const t = useTranslations("ResetPasswordForm");
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,10 +43,10 @@ export default function ResetPasswordForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to reset password");
+        throw new Error(result.error || t("resetError"));
       }
 
-      router.push("/profile"); // ✅ redirect after success
+      router.push("/profile");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -52,16 +55,13 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h2 className="text-2xl font-bold text-center mb-2">Change Password</h2>
-      <p className="text-gray-600 text-center mb-6">
-        Enter your current and new password below.
-      </p>
+    <div className="max-w-md mx-auto p-6 min-h-[500px] flex flex-col justify-center">
+      <h2 className="text-2xl font-bold text-center mb-2">{t("title")}</h2>
+      <p className="text-gray-600 text-center mb-6">{t("description")}</p>
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* 🔐 Current password */}
         <InputField
-          placeholder="Current Password"
+          placeholder={t("currentPassword")}
           icon={IoLockClosedOutline}
           error={form.formState.errors.currentPassword}
           register={form.register}
@@ -69,9 +69,8 @@ export default function ResetPasswordForm() {
           type="password"
         />
 
-        {/* 🆕 New password */}
         <InputField
-          placeholder="New Password"
+          placeholder={t("newPassword")}
           icon={IoLockClosedOutline}
           error={form.formState.errors.password}
           register={form.register}
@@ -79,9 +78,8 @@ export default function ResetPasswordForm() {
           type="password"
         />
 
-        {/* 🔁 Confirm new password */}
         <InputField
-          placeholder="Confirm New Password"
+          placeholder={t("confirmPassword")}
           icon={IoLockClosedOutline}
           error={form.formState.errors.passwordConfirmation}
           register={form.register}
@@ -96,7 +94,7 @@ export default function ResetPasswordForm() {
           disabled={isLoading}
           className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Updating..." : "Update Password"}
+          {isLoading ? t("updating") : t("updatePassword")}
         </button>
       </form>
     </div>

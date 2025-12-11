@@ -14,12 +14,17 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const locale = searchParams.get("locale") || "en";
-
-    const data = await serverApiClient(`/wishlist/me?locale=${locale}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const data = await serverApiClient(
+      "/wishlist/me",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+      { },
+      locale
+    );
 
     return Response.json(data);
   } catch (error: any) {

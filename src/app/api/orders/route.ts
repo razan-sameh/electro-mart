@@ -17,7 +17,6 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const pageSize = parseInt(searchParams.get("pageSize") || "10");
 
-    console.log("Extracted params:", {searchParams,order_status });
     const data = await serverApiClient(
       "/orders",
       {

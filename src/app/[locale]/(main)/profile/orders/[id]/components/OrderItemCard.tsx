@@ -1,10 +1,15 @@
+"use client";
+
 import { typOrderItem } from "@/content/types";
+import { useTranslations } from "next-intl";
 
 type Props = {
   item: typOrderItem;
 };
 
 export default function OrderItemCard({ item }: Props) {
+  const t = useTranslations("OrderDetail");
+
   return (
     <div className="bg-body rounded-2xl p-3 shadow-sm flex flex-col sm:flex-row items-center sm:items-start space-y-2 sm:space-y-0 sm:space-x-4 w-full">
       <img
@@ -15,21 +20,29 @@ export default function OrderItemCard({ item }: Props) {
       <div className="flex-1 w-full">
         <p className="font-medium">{item.product.name}</p>
 
-        {/* السعر قبل الخصم */}
-        <p className="text-sm text-content ">
-          {item.quantity} x E£{item.UnitPrice} (E£{item.subtotal})
+        {/* Quantity × Unit Price */}
+        <p className="text-sm text-content">
+          {t("quantityXPrice", {
+            quantity: item.quantity,
+            unitPrice: item.UnitPrice,
+            subtotal: item.subtotal
+          })}
         </p>
 
-        {/* خصم المنتج */}
+        {/* Discount */}
         {item.discountValue > 0 && (
-          <p className="text-xs text-secondary">- E£{item.discountValue}</p>
+          <p className="text-xs text-secondary">
+            {t("discount", { discountValue: item.discountValue })}
+          </p>
         )}
-        {/* السعر بعد الخصم */}
+
+        {/* Total */}
         <p className="text-content text-sm">E£{item.total}</p>
 
-        {/* الكمية واللون */}
-        {/* <p className="text-content text-xs">Quantity: {item.quantity}</p> */}
-        <p className="text-content text-xs">Color: {item.selectedColor.name}</p>
+        {/* Color */}
+        <p className="text-content text-xs">
+          {t("color")}: {item.selectedColor.name}
+        </p>
       </div>
     </div>
   );

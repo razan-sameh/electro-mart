@@ -6,6 +6,7 @@ import { useReviews } from "@/lib/hooks/useReview";
 import SectionHeader from "@/components/reusable/SectionHeader";
 import ReviewSummary from "@/components/reusable/ReviewSummary";
 import ReviewCard from "@/components/reusable/ReviewCard";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Props {
   averageRating: number;
@@ -13,9 +14,11 @@ interface Props {
 }
 
 export default function ProductReviews({ averageRating, productId }: Props) {
-  const { reviews } = useReviews(productId);
+  const { reviews, isFetching } = useReviews(productId);
   const breakdown: RatingBreakdown[] = getRatingTable(reviews!);
   const t = useTranslations("ProductDetails");
+  if (isFetching) return <LoadingSpinner />;
+
   return (
     <div className="mt-12">
       <SectionHeader

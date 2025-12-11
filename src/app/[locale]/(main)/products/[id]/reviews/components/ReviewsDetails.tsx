@@ -10,6 +10,7 @@ import { useReviews } from "@/lib/hooks/useReview";
 import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface ReviewsDetailsProps {
   productId: string;
@@ -34,7 +35,7 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
 
   const pageSize = 18;
 
-  const { data: product } = useProductsById(productId);
+  const { data: product ,isFetching:isProductFetching } = useProductsById(productId);
 
   // useReviews reads page, search, rating directly from URL
   const { reviews, meta, isFetching } = useReviews(productId, pageSize);
@@ -71,6 +72,7 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
   const handlePageChange = (page: number) => {
     updateUrl(page, searchText, selectedRating);
   };
+  if (isProductFetching) return <LoadingSpinner/>;
 
   return (
     <div className="min-h-screen">
@@ -131,7 +133,7 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
       {/* Reviews */}
       <div className="space-y-4 pb-8">
         {isFetching ? (
-          <p>{t("loadingReviews")}</p>
+          <LoadingSpinner/>
         ) : reviews.length === 0 ? (
           <p className="text-gray-500">{t("noReviews")}</p>
         ) : (

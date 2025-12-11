@@ -29,9 +29,7 @@ export async function fetchOrders(
 
   if (!res.ok) throw new Error("Failed to fetch orders");
 
-  const data = await res.json();
-  console.log({data});
-  
+  const data = await res.json();  
   return {
     orders: orderAdapter.adaptMany(data.data),
     meta: data.meta,

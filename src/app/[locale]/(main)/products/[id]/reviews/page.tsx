@@ -11,9 +11,7 @@ export default async function ReviewsPage({
 
   return (
     <Container>
-      <Suspense fallback={<div>Loading...</div>}>
         <ReviewsDetails productId={id} />
-      </Suspense>
     </Container>
   );
 }

@@ -13,8 +13,11 @@ import { typPhone } from "@/content/types";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Loader from "@/components/ui/Loader";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 export default function ProfileForm() {
+  const t = useTranslations("Profile");
+
   const [editingFields, setEditingFields] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user, isLoading: userLoading } = useAuth();
@@ -30,16 +33,13 @@ export default function ProfileForm() {
     },
   });
 
-  // ✅ watch for live changes in phone
   const { watch, reset, setValue, register, formState } = form;
   const phoneValue = watch("phone");
 
-  // ✅ rebuild display string dynamically
   const phoneString = phoneValue
     ? `${phoneValue.dialCode}${phoneValue.number}`
     : "";
 
-  // ✅ update form when user changes (from useAuth)
   useEffect(() => {
     if (user) {
       reset({
@@ -79,12 +79,13 @@ export default function ProfileForm() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed to update profile");
-      toast.success(`${field} updated successfully!`);
+      if (!res.ok) throw new Error(data?.error || t("updatingError"));
+
+      toast.success(t("updatingSuccess", { field }));
       setEditingFields((prev) => prev.filter((f) => f !== field));
       setValue(field, value);
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+      toast.error(t("updatingError"));
     } finally {
       setIsLoading(false);
     }
@@ -114,9 +115,14 @@ export default function ProfileForm() {
     );
   };
 
-  if (userLoading) {
-    return <LoadingSpinner />;
-  }
+  if (userLoading) return <LoadingSpinner />;
+
+  const fieldLabels: Record<string, string> = {
+    username: t("username"),
+    email: t("email"),
+    phone: t("phone"),
+    password: t("password"),
+  };
 
   return (
     <form
@@ -125,12 +131,6 @@ export default function ProfileForm() {
     >
       {Object.entries(form.getValues()).map(([key]) => {
         const isEditing = editingFields.includes(key);
-        const fieldLabels: Record<string, string> = {
-          username: "User name",
-          email: "Email",
-          phone: "Phone number",
-          password: "Password",
-        };
 
         return (
           <div key={key} className="flex flex-col">
@@ -193,7 +193,7 @@ export default function ProfileForm() {
               setValue={setValue}
               value={
                 key === "phone"
-                  ? phoneString // ✅ dynamic string from watch
+                  ? phoneString
                   : String(form.getValues(key as keyof typProfileData) ?? "")
               }
             />

@@ -17,3 +17,9 @@ export enum enmOrderStatus {
   DELIVERED = "Delivered",
   CANCELLED = "Cancelled",
 }
+
+export enum enmPaymentStatus {
+  PROCESSING = "processing",
+  SUCCEEDED = "succeeded",
+  FAILED = "failed",
+}

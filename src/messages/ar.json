@@ -201,5 +201,94 @@
     "translateReviews": "ترجمة جميع المراجعات إلى الإنجليزية",
     "loadingReviews": "جارٍ تحميل المراجعات...",
     "noReviews": "لا توجد مراجعات."
+  },
+  "Profile": {
+    "title": "البيانات الشخصية",
+    "customerClubTitle": "نادي عملاء ELECTRIC.MART",
+    "customerClubDesc": "يمنحك الاشتراك في نادي عملاء Electric.mart خصومات على بعض المشتريات المختارة، بالإضافة إلى إمكانية الوصول المبكر إلى عروضنا.",
+    "seeOffers": "عرض العروض",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "password": "كلمة المرور",
+    "updatingSuccess": "تم تحديث {field} بنجاح!",
+    "updatingError": "حدث خطأ ما",
+    "loading": "جاري التحميل..."
+  },
+  "ProfileSidebar": {
+    "hi": "مرحباً، {name}",
+    "myProfile": "حسابي",
+    "orders": "طلباتي",
+    "myFavorite": "مفضلتي",
+    "logout": "تسجيل الخروج"
+  },
+  "ResetPasswordForm": {
+    "title": "تغيير كلمة المرور",
+    "description": "أدخل كلمة المرور الحالية والجديدة أدناه.",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "updatePassword": "تحديث كلمة المرور",
+    "updating": "جارٍ التحديث...",
+    "resetError": "فشل في إعادة تعيين كلمة المرور"
+  },
+  "Orders": {
+    "tabs": {
+      "all": "كل الأوقات",
+      "current": "الحالية",
+      "delivered": "تم التسليم"
+    },
+    "noOrders": "لم تقم بأي طلبات بعد",
+    "orderNumber": "رقم الطلب",
+    "date": "التاريخ",
+    "total": "الإجمالي",
+    "statusProcessing": "قيد المعالجة",
+    "delivered": "تم التسليم",
+    "TableHeader": {
+      "orderNumber": "رقم الطلب",
+      "product": "المنتج",
+      "date": "التاريخ",
+      "totalPayment": "إجمالي الدفع",
+      "status": "الحالة"
+    }
+  },
+  "OrderDetail": {
+    "title": "تفاصيل الطلب",
+    "errorLoading": "حدث خطأ أثناء تحميل الطلب",
+    "noOrder": "لم يتم العثور على طلب",
+    "orderId": "رقم الطلب",
+    "color": "اللون",
+    "quantityXPrice": "{quantity} × ج.م {unitPrice} (ج.م {subtotal})",
+    "discount": "- ج.م {discountValue}",
+    "items": "المنتجات",
+    "delivered": "تم التسليم",
+    "statusProcessing": "قيد المعالجة",
+    "PaymentSummary": {
+      "title": "تفاصيل الدفع",
+      "paymentMethod": "طريقة الدفع",
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "shippingFee": "رسوم الشحن",
+      "free": "مجاني",
+      "total": "الإجمالي",
+      "statusProcessing": "قيد المعالجة",
+      "paid": "تم الدفع"
+    },
+    "ShipmentSection": {
+      "shipment": "الشحن",
+      "email": "البريد الإلكتروني",
+      "deliveryAddress": "عنوان التوصيل",
+      "phone": "رقم الهاتف",
+      "noPhone": "لا يوجد رقم هاتف"
+    }
+  },
+  "Wishlist": {
+    "title": "المفضلة",
+    "emptyTitle": "قائمة المفضلة فارغة",
+    "emptyDescription": "احفظ العناصر التي تحبها لاحقًا",
+    "continueShopping": "تابع التسوق",
+    "remove": "إزالة من المفضلة",
+    "addedToCart": "تمت الإضافة للسلة",
+    "addToCart": "أضف إلى السلة"
   }
 }

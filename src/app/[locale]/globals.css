@@ -7,13 +7,14 @@ body {
 }
 
 @theme {
-  --color-body: #F5F5F5;
-  --color-background: #FFFFFF;
+  --color-body: #f5f5f5;
+  --color-background: #ffffff;
   --color-icon: #4b4b4b;
   --color-content: #4b4b4b;
   --color-lightGray: #cbcbcb;
   --color-secondary: #fb5f2f;
   --color-primary: #1a4de1;
+  --color-success: #1fc16b;
 }
 
 .dark {
@@ -24,6 +25,7 @@ body {
   --color-lightGray: #313131;
   --color-secondary: #fb5f2f;
   --color-primary: #1a4de1;
+  --color-success: #1fc16b;
 }
 
 @keyframes slide-up {
@@ -39,27 +41,42 @@ body {
   animation: slide-up 0.3s ease-out;
 }
 
-button{
+button {
   cursor: pointer;
 }
 
-li{
+li {
   cursor: pointer;
 }
-
 
 @keyframes enter {
-  0% { opacity: 0; transform: translateY(-20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes leave {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
-.animate-enter { animation: enter 0.3s ease-out; }
-.animate-leave { animation: leave 0.2s ease-in forwards; }
+.animate-enter {
+  animation: enter 0.3s ease-out;
+}
+.animate-leave {
+  animation: leave 0.2s ease-in forwards;
+}
 
 /* Optional: align the arrow icon to the right in phone-input */
 [dir="rtl"] .phone-input-container .arrow {

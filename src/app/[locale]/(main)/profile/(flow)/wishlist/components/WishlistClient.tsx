@@ -4,14 +4,17 @@ import { FiShoppingBag } from "react-icons/fi";
 import ProductCard from "./ProductCard";
 import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function WishlistClient() {
+  const t = useTranslations("Wishlist");
   const { wishlistItems, isLoading, removeItem } = useUnifiedWishlist();
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner/>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -22,7 +25,7 @@ export default function WishlistClient() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">
-            Wishlist {' '}
+            {t("title")}{" "}
             <span className="text-gray-400">({wishlistItems.length})</span>
           </h1>
         </div>
@@ -44,15 +47,15 @@ export default function WishlistClient() {
               <FiShoppingBag className="w-8 h-8 text-gray-400" />
             </div>
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              Your wishlist is empty
+              {t("emptyTitle")}
             </h2>
-            <p className="text-gray-500 mb-6">Save items you love for later</p>
-            <a
+            <p className="text-gray-500 mb-6">{t("emptyDescription")}</p>
+            <Link
               href="/categories"
               className="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition"
             >
-              Continue Shopping
-            </a>
+              {t("continueShopping")}
+            </Link>
           </div>
         )}
       </div>

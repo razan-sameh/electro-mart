@@ -201,5 +201,94 @@
     "translateReviews": "Translate all reviews to English",
     "loadingReviews": "Loading reviews...",
     "noReviews": "No reviews found."
+  },
+  "Profile": {
+    "title": "Personal data",
+    "customerClubTitle": "ELECTRIC.MART Customer Club",
+    "customerClubDesc": "Membership in Electric.mart’s Customer Club entitles you to discounts on selected member purchases, as well as early access to our offers.",
+    "seeOffers": "See offers",
+    "username": "User name",
+    "email": "Email",
+    "phone": "Phone number",
+    "password": "Password",
+    "updatingSuccess": "{field} updated successfully!",
+    "updatingError": "Something went wrong",
+    "loading": "Loading..."
+  },
+  "ProfileSidebar": {
+    "hi": "Hi, {name}",
+    "myProfile": "My profile",
+    "orders": "Orders",
+    "myFavorite": "My favorite",
+    "logout": "Log out"
+  },
+  "ResetPasswordForm": {
+    "title": "Change Password",
+    "description": "Enter your current and new password below.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "updating": "Updating...",
+    "resetError": "Failed to reset password"
+  },
+  "Orders": {
+    "tabs": {
+      "all": "All Time",
+      "current": "Current",
+      "delivered": "Delivered"
+    },
+    "noOrders": "You have not placed any orders yet",
+    "orderNumber": "Order number",
+    "date": "Date",
+    "total": "Total",
+    "statusProcessing": "Being processed",
+    "delivered": "Delivered",
+    "TableHeader": {
+      "orderNumber": "Order number",
+      "product": "Product",
+      "date": "Date",
+      "totalPayment": "Total payment",
+      "status": "Status"
+    }
+  },
+  "OrderDetail": {
+    "title": "Order Detail",
+    "errorLoading": "Error loading order",
+    "noOrder": "No order found",
+    "orderId": "Order ID",
+    "color": "Color",
+    "quantityXPrice": "{quantity} x E£{unitPrice} (E£{subtotal})",
+    "discount": "- E£{discountValue}",
+    "items": "Items",
+    "delivered": "Delivered",
+    "statusProcessing": "Being processed",
+    "PaymentSummary": {
+      "title": "Payment Details",
+      "paymentMethod": "Payment Method",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shippingFee": "Shipping Fee",
+      "free": "Free",
+      "total": "Total",
+      "statusProcessing": "Being processed",
+      "paid": "Paid"
+    },
+    "ShipmentSection": {
+      "shipment": "Shipment",
+      "email": "Email",
+      "deliveryAddress": "Delivery Address",
+      "phone": "Phone",
+      "noPhone": "No phone available"
+    }
+  },
+  "Wishlist": {
+    "title": "Wishlist",
+    "emptyTitle": "Your wishlist is empty",
+    "emptyDescription": "Save items you love for later",
+    "continueShopping": "Continue Shopping",
+    "remove": "Remove from wishlist",
+    "addedToCart": "Added to Cart",
+    "addToCart": "Add to Cart"
   }
 }

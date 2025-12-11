@@ -12,9 +12,7 @@ export default async function ProductPage({
 
   return (
     <Container>
-      <Suspense fallback={<div>Loading...</div>}>
         <ReviewForm productId={id} />
-      </Suspense>
     </Container>
   );
 }
