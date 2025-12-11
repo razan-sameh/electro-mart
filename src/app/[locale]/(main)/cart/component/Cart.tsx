@@ -6,6 +6,7 @@ import CartSummary from "../../../../../components/reusable/CartSummary";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 function Cart() {
   const { cartItems: cart, isGuest, isLoading } = useUnifiedCart();
@@ -13,7 +14,7 @@ function Cart() {
   const t = useTranslations("Cart");
 
   if (isLoading) {
-    return <p className="text-gray-500 text-center mt-12">Loading cart...</p>;
+    return <LoadingSpinner/>;
   }
 
   if (!cart || cart.length === 0) {
@@ -24,7 +25,7 @@ function Cart() {
   const handleCheckout = async () => {
     const res = await fetch("/api/auth/me");
     const data = await res.json();
-    if (!data.user) router.push("/login?redirect=/checkout");
+    if (!data.user) router.push("/login?redirect=/checkout/shipping");
     else router.push("/checkout/shipping");
   };
 

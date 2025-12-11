@@ -77,6 +77,7 @@ export const fetchProducts = async (
     queryParams["pagination[withCount]"] = true;
   }
   const res = await apiClient<any>("/products", {}, queryParams, locale);
+console.log({res});
 
   return {
     data: res.data.map((product: any) => productAdapter.adapt(product)),

@@ -1,5 +1,5 @@
 // app/profile/layout.tsx
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import Sidebar from "./components/Sidebar";
 import MobileSidebar from "./components/MobileSidebar";
 

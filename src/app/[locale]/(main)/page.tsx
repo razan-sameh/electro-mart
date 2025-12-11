@@ -5,7 +5,7 @@ import SpecialOffers from "./components/SpecialOffers";
 import Brands from "./components/Brands";
 import Categories from "./components/Categories";
 import Hero from "./components/Hero";
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 
 export default function Home() {
   return (

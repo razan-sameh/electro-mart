@@ -7,6 +7,7 @@ import { formatDateTime } from "@/content/utils";
 import { useLocale } from "next-intl";
 import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useCart } from "@/lib/hooks/useCart";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function SuccessPage() {
   const params = useSearchParams();
@@ -40,7 +41,7 @@ export default function SuccessPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-160px)]">
-        <p className="text-gray-500">Loading...</p>
+        <LoadingSpinner />
       </div>
     );
   }

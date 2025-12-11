@@ -10,12 +10,13 @@ import InputField from "@/components/reusable/InputField";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "@/i18n/navigation";
 import { typPhone } from "@/content/types";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import Loader from "@/components/ui/Loader";
+import toast from "react-hot-toast";
 
 export default function ProfileForm() {
   const [editingFields, setEditingFields] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const { user, isLoading: userLoading } = useAuth();
   const router = useRouter();
 
@@ -53,8 +54,6 @@ export default function ProfileForm() {
   const handleSave = async (field: keyof typProfileData) => {
     let value = form.getValues(field);
     setIsLoading(true);
-    setSuccess("");
-    setError("");
 
     try {
       const payload: Record<string, any> = {};
@@ -81,12 +80,11 @@ export default function ProfileForm() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to update profile");
-
-      setSuccess(`${field} updated successfully!`);
+      toast.success(`${field} updated successfully!`);
       setEditingFields((prev) => prev.filter((f) => f !== field));
       setValue(field, value);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      toast.error(err.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -117,7 +115,7 @@ export default function ProfileForm() {
   };
 
   if (userLoading) {
-    return <p className="text-center text-gray-500">Loading profile...</p>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -157,17 +155,27 @@ export default function ProfileForm() {
               readOnly={!isEditing}
               iconAction={
                 isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <FiCheck
-                      className="text-green-600 cursor-pointer"
-                      size={18}
-                      onClick={() => handleSave(key as keyof typProfileData)}
-                    />
-                    <FiX
-                      className="text-red-500 cursor-pointer"
-                      size={18}
-                      onClick={() => handleCancel(key as keyof typProfileData)}
-                    />
+                  <div className="flex items-center gap-2 min-w-[40px]">
+                    {isLoading ? (
+                      <Loader size={18} />
+                    ) : (
+                      <>
+                        <FiCheck
+                          className="text-green-600 cursor-pointer"
+                          size={18}
+                          onClick={() =>
+                            handleSave(key as keyof typProfileData)
+                          }
+                        />
+                        <FiX
+                          className="text-red-500 cursor-pointer"
+                          size={18}
+                          onClick={() =>
+                            handleCancel(key as keyof typProfileData)
+                          }
+                        />
+                      </>
+                    )}
                   </div>
                 ) : (
                   <BsPencilSquare
@@ -192,11 +200,6 @@ export default function ProfileForm() {
           </div>
         );
       })}
-
-      <div className="sm:col-span-2 mt-2">
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-500 text-sm">{success}</p>}
-      </div>
     </form>
   );
 }

@@ -1,7 +1,7 @@
-import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
+import { serverApiClient } from "../serverApiClient";
 
-// GET /api/orders - Get user's orders with relations
+// GET /api/orders
 export async function GET(req: Request) {
   try {
     const cookieStore = await cookies();
@@ -13,15 +13,20 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const locale = searchParams.get("locale") || "en";
+    const order_status = searchParams.get("order_status") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const pageSize = parseInt(searchParams.get("pageSize") || "10");
 
+    console.log("Extracted params:", {searchParams,order_status });
     const data = await serverApiClient(
       "/orders",
       {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       },
-      {},
+      { page, pageSize, order_status},
       locale
     );
 

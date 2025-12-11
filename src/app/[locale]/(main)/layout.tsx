@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Providers from "../providers";
 import Header from "@/components/layout/Header/Header";
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -68,7 +68,7 @@ export default async function MainLayout({
               <Header />
             </Container>
             {children}
-            <Toaster position="top-right" />
+            <Toaster position="bottom-right" />
             <Footer />
           </Providers>
         </NextIntlClientProvider>

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { typCartItem } from "@/content/types";
 import { calculateDiscountedPrice } from "@/content/utils";
-import Loader from "./Loader";
+import Loader from "../ui/Loader";
 
 interface Props {
   items: typCartItem[];

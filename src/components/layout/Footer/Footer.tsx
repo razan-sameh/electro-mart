@@ -4,7 +4,7 @@ import FooterBottom from "./components/FooterBottom";
 import FooterLinks from "./components/FooterLinks";
 import FooterNewsletter from "./components/FooterNewsletter";
 import FooterSection from "./components/FooterSection";
-import Container from "../Container";
+import Container from "../../ui/Container";
 
 export default function Footer() {
   const t = useTranslations("Footer");

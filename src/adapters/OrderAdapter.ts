@@ -34,15 +34,15 @@ export class OrderAdapter extends BaseAdapter<StrapiOrder, typOrder> {
   ): typOrder["orderStatus"] {
     switch (status) {
       case "Pending":
-        return enmOrderStatus.PROCESSING;
+        return enmOrderStatus.PENDING;
       case "Shipped":
-        return enmOrderStatus.DELIVERED; // or whatever mapping fits your logic
+        return enmOrderStatus.SHIPPED; // or whatever mapping fits your logic
       case "Delivered":
         return enmOrderStatus.DELIVERED;
       case "Cancelled":
         return enmOrderStatus.CANCELLED;
       default:
-        return enmOrderStatus.PROCESSING; // fallback
+        return enmOrderStatus.PENDING; // fallback
     }
   }
 

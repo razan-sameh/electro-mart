@@ -1,4 +1,4 @@
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import React, { Suspense } from "react";
 import ReviewsDetails from "./components/ReviewsDetails";
 

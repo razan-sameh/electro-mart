@@ -12,6 +12,7 @@ import { useRouter as useI18nRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useBuyNow } from "@/lib/hooks/useBuyNow";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function OverviewStep() {
   const t = useTranslations("Checkout");
@@ -20,13 +21,13 @@ export default function OverviewStep() {
   const isBuyNow = searchParams.get("isBuyNow") === "1";
 
   const { cartItems } = useUnifiedCart();
-  const { data: buyNowItems } = useBuyNow();
+  const { data: buyNowItems, isLoading } = useBuyNow();
   const {
     shippingAddress,
     paymentMethod,
     setCardInfo,
     setLoadingCardInfo,
-    resetCheckout,
+    loadingCardInfo,
   } = useCheckoutStore();
 
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,12 @@ export default function OverviewStep() {
   const [status, setStatus] = useState<"success" | "failed" | null>(null);
 
   const itemsToCheckout = isBuyNow ? buyNowItems : cartItems;
+  const isPageLoading =
+    isLoading || // buyNow loading
+    loadingCardInfo || // card info loading
+    !itemsToCheckout || // cart not ready
+    itemsToCheckout.length === 0;
+
 
   // 🔁 Verify previous steps and fetch card info
   useEffect(() => {
@@ -50,30 +57,29 @@ export default function OverviewStep() {
         : router.push("/checkout/payment");
       return;
     }
-
-    const fetchCardInfo = async () => {
-      setLoadingCardInfo(true);
-      try {
-        const res = await fetch(`/api/payment-method/${paymentMethod?.id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data?.error || "Failed");
-
-        setCardInfo({
-          brand: data.brand,
-          last4: data.last4,
-          exp_month: data.exp_month,
-          exp_year: data.exp_year,
-        });
-      } catch (err) {
-        console.error("Failed to fetch card info:", err);
-        setCardInfo(null);
-      } finally {
-        setLoadingCardInfo(false);
-      }
-    };
-
     fetchCardInfo();
   }, [shippingAddress, paymentMethod]);
+
+  const fetchCardInfo = async () => {
+    setLoadingCardInfo(true);
+    try {
+      const res = await fetch(`/api/payment-method/${paymentMethod?.id}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Failed");
+
+      setCardInfo({
+        brand: data.brand,
+        last4: data.last4,
+        exp_month: data.exp_month,
+        exp_year: data.exp_year,
+      });
+    } catch (err) {
+      console.error("Failed to fetch card info:", err);
+      setCardInfo(null);
+    } finally {
+      setLoadingCardInfo(false);
+    }
+  };
 
   // 💳 Confirm Order
   const handleConfirmOrder = async (isRetry = false) => {
@@ -109,7 +115,13 @@ export default function OverviewStep() {
       isRetry ? setRetryLoading(false) : setLoading(false);
     }
   };
-
+  if (isPageLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[300px]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <>
       <div className="grid lg:grid-cols-3 gap-8 mt-6">

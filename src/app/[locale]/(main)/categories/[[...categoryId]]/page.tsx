@@ -2,8 +2,9 @@
 import { Suspense } from "react";
 import Filters from "./components/Filters";
 import ShopProducts from "./components/ShopProducts";
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import MobileFilters from "./components/MobileFilters"; // 👈 component للـ bottom sheet
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default async function CategoryPage({
   params,
@@ -14,7 +15,7 @@ export default async function CategoryPage({
 
   return (
     <Container>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoadingSpinner />}>
         <div className="flex flex-col md:flex-row gap-6 py-6">
           {/* Sidebar (hidden on mobile, visible on desktop) */}
           <aside className="hidden md:block w-72 lg:w-80 xl:w-80 shrink-0">

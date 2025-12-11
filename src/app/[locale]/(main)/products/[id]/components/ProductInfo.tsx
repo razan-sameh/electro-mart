@@ -68,22 +68,7 @@ export default function ProductInfo({ product }: Props) {
         selectedColor: state.selectedColor,
       });
     }
-
-    toast.custom(
-      (tToast) => (
-        <div
-          className={`${
-            tToast.visible ? "animate-enter" : "animate-leave"
-          } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center  p-4`}
-        >
-          <FaCheckCircle className="text-green-500 mb-2" size={32} />
-          <div className="text-green-600 font-medium text-center">
-            {t("successAdded", { product: product.name })}
-          </div>
-        </div>
-      ),
-      { position: "bottom-left" }
-    );
+    toast.success(t("successAddedToWishlist", { product: product.name }));
   };
 
   const handleAddToWishlist = async () => {
@@ -106,23 +91,7 @@ export default function ProductInfo({ product }: Props) {
         selectedColor: state.selectedColor,
       });
     }
-
-    toast.custom(
-      (tToast) => (
-        <div
-          className={`${
-            tToast.visible ? "animate-enter" : "animate-leave"
-          } max-w-xs w-full bg-background shadow-lg rounded-lg pointer-events-auto flex flex-col items-center p-4`}
-        >
-          <FaCheckCircle className="text-green-600 mb-2" size={32} />
-          <div className="text-green-600font-medium text-center">
-            {product.name}
-            {/* {t("successAddedToWishlist", { product: product.name })} */}
-          </div>
-        </div>
-      ),
-      { position: "bottom-left" }
-    );
+    toast.success(t("successAdded", { product: product.name }));
   };
   const handleBuyNow = async () => {
     if (!state.selectedColor) return;

@@ -1,21 +1,16 @@
 // lib/hooks/useOrders.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
-import { useCallback } from "react";
 import { fetchOrderById, fetchOrders } from "../services/orders";
 import { typOrder } from "@/content/types";
+import { enmOrderStatus } from "@/content/enums";
 
-export function useOrders(page = 1, pageSize = 10) {
+export function useOrders(page = 1, pageSize = 10, status?: enmOrderStatus) {
   const locale = useLocale();
 
-  const queryFn = useCallback(
-    () => fetchOrders(locale, page, pageSize),
-    [locale, page, pageSize]
-  );
-
   return useQuery({
-    queryKey: ["orders", locale, page, pageSize],
-    queryFn,
+    queryKey: ["orders", locale, page, pageSize, status],
+    queryFn: () => fetchOrders(locale, page, pageSize, status),
   });
 }
 

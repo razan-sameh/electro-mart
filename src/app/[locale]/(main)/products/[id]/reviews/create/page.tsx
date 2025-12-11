@@ -1,5 +1,5 @@
 // app/[locale]/products/[id]/page.tsx
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import { Suspense } from "react";
 import ReviewForm from "./components/ReviewForm";
 

@@ -7,7 +7,7 @@ import { CardForm } from "./CardForm";
 import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useBuyNow } from "@/lib/hooks/useBuyNow";
-import Loader from "@/components/reusable/Loader";
+import Loader from "@/components/ui/Loader";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";

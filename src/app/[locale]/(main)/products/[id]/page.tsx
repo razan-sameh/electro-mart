@@ -1,7 +1,8 @@
 // app/[locale]/products/[id]/page.tsx
-import Container from "@/components/layout/Container";
+import Container from "@/components/ui/Container";
 import { Suspense } from "react";
 import ProductDetails from "./components/ProductDetails";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default async function ProductPage({
   params,
@@ -12,7 +13,7 @@ export default async function ProductPage({
 
   return (
     <Container>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<LoadingSpinner />}>
         <ProductDetails productId={id} />
       </Suspense>
     </Container>

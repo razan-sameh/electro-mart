@@ -8,70 +8,54 @@ import { useOrders } from "@/lib/hooks/useOrders";
 import { typOrder } from "@/content/types";
 import Pagination from "@/components/reusable/Pagination";
 import { OrderCard } from "./OrderCard";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const OrderManagement = () => {
   const [activeTab, setActiveTab] = useState<enmOrderTab>(enmOrderTab.ALL);
   const [page, setPage] = useState(1);
-  const pageSize = 5;
-  const { data } = useOrders(page, pageSize);
-  const allOrders: typOrder[] = data?.orders || [];
-  const meta = data?.meta?.pagination;
+  const pageSize = 10;
 
-  const getFilteredOrders = () => {
-    switch (activeTab) {
-      case enmOrderTab.ALL:
-        return allOrders;
-      case enmOrderTab.CURRENT:
-        return allOrders.filter(
-          (order) => order.orderStatus === enmOrderStatus.PROCESSING
-        );
-      case enmOrderTab.DELIVERED:
-        return allOrders.filter(
-          (order) => order.orderStatus === enmOrderStatus.DELIVERED
-        );
-      case enmOrderTab.CANCELLED:
-        return allOrders.filter(
-          (order) => order.orderStatus === enmOrderStatus.CANCELLED
-        );
-      case enmOrderTab.RETURNED:
-        return allOrders.filter(
-          (order) => order.orderStatus === enmOrderStatus.RETURNED
-        );
-      default:
-        return allOrders;
-    }
+  // Map tabs to status
+  const statusMap = {
+    [enmOrderTab.ALL]: undefined,
+    [enmOrderTab.CURRENT]: enmOrderStatus.PENDING,
+    [enmOrderTab.DELIVERED]: enmOrderStatus.DELIVERED,
   };
 
-  const filteredOrders = getFilteredOrders();
+  const { data, isLoading } = useOrders(page, pageSize, statusMap[activeTab]);
 
-  const getTabCounts = () => ({
-    [enmOrderTab.ALL]: allOrders.length,
-    [enmOrderTab.CURRENT]: allOrders.filter(
-      (o) => o.orderStatus === enmOrderStatus.PROCESSING
-    ).length,
-    [enmOrderTab.DELIVERED]: allOrders.filter(
-      (o) => o.orderStatus === enmOrderStatus.DELIVERED
-    ).length,
-    [enmOrderTab.CANCELLED]: allOrders.filter(
-      (o) => o.orderStatus === enmOrderStatus.CANCELLED
-    ).length,
-    [enmOrderTab.RETURNED]: allOrders.filter(
-      (o) => o.orderStatus === enmOrderStatus.RETURNED
-    ).length,
-  });
+  const allOrders = data?.orders || [];
+  const pagination = data?.meta?.pagination;
+  const counts = data?.meta?.counts;
 
-  const tabCounts = getTabCounts();
+  const tabCounts = {
+    [enmOrderTab.ALL]: counts?.all,
+    [enmOrderTab.CURRENT]: counts?.pending,
+    [enmOrderTab.DELIVERED]: counts?.delivered,
+  };
 
   const tabs = [
     { key: enmOrderTab.ALL, label: "All Time" },
     { key: enmOrderTab.CURRENT, label: "Current" },
     { key: enmOrderTab.DELIVERED, label: "Delivered" },
-    { key: enmOrderTab.CANCELLED, label: "Cancelled" },
-    { key: enmOrderTab.RETURNED, label: "Returned" },
   ];
+
+  const handleTabClick = (tabKey: enmOrderTab) => {
+    setActiveTab(tabKey);
+    setPage(1); // Reset pagination when tab changes
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full mx-auto">
+      {/* Tabs */}
       <ul className="flex flex-row gap-4 overflow-y-auto scrollbar-hide shadow-md/5 rounded-md p-2">
         {tabs.map((tab) => (
           <Tab
@@ -79,18 +63,18 @@ const OrderManagement = () => {
             label={tab.label}
             count={tabCounts[tab.key]}
             isActive={activeTab === tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => handleTabClick(tab.key)}
           />
         ))}
       </ul>
 
-      {/* Mobile View - Cards */}
+      {/* Cards (Mobile) */}
       <div className="lg:hidden">
-        {filteredOrders.length > 0 ? (
-          filteredOrders.map((order: typOrder, index) => (
+        {allOrders.length > 0 ? (
+          allOrders.map((order: typOrder, index) => (
             <div key={order.id}>
               <OrderCard order={order} />
-              {index !== filteredOrders.length - 1 && (
+              {index !== allOrders.length - 1 && (
                 <div className="border-b border-gray-200 my-4" />
               )}
             </div>
@@ -102,13 +86,13 @@ const OrderManagement = () => {
         )}
       </div>
 
-      {/* Table Header - Desktop only */}
+      {/* Table (Desktop) */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="min-w-full table-fixed border-spacing-y-2">
           <TableHeader />
           <tbody className="divide-y divide-lightGray">
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+            {allOrders.length > 0 ? (
+              allOrders.map((order) => (
                 <OrderRow key={order.id} order={order} />
               ))
             ) : (
@@ -122,13 +106,14 @@ const OrderManagement = () => {
         </table>
       </div>
 
+      {/* Pagination */}
       <div className="mt-auto">
-        {meta?.total > pageSize && (
+        {pagination?.total > pageSize && (
           <Pagination
             setPaginate={setPage}
             currentPage={page}
             pageSize={pageSize}
-            itemsLength={meta?.total || 0}
+            itemsLength={pagination.total}
           />
         )}
       </div>
