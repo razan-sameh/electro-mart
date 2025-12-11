@@ -83,7 +83,7 @@ export default function ProductCard({ item, onRemove }: productCardProps) {
             <ProductPrice item={item.product} />
             <div className="flex items-center text-sm text-gray-600">
               <FaStar className="w-4 h-4 fill-yellow-400 mr-1" />
-              {item.product.averageRating} ({item.product.totalReviews})
+              {item.product.averageRating.toFixed(2)} ({item.product.totalReviews})
             </div>
           </div>
         </div>

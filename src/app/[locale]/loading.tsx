@@ -1,4 +1,6 @@
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+
 export default function RootLoading() {
-  return <div className="p-6 animate-pulse">Loading website…</div>;
+  return <LoadingSpinner/>;
 }
 3

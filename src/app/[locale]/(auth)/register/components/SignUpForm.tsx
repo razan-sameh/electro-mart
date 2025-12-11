@@ -55,13 +55,13 @@ export default function SignUpForm() {
       const result = await response.json();
       if (!response.ok)
         throw new Error(result.error || "Failed to create user");
-      router.push(redirect);
       if (result.success && result.user) {
         await mergeCart();
         await refreshCart();
         await mergeWishlist();
         await refreshWishlist();
       }
+      router.push(redirect);
     } catch (err: any) {
       setError(err.message);
     } finally {

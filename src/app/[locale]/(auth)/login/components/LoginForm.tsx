@@ -50,13 +50,13 @@ export default function LoginForm() {
       const result = text ? JSON.parse(text) : {};
 
       if (!response.ok) throw new Error(result.error || "Failed to login");
-      router.push(redirect);
-      if (result.success && result.user) {        
+      if (result.success && result.user) {
         await mergeCart();
         await refreshCart();
         await mergeWishlist();
         await refreshWishlist();
       }
+      router.push(redirect);
     } catch (err: any) {
       setError(err.message);
     } finally {

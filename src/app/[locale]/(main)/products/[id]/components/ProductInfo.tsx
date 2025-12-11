@@ -68,7 +68,7 @@ export default function ProductInfo({ product }: Props) {
         selectedColor: state.selectedColor,
       });
     }
-    toast.success(t("successAddedToWishlist", { product: product.name }));
+    toast.success(t("successAdded", { product: product.name }));
   };
 
   const handleAddToWishlist = async () => {
