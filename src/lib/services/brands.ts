@@ -2,6 +2,7 @@
 import { typBrand } from "@/content/types";
 import { apiClient, STRAPI_URL } from "../apiClient";
 import { BrandAdapter } from "@/adapters/BrandAdapter";
+import { notFound } from "next/navigation";
 
 const brandAdapter = BrandAdapter.getInstance(STRAPI_URL);
 
@@ -12,7 +13,9 @@ export async function fetchBrands(locale: string): Promise<typBrand[]> {
     { populate: "*" },
     locale
   );
-
+  if (!data.data) {
+    notFound();
+  }
   return data.data.map((brand: any) => brandAdapter.adapt(brand));
 
 }

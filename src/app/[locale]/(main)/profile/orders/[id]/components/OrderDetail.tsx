@@ -11,10 +11,10 @@ import { useTranslations } from "next-intl";
 
 export default function OrderDetail({ orderId }: { orderId: string }) {
   const t = useTranslations("OrderDetail");
-  const { data: order, isLoading, error } = useOrder(orderId);
+  const { data: order, isLoading, isError } = useOrder(orderId);
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <div>{t("errorLoading")}</div>;
+  if (isError) return <div>{t("errorLoading")}</div>;
   if (!order) return <div>{t("noOrder")}</div>;
 
   return (

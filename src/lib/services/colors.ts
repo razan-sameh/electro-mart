@@ -1,7 +1,8 @@
 // lib/services/categories.ts
-import {typColor } from "@/content/types";
+import { typColor } from "@/content/types";
 import { apiClient, STRAPI_URL } from "../apiClient";
 import { ColorAdapter } from "@/adapters/ColorAdapter";
+import { notFound } from "next/navigation";
 
 const colorAdapter = ColorAdapter.getInstance(STRAPI_URL);
 
@@ -12,7 +13,8 @@ export async function fetchColors(locale: string): Promise<typColor[]> {
     { populate: "*" },
     locale
   );
-
+  if (!data.data) {
+    notFound();
+  }
   return data.data.map((color: any) => colorAdapter.adapt(color));
-
 }

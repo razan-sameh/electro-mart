@@ -1,6 +1,7 @@
 import { ProductAdapter } from "@/adapters/ProductAdapter";
 import { apiClient, STRAPI_URL } from "../apiClient";
 import { typProductFilters, typProduct } from "@/content/types";
+import { notFound } from "next/navigation";
 
 const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
 
@@ -77,7 +78,9 @@ export const fetchProducts = async (
     queryParams["pagination[withCount]"] = true;
   }
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
+  if (!res.data) {
+    notFound();
+  }
   return {
     data: res.data.map((product: any) => productAdapter.adapt(product)),
     meta: res.meta.pagination,
@@ -103,7 +106,7 @@ export const fetchProductById = async (locale: string, productId: string) => {
   );
 
   if (!res.data) {
-    throw new Error("Product not found");
+    notFound();
   }
 
   return productAdapter.adapt(res.data);
@@ -120,7 +123,9 @@ export const getMinPrice = async (locale: string, categoryId?: string) => {
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
+  if (!res.data) {
+    notFound();
+  }
   return res.data[0]?.Price || 0;
 };
 
@@ -136,7 +141,9 @@ export const getMaxPrice = async (locale: string, categoryId?: string) => {
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
+  if (!res.data) {
+    notFound();
+  }
   return res.data[0]?.Price || 0;
 };
 
@@ -163,6 +170,8 @@ export const fetchSimilarProducts = async (
   }
 
   const res = await apiClient<any>("/products", {}, queryParams, locale);
-
+  if (!res.data) {
+    notFound();
+  }
   return res.data.map((p: any) => productAdapter.adapt(p));
 };

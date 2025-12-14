@@ -1,6 +1,7 @@
 import { UserAdapter } from "@/adapters/UserAdapter";
 import { typUser } from "@/content/types";
 import { STRAPI_URL } from "../apiClient";
+import { notFound } from "next/navigation";
 const userAdapter = UserAdapter.getInstance(STRAPI_URL);
 
 export async function fetchMe(): Promise<typUser | null> {
@@ -8,5 +9,8 @@ export async function fetchMe(): Promise<typUser | null> {
   if (!res.ok) return null;
 
   const data = await res.json();
+  if (!data) {
+    notFound();
+  }
   return userAdapter.adapt(data.user);
 }

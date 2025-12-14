@@ -11,6 +11,7 @@ export function useOrders(page = 1, pageSize = 10, status?: enmOrderStatus) {
   return useQuery({
     queryKey: ["orders", locale, page, pageSize, status],
     queryFn: () => fetchOrders(locale, page, pageSize, status),
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }
 
@@ -21,6 +22,7 @@ export function usePrefetchOrder() {
     queryClient.prefetchQuery({
       queryKey: ["order", orderId, locale],
       queryFn: () => fetchOrderById(locale, orderId),
+      retry: 1, // 👈 Avoid infinite retry loops
     });
   };
 
@@ -49,5 +51,6 @@ export function useOrder(orderId: string) {
       // Otherwise fetch from API
       return await fetchOrderById(locale, orderId);
     },
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }

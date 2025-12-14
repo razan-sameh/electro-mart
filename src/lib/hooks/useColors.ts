@@ -11,5 +11,6 @@ export function useColors() {
   return useSuspenseQuery({
     queryKey: ["product-colors", locale],
     queryFn,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }

@@ -12,6 +12,8 @@ export function useAuth() {
   } = useQuery({
     queryKey: ["auth", "me"],
     queryFn: fetchMe,
+    retry: 1, // 👈 Avoid infinite retry loops
+
     // staleTime: 1000 * 60 * 5, // 5 minutes
   });
 

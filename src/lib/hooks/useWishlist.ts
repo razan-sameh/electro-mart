@@ -5,7 +5,13 @@ import type { typWishlist, typProduct, typColor } from "@/content/types";
 import { useAuth } from "./useAuth";
 import { useLocale } from "next-intl";
 import { useWishlistStore } from "@/stores/wishlistStore";
-import { fetchWishlist, mergeWishlist, addWishlistItem, removeWishlistItem, clearWishlist } from "../services/wishlist";
+import {
+  fetchWishlist,
+  mergeWishlist,
+  addWishlistItem,
+  removeWishlistItem,
+  clearWishlist,
+} from "../services/wishlist";
 
 export const WISHLIST_QUERY_KEY = ["wishlist"];
 
@@ -27,14 +33,16 @@ export function useWishlist() {
       return data ?? { id: "empty", items: [] };
     },
     enabled: !!isAuthenticated,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 
   // 🔄 Merge local → server
   const mergeMutation = useMutation({
     mutationFn: ({ product, selectedColor }: MergeWishlistInput) =>
-      mergeWishlist([
-        { id: -1, documentId: "wishlist", product, selectedColor },
-      ],locale),
+      mergeWishlist(
+        [{ id: -1, documentId: "wishlist", product, selectedColor }],
+        locale
+      ),
 
     onMutate: ({ product, selectedColor }) => {
       const prevWishlist = { items: [...useWishlistStore.getState().items] };
@@ -82,7 +90,8 @@ export function useWishlist() {
 
     onMutate: async ({ product, selectedColor }) => {
       await queryClient.cancelQueries({ queryKey: WISHLIST_QUERY_KEY });
-      const previousWishlist = queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
+      const previousWishlist =
+        queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
 
       queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
         if (!old) return old;
@@ -127,7 +136,10 @@ export function useWishlist() {
 
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, context.previousWishlist);
+        queryClient.setQueryData<typWishlist>(
+          WISHLIST_QUERY_KEY,
+          context.previousWishlist
+        );
       }
     },
   });
@@ -138,11 +150,15 @@ export function useWishlist() {
 
     onMutate: async (itemId) => {
       await queryClient.cancelQueries({ queryKey: WISHLIST_QUERY_KEY });
-      const previousWishlist = queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
+      const previousWishlist =
+        queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
 
       queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
         if (!old) return old;
-        return { ...old, items: old.items.filter((item) => item.id !== itemId) };
+        return {
+          ...old,
+          items: old.items.filter((item) => item.id !== itemId),
+        };
       });
 
       return { previousWishlist };
@@ -150,7 +166,10 @@ export function useWishlist() {
 
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, context.previousWishlist);
+        queryClient.setQueryData<typWishlist>(
+          WISHLIST_QUERY_KEY,
+          context.previousWishlist
+        );
       }
     },
   });
@@ -161,7 +180,8 @@ export function useWishlist() {
 
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: WISHLIST_QUERY_KEY });
-      const previousWishlist = queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
+      const previousWishlist =
+        queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
 
       queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
         if (!old) return old;
@@ -173,7 +193,10 @@ export function useWishlist() {
 
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, context.previousWishlist);
+        queryClient.setQueryData<typWishlist>(
+          WISHLIST_QUERY_KEY,
+          context.previousWishlist
+        );
       }
     },
   });

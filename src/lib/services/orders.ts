@@ -2,6 +2,7 @@
 import { enmOrderStatus } from "@/content/enums";
 import { STRAPI_URL } from "../apiClient";
 import { OrderAdapter } from "@/adapters/OrderAdapter";
+import { notFound } from "next/navigation";
 
 const orderAdapter = OrderAdapter.getInstance(STRAPI_URL);
 
@@ -29,7 +30,10 @@ export async function fetchOrders(
 
   if (!res.ok) throw new Error("Failed to fetch orders");
 
-  const data = await res.json();  
+  const data = await res.json();
+  if (!data.data) {
+    notFound();
+  }
   return {
     orders: orderAdapter.adaptMany(data.data),
     meta: data.meta,
@@ -47,5 +51,8 @@ export async function fetchOrderById(locale: string, id: string) {
   if (!res.ok) throw new Error("Failed to fetch order");
 
   const data = await res.json();
+  if (!data.data) {
+    notFound();
+  }
   return orderAdapter.adapt(data.data);
 }

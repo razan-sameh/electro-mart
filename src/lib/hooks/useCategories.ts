@@ -15,6 +15,7 @@ export function useCategories() {
   return useSuspenseQuery({
     queryKey: ["categories", locale],
     queryFn,
+    retry: 1, // 👈 Avoid infinite retry loops
     // staleTime: 1000 * 60 * 60, // 1 hour - perfect for categories
     // gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
@@ -30,6 +31,7 @@ export function useCategoryById(categoryId?: string) {
       ? () => fetchCategoryById(categoryId, locale)
       : () => Promise.resolve(null), // Never actually called due to enabled
     enabled: !!categoryId,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }
 
@@ -40,5 +42,6 @@ export function useCategoryByName(slug: string) {
     queryKey: ["category-slug", slug, locale],
     queryFn: () => fetchCategoryByName(slug, locale),
     enabled: !!slug,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }

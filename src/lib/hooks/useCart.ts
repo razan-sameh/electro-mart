@@ -24,7 +24,7 @@ export const CART_QUERY_KEY = ["cart"];
 
 export function useCart() {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated} = useAuth();
   const locale = useLocale();
 
   // 🧾 Fetch cart
@@ -36,6 +36,7 @@ export function useCart() {
       return data ?? { id: "empty", items: [] };
     },
     enabled: !!isAuthenticated,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 
   // 🔄 Merge local → server
@@ -92,7 +93,7 @@ export function useCart() {
     },
   });
 
-// ➕ Add item
+  // ➕ Add item
   const addMutation = useMutation({
     mutationFn: ({
       product,
@@ -140,7 +141,8 @@ export function useCart() {
           // Find and replace the optimistic item with the server response
           const existingIndex = old.items.findIndex(
             (item) =>
-              String(item.product.documentId) === String(data.product.documentId) &&
+              String(item.product.documentId) ===
+                String(data.product.documentId) &&
               item.selectedColor?.documentId === data.selectedColor?.documentId
           );
 

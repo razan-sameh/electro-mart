@@ -8,5 +8,6 @@ export function useBuyNow() {
   return useQuery({
     queryKey: ["buyNow"],
     queryFn,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }

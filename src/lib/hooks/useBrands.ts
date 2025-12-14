@@ -11,5 +11,6 @@ export function useBrands() {
   return useSuspenseQuery({
     queryKey: ["brands", locale],
     queryFn,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }

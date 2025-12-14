@@ -1,5 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getMaxPrice, getMinPrice, fetchProducts, fetchProductById, fetchSimilarProducts } from "../services/products";
+import {
+  getMaxPrice,
+  getMinPrice,
+  fetchProducts,
+  fetchProductById,
+  fetchSimilarProducts,
+} from "../services/products";
 import { useLocale } from "next-intl";
 import { typProductFilters } from "@/content/types";
 import { useSearchParams } from "next/navigation";
@@ -18,7 +24,11 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
       searchParams.get("specialOffer") === "true" ? true : undefined,
   };
 }
-export const useProducts = (categoryId?: string, page: number = 1, pageSize: number = 9) => {
+export const useProducts = (
+  categoryId?: string,
+  page: number = 1,
+  pageSize: number = 9
+) => {
   const locale = useLocale();
   const searchParams = useSearchParams();
   const filters = getFiltersFromUrl(searchParams);
@@ -26,7 +36,10 @@ export const useProducts = (categoryId?: string, page: number = 1, pageSize: num
   const searchQuery = searchParams.get("q") || undefined;
   return useSuspenseQuery({
     queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
-    queryFn: () => fetchProducts(locale, filters, searchQuery, undefined,page, pageSize),
+    queryFn: () =>
+      fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
+    retry: 1, // 👈 Avoid infinite retry loops
+
     // staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
@@ -38,6 +51,7 @@ export const useSpecialOffers = (limit?: number) => {
     queryKey: ["specialOffers", limit, locale],
     queryFn: () =>
       fetchProducts(locale, { specialOffer: true }, undefined, limit), // filters: specialOffer only
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 };
 
@@ -53,16 +67,17 @@ export const usePriceRange = (categoryId?: string) => {
 
       return { minPrice, maxPrice };
     },
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 };
 
-export function useProductsById(productId:string) {
+export function useProductsById(productId: string) {
   const locale = useLocale();
 
   return useSuspenseQuery({
-    queryKey: ["product", locale,productId],
-    queryFn:() =>
-      fetchProductById(locale, productId), // filters: specialOffer only
+    queryKey: ["product", locale, productId],
+    queryFn: () => fetchProductById(locale, productId), // filters: specialOffer only
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 }
 
@@ -76,5 +91,6 @@ export const useSimilarProducts = (
   return useSuspenseQuery({
     queryKey: ["similar-products", productId, categoryId, brandId, locale],
     queryFn: () => fetchSimilarProducts(locale, productId, categoryId, brandId),
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 };

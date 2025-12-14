@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { typReview } from "@/content/types";
 import { createReview, fetchReviewsByProductId } from "../services/review";
 import { v4 as uuidv4 } from "uuid";
@@ -16,10 +12,7 @@ type CreateReviewInput = {
   comment: string;
 };
 
-export function useReviews(
-  productId: string,
-  pageSize: number = 10,
-) {
+export function useReviews(productId: string, pageSize: number = 10) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 
@@ -31,10 +24,24 @@ export function useReviews(
     : undefined;
 
   const reviewsQuery = useQuery<{ data: typReview[]; meta: any }>({
-    queryKey: ["reviews", productId, page, pageSize, searchComment, ratingFilter],
+    queryKey: [
+      "reviews",
+      productId,
+      page,
+      pageSize,
+      searchComment,
+      ratingFilter,
+    ],
     queryFn: () =>
-      fetchReviewsByProductId(productId, page, pageSize, searchComment, ratingFilter),
+      fetchReviewsByProductId(
+        productId,
+        page,
+        pageSize,
+        searchComment,
+        ratingFilter
+      ),
     enabled: !!productId,
+    retry: 1, // 👈 Avoid infinite retry loops
   });
 
   // ➕ Create review
@@ -67,17 +74,14 @@ export function useReviews(
 
       // Insert optimistic review at the top
       if (previousReviews) {
-        queryClient.setQueryData(
-          ["reviews", data.productId, page, pageSize],
-          {
-            ...previousReviews,
-            data: [optimisticReview, ...previousReviews.data],
-            meta: {
-              ...previousReviews.meta,
-              total: previousReviews.meta.total + 1,
-            },
-          }
-        );
+        queryClient.setQueryData(["reviews", data.productId, page, pageSize], {
+          ...previousReviews,
+          data: [optimisticReview, ...previousReviews.data],
+          meta: {
+            ...previousReviews.meta,
+            total: previousReviews.meta.total + 1,
+          },
+        });
       }
 
       return { previousReviews };

@@ -2,11 +2,15 @@
 
 import { SpecificationTypeAdapter } from "@/adapters/SpecificationTypeAdapter";
 import { apiClient, STRAPI_URL } from "../apiClient";
+import { notFound } from "next/navigation";
 const specificationTypeAdapter =
   SpecificationTypeAdapter.getInstance(STRAPI_URL);
 
 // categoryId optional
-export const fetchSpecification = async (locale: string, categoryId?: string) => {
+export const fetchSpecification = async (
+  locale: string,
+  categoryId?: string
+) => {
   const queryParams: Record<string, any> = {
     "populate[specification_values][populate]": "specification_type",
   };
@@ -23,6 +27,8 @@ export const fetchSpecification = async (locale: string, categoryId?: string) =>
     queryParams,
     locale
   );
-
+  if (!res.data) {
+    notFound();
+  }
   return res.data.map((spec: any) => specificationTypeAdapter.adapt(spec));
 };
