@@ -68,11 +68,11 @@ export default function PaymentStep() {
         stripe={stripePromise}
         options={{
           clientSecret,
-          locale: `${locale}`,
+          locale: locale === "ar" ? "ar" : "en",
           appearance: {
             variables: {
-              colorBackground: isDark?"#000000" : "#FFFFFF",
-              colorText: isDark?"#ece7e7":"#4b4b4b",
+              colorBackground: isDark ? "#000000" : "#FFFFFF",
+              colorText: isDark ? "#ece7e7" : "#4b4b4b",
             },
           },
         }}

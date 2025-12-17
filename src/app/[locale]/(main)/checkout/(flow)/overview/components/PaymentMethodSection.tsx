@@ -17,7 +17,7 @@ export default function PaymentMethodSection() {
           <p className="text-sm mt-2">
             **** **** **** {cardInfo?.last4 || "5028"}
           </p>
-          <p className="text-xs mt-1">{shippingAddress?.name}</p>
+          {/* <p className="text-xs mt-1">{shippingAddress?.streetAddress}</p> */}
         </div>
         <p className="text-sm">
           {cardInfo?.exp_month}/{cardInfo?.exp_year}

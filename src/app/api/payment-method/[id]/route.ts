@@ -1,22 +1,27 @@
 // app/api/payment-method/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 const NEXT_PUBLIC_API_URL =
-   process.env.NEXT_PUBLIC_API_URL || "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  const { id } = await params; // ✅ await params
+
+  if (!id) {
+    return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  }
 
   const cookieStore = await cookies();
   const token = cookieStore.get("jwtToken")?.value;
 
-  if (!token)
+  if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const res = await fetch(
