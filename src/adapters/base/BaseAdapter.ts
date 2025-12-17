@@ -27,17 +27,23 @@ export abstract class BaseAdapter<TSource, TTarget>
   // Always returns an array
   protected adaptImageUrls(images?: StrapiImage | StrapiImage[]): string[] {
     if (!images) return [];
+
+    const getFullUrl = (img: StrapiImage) =>
+      img.url.startsWith("http") ? img.url : `${this.STRAPI_URL}${img.url}`;
+
     return Array.isArray(images)
-      ? images.map((img) => `${this.STRAPI_URL}${img.url}`)
-      : [`${this.STRAPI_URL}${images.url}`];
+      ? images.map(getFullUrl)
+      : [getFullUrl(images)];
   }
 
-  // Always returns a single string
   protected adaptImageUrlSingle(images?: StrapiImage | StrapiImage[]): string {
     if (!images) return "";
-    if (Array.isArray(images))
-      return images[0] ? `${this.STRAPI_URL}${images[0].url}` : "";
-    return `${this.STRAPI_URL}${images.url}`;
+
+    const img = Array.isArray(images) ? images[0] : images;
+    if (!img) return "";
+
+    return img.url.startsWith("http")
+      ? img.url
+      : `${this.STRAPI_URL}${img.url}`;
   }
-  
 }
