@@ -1,10 +1,10 @@
 // app/api/auth/update-user/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { typPhone, typUser } from "@/content/types";
 import { serverApiClient } from "../../serverApiClient";
 
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("jwtToken")?.value;

@@ -1,6 +1,6 @@
 // apiClient.ts
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://ingenious-agreement-d1c2cbc003.strapiapp.com/api" ||"http://localhost:1337/api";
 export const STRAPI_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
   "http://localhost:1337";

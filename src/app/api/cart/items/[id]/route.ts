@@ -1,11 +1,12 @@
 import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 
 
 // PUT /api/cart/items/:id - Update quantity
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+ req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params; // FIX: Await params
