@@ -8,14 +8,14 @@ export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
   private static instance: ReviewAdapter;
   private userAdapter: UserAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.userAdapter = UserAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.userAdapter = UserAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): ReviewAdapter {
+  public static getInstance(): ReviewAdapter {
     if (!ReviewAdapter.instance) {
-      ReviewAdapter.instance = new ReviewAdapter(strapiUrl);
+      ReviewAdapter.instance = new ReviewAdapter();
     }
     return ReviewAdapter.instance;
   }

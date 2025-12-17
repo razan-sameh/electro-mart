@@ -1,10 +1,10 @@
 // lib/services/categories.ts
 import { typBrand } from "@/content/types";
-import { apiClient, STRAPI_URL } from "../apiClient";
+import { apiClient } from "../apiClient";
 import { BrandAdapter } from "@/adapters/BrandAdapter";
 import { notFound } from "next/navigation";
 
-const brandAdapter = BrandAdapter.getInstance(STRAPI_URL);
+const brandAdapter = BrandAdapter.getInstance();
 
 export async function fetchBrands(locale: string): Promise<typBrand[]> {
   const data = await apiClient<any>(

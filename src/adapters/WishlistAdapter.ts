@@ -9,14 +9,14 @@ export class WishlistAdapter extends BaseAdapter<StrapiWishlist, typWishlist> {
   private static instance: WishlistAdapter;
   private wishlistItemsAdapter: WishlistItemsAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.wishlistItemsAdapter = WishlistItemsAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.wishlistItemsAdapter = WishlistItemsAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): WishlistAdapter {
+  public static getInstance(): WishlistAdapter {
     if (!WishlistAdapter.instance) {
-      WishlistAdapter.instance = new WishlistAdapter(strapiUrl);
+      WishlistAdapter.instance = new WishlistAdapter();
     }
     return WishlistAdapter.instance;
   }

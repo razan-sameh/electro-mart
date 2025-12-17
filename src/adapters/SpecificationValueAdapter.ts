@@ -9,14 +9,14 @@ export class SpecificationValueAdapter extends BaseAdapter<
 > {
   private static instance: SpecificationValueAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): SpecificationValueAdapter {
+  public static getInstance(): SpecificationValueAdapter {
     if (!SpecificationValueAdapter.instance) {
       SpecificationValueAdapter.instance = new SpecificationValueAdapter(
-        strapiUrl
+        
       );
     }
     return SpecificationValueAdapter.instance;

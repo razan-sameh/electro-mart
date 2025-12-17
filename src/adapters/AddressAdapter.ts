@@ -11,14 +11,14 @@ export class AddressAdapter extends BaseAdapter<
   private static instance: AddressAdapter;
   private phoneAdapter: PhoneAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.phoneAdapter = PhoneAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.phoneAdapter = PhoneAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): AddressAdapter {
+  public static getInstance(): AddressAdapter {
     if (!AddressAdapter.instance) {
-      AddressAdapter.instance = new AddressAdapter(strapiUrl);
+      AddressAdapter.instance = new AddressAdapter();
     }
     return AddressAdapter.instance;
   }

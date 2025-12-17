@@ -7,13 +7,13 @@ import { StrapiSpecialOffer } from "./interfaces/types";
 export class SpecialOfferAdapter extends BaseAdapter<StrapiSpecialOffer, typSpecialOffer> {
   private static instance: SpecialOfferAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): SpecialOfferAdapter {
+  public static getInstance(): SpecialOfferAdapter {
     if (!SpecialOfferAdapter.instance) {
-      SpecialOfferAdapter.instance = new SpecialOfferAdapter(strapiUrl);
+      SpecialOfferAdapter.instance = new SpecialOfferAdapter();
     }
     return SpecialOfferAdapter.instance;
   }

@@ -8,14 +8,14 @@ export class UserAdapter extends BaseAdapter<StrapiUser, typUser> {
   private static instance: UserAdapter;
   private phoneAdapter: PhoneAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.phoneAdapter = PhoneAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.phoneAdapter = PhoneAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): UserAdapter {
+  public static getInstance(): UserAdapter {
     if (!UserAdapter.instance) {
-      UserAdapter.instance = new UserAdapter(strapiUrl);
+      UserAdapter.instance = new UserAdapter();
     }
     return UserAdapter.instance;
   }

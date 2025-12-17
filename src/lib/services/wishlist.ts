@@ -2,10 +2,9 @@
 import { WishlistAdapter } from "@/adapters/WishlistAdapter";
 import { WishlistItemsAdapter } from "@/adapters/WishlistItemsAdapter";
 import { typWishlistItem, typProduct, typColor } from "@/content/types";
-import { STRAPI_URL } from "../apiClient";
 
-const wishlistAdapter = WishlistAdapter.getInstance(STRAPI_URL);
-const wishlistItemsAdapter = WishlistItemsAdapter.getInstance(STRAPI_URL);
+const wishlistAdapter = WishlistAdapter.getInstance();
+const wishlistItemsAdapter = WishlistItemsAdapter.getInstance();
 
 // Fetch wishlist
 export async function fetchWishlist(locale: string) {

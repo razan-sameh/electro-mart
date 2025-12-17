@@ -1,10 +1,9 @@
 // lib/services/orders.ts
 import { enmOrderStatus } from "@/content/enums";
-import { STRAPI_URL } from "../apiClient";
 import { OrderAdapter } from "@/adapters/OrderAdapter";
 import { notFound } from "next/navigation";
 
-const orderAdapter = OrderAdapter.getInstance(STRAPI_URL);
+const orderAdapter = OrderAdapter.getInstance();
 
 export async function fetchOrders(
   locale: string,

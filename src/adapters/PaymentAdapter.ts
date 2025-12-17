@@ -8,15 +8,15 @@ export class PaymentAdapter extends BaseAdapter<StrapiPayment, typPayment> {
   private static instance: PaymentAdapter;
   private paymentMethodAdapter: PaymentMethodAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-        this.paymentMethodAdapter = PaymentMethodAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+        this.paymentMethodAdapter = PaymentMethodAdapter.getInstance();
     
   }
 
-  public static getInstance(strapiUrl: string): PaymentAdapter {
+  public static getInstance(): PaymentAdapter {
     if (!PaymentAdapter.instance) {
-      PaymentAdapter.instance = new PaymentAdapter(strapiUrl);
+      PaymentAdapter.instance = new PaymentAdapter();
     }
     return PaymentAdapter.instance;
   }

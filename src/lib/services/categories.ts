@@ -1,10 +1,10 @@
 // lib/services/categories.ts
 import { typCategory } from "@/content/types";
-import { apiClient, STRAPI_URL } from "../apiClient";
+import { apiClient } from "../apiClient";
 import { CategoryAdapter } from "@/adapters/CategoryAdapter";
 import { notFound } from "next/navigation";
 
-const categoryAdapter = CategoryAdapter.getInstance(STRAPI_URL);
+const categoryAdapter = CategoryAdapter.getInstance();
 
 export async function fetchCategories(locale: string): Promise<typCategory[]> {
   const data = await apiClient<any>(

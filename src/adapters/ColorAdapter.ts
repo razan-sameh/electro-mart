@@ -6,13 +6,13 @@ import { StrapiColor } from "./interfaces/types";
 export class ColorAdapter extends BaseAdapter<StrapiColor, typColor> {
   private static instance: ColorAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): ColorAdapter {
+  public static getInstance(): ColorAdapter {
     if (!ColorAdapter.instance) {
-      ColorAdapter.instance = new ColorAdapter(strapiUrl);
+      ColorAdapter.instance = new ColorAdapter();
     }
     return ColorAdapter.instance;
   }

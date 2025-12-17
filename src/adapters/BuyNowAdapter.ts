@@ -10,15 +10,15 @@ export class BuyNowAdapter extends BaseAdapter<StrapiBuyNow, typCartItem> {
   private colorAdapter: ColorAdapter;
   private productAdapter: ProductAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
-    this.productAdapter = ProductAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.colorAdapter = ColorAdapter.getInstance();
+    this.productAdapter = ProductAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): BuyNowAdapter {
+  public static getInstance(): BuyNowAdapter {
     if (!BuyNowAdapter.instance) {
-      BuyNowAdapter.instance = new BuyNowAdapter(strapiUrl);
+      BuyNowAdapter.instance = new BuyNowAdapter();
     }
     return BuyNowAdapter.instance;
   }

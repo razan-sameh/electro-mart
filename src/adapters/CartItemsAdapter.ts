@@ -10,15 +10,15 @@ export class CartItemsAdapter extends BaseAdapter<StrapiCartItem, typCartItem> {
   private colorAdapter: ColorAdapter;
   private productAdapter: ProductAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
-    this.productAdapter = ProductAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.colorAdapter = ColorAdapter.getInstance();
+    this.productAdapter = ProductAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): CartItemsAdapter {
+  public static getInstance(): CartItemsAdapter {
     if (!CartItemsAdapter.instance) {
-      CartItemsAdapter.instance = new CartItemsAdapter(strapiUrl);
+      CartItemsAdapter.instance = new CartItemsAdapter();
     }
     return CartItemsAdapter.instance;
   }

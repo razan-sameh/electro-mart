@@ -9,13 +9,13 @@ export class PaymentMethodAdapter extends BaseAdapter<
 > {
   private static instance: PaymentMethodAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): PaymentMethodAdapter {
+  public static getInstance(): PaymentMethodAdapter {
     if (!PaymentMethodAdapter.instance) {
-      PaymentMethodAdapter.instance = new PaymentMethodAdapter(strapiUrl);
+      PaymentMethodAdapter.instance = new PaymentMethodAdapter();
     }
     return PaymentMethodAdapter.instance;
   }

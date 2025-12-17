@@ -8,14 +8,14 @@ export class CartAdapter extends BaseAdapter<StrapiCart, typCart> {
   private static instance: CartAdapter;
   private cartItemsAdapter: CartItemsAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.cartItemsAdapter = CartItemsAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.cartItemsAdapter = CartItemsAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): CartAdapter {
+  public static getInstance(): CartAdapter {
     if (!CartAdapter.instance) {
-      CartAdapter.instance = new CartAdapter(strapiUrl);
+      CartAdapter.instance = new CartAdapter();
     }
     return CartAdapter.instance;
   }

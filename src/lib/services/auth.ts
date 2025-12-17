@@ -1,8 +1,7 @@
 import { UserAdapter } from "@/adapters/UserAdapter";
 import { typUser } from "@/content/types";
-import { STRAPI_URL } from "../apiClient";
 import { notFound } from "next/navigation";
-const userAdapter = UserAdapter.getInstance(STRAPI_URL);
+const userAdapter = UserAdapter.getInstance();
 
 export async function fetchMe(): Promise<typUser | null> {
   const res = await fetch("/api/auth/me", { credentials: "include" });

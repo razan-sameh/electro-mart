@@ -1,14 +1,15 @@
 // adapters/base/BaseAdapter.ts
 import { IDataAdapter } from "../interfaces/interfaces";
 import { StrapiImage } from "../interfaces/types";
+const STRAPI_URL_Image = "http://localhost:1337";
 
 export abstract class BaseAdapter<TSource, TTarget>
   implements IDataAdapter<TSource, TTarget>
 {
   protected readonly STRAPI_URL: string;
 
-  constructor(strapiUrl: string) {
-    this.STRAPI_URL = strapiUrl;
+  constructor() {
+    this.STRAPI_URL = STRAPI_URL_Image;
   }
 
   abstract adapt(source: TSource): TTarget;

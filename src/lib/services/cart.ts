@@ -1,10 +1,9 @@
 // lib/services/cart.ts
 import { CartAdapter } from "@/adapters/CartAdapter";
 import { typCartItem, typColor, typProduct } from "@/content/types";
-import { STRAPI_URL } from "../apiClient";
 import { CartItemsAdapter } from "@/adapters/CartItemsAdapter";
-const cartAdapter = CartAdapter.getInstance(STRAPI_URL);
-const cartItemsAdapter = CartItemsAdapter.getInstance(STRAPI_URL);
+const cartAdapter = CartAdapter.getInstance();
+const cartItemsAdapter = CartItemsAdapter.getInstance();
 
 export async function mergeCart(cartItems: typCartItem[]) {  
   const cartRes = await fetch("/api/cart", {

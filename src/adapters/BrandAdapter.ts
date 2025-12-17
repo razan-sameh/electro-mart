@@ -6,13 +6,13 @@ import { StrapiBrand } from "./interfaces/types";
 export class BrandAdapter extends BaseAdapter<StrapiBrand, typBrand> {
   private static instance: BrandAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): BrandAdapter {
+  public static getInstance(): BrandAdapter {
     if (!BrandAdapter.instance) {
-      BrandAdapter.instance = new BrandAdapter(strapiUrl);
+      BrandAdapter.instance = new BrandAdapter();
     }
     return BrandAdapter.instance;
   }

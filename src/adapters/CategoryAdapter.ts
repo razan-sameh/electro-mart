@@ -7,14 +7,14 @@ export class CategoryAdapter extends BaseAdapter<StrapiCategory, typCategory> {
   private static instance: CategoryAdapter;
   private specificationTypeAdapter: SpecificationTypeAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.specificationTypeAdapter = SpecificationTypeAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.specificationTypeAdapter = SpecificationTypeAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): CategoryAdapter {
+  public static getInstance(): CategoryAdapter {
     if (!CategoryAdapter.instance) {
-      CategoryAdapter.instance = new CategoryAdapter(strapiUrl);
+      CategoryAdapter.instance = new CategoryAdapter();
     }
     return CategoryAdapter.instance;
   }

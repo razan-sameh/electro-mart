@@ -6,13 +6,13 @@ import { StrapiColor, StrapiPhone } from "./interfaces/types";
 export class PhoneAdapter extends BaseAdapter<StrapiPhone, typPhone> {
   private static instance: PhoneAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
   }
 
-  public static getInstance(strapiUrl: string): PhoneAdapter {
+  public static getInstance(): PhoneAdapter {
     if (!PhoneAdapter.instance) {
-      PhoneAdapter.instance = new PhoneAdapter(strapiUrl);
+      PhoneAdapter.instance = new PhoneAdapter();
     }
     return PhoneAdapter.instance;
   }

@@ -10,15 +10,15 @@ export class WishlistItemsAdapter extends BaseAdapter<StrapiWishlistItem, typWis
   private colorAdapter: ColorAdapter;
   private productAdapter: ProductAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
-    this.productAdapter = ProductAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.colorAdapter = ColorAdapter.getInstance();
+    this.productAdapter = ProductAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): WishlistItemsAdapter {
+  public static getInstance(): WishlistItemsAdapter {
     if (!WishlistItemsAdapter.instance) {
-      WishlistItemsAdapter.instance = new WishlistItemsAdapter(strapiUrl);
+      WishlistItemsAdapter.instance = new WishlistItemsAdapter();
     }
     return WishlistItemsAdapter.instance;
   }

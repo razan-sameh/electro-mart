@@ -11,16 +11,16 @@ export class SpecificationTypeAdapter extends BaseAdapter<
   private static instance: SpecificationTypeAdapter;
   private specificationValueAdapter: SpecificationValueAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
+  private constructor() {
+    super();
     this.specificationValueAdapter =
-      SpecificationValueAdapter.getInstance(strapiUrl);
+      SpecificationValueAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): SpecificationTypeAdapter {
+  public static getInstance(): SpecificationTypeAdapter {
     if (!SpecificationTypeAdapter.instance) {
       SpecificationTypeAdapter.instance = new SpecificationTypeAdapter(
-        strapiUrl
+        
       );
     }
     return SpecificationTypeAdapter.instance;

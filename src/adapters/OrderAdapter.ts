@@ -15,17 +15,17 @@ export class OrderAdapter extends BaseAdapter<StrapiOrder, typOrder> {
   private userAdapter: UserAdapter;
   private addressAdapter: AddressAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.orderItemAdapter = OrderItemAdapter.getInstance(strapiUrl);
-    this.paymentAdapter = PaymentAdapter.getInstance(strapiUrl);
-    this.userAdapter = UserAdapter.getInstance(strapiUrl);
-    this.addressAdapter = AddressAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.orderItemAdapter = OrderItemAdapter.getInstance();
+    this.paymentAdapter = PaymentAdapter.getInstance();
+    this.userAdapter = UserAdapter.getInstance();
+    this.addressAdapter = AddressAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): OrderAdapter {
+  public static getInstance(): OrderAdapter {
     if (!OrderAdapter.instance) {
-      OrderAdapter.instance = new OrderAdapter(strapiUrl);
+      OrderAdapter.instance = new OrderAdapter();
     }
     return OrderAdapter.instance;
   }

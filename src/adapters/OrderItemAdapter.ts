@@ -13,15 +13,15 @@ export class OrderItemAdapter extends BaseAdapter<
   private productAdapter: ProductAdapter;
   private colorAdapter: ColorAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.productAdapter = ProductAdapter.getInstance(strapiUrl);
-    this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.productAdapter = ProductAdapter.getInstance();
+    this.colorAdapter = ColorAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): OrderItemAdapter {
+  public static getInstance(): OrderItemAdapter {
     if (!OrderItemAdapter.instance) {
-      OrderItemAdapter.instance = new OrderItemAdapter(strapiUrl);
+      OrderItemAdapter.instance = new OrderItemAdapter();
     }
     return OrderItemAdapter.instance;
   }

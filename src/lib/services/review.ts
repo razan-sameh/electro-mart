@@ -1,8 +1,8 @@
 import { ReviewAdapter } from "@/adapters/ReviewAdapter";
-import { apiClient, STRAPI_URL } from "../apiClient";
+import { apiClient } from "../apiClient";
 import { typReview } from "@/content/types";
 
-const reviewAdapter = ReviewAdapter.getInstance(STRAPI_URL);
+const reviewAdapter = ReviewAdapter.getInstance();
 
 export const fetchReviewsByProductId = async (
   productId: string,

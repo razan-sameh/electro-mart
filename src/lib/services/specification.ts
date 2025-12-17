@@ -1,10 +1,10 @@
 // Get spec types for a category
 
 import { SpecificationTypeAdapter } from "@/adapters/SpecificationTypeAdapter";
-import { apiClient, STRAPI_URL } from "../apiClient";
+import { apiClient } from "../apiClient";
 import { notFound } from "next/navigation";
 const specificationTypeAdapter =
-  SpecificationTypeAdapter.getInstance(STRAPI_URL);
+  SpecificationTypeAdapter.getInstance();
 
 // categoryId optional
 export const fetchSpecification = async (

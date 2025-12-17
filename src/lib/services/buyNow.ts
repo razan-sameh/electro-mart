@@ -1,7 +1,6 @@
 import { BuyNowAdapter } from "@/adapters/BuyNowAdapter";
-import { STRAPI_URL } from "../apiClient";
 
-const buyNowAdapter = BuyNowAdapter.getInstance(STRAPI_URL);
+const buyNowAdapter = BuyNowAdapter.getInstance();
 
 export async function fetchBuyNow() {
   const res = await fetch(`/api/buy-now`);

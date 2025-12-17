@@ -15,19 +15,19 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
   private colorAdapter: ColorAdapter;
   private specificationValueAdapter: SpecificationValueAdapter;
 
-  private constructor(strapiUrl: string) {
-    super(strapiUrl);
-    this.categoryAdapter = CategoryAdapter.getInstance(strapiUrl);
-    this.brandAdapter = BrandAdapter.getInstance(strapiUrl);
-    this.specialOfferAdapter = SpecialOfferAdapter.getInstance(strapiUrl);
-    this.colorAdapter = ColorAdapter.getInstance(strapiUrl);
+  private constructor() {
+    super();
+    this.categoryAdapter = CategoryAdapter.getInstance();
+    this.brandAdapter = BrandAdapter.getInstance();
+    this.specialOfferAdapter = SpecialOfferAdapter.getInstance();
+    this.colorAdapter = ColorAdapter.getInstance();
     this.specificationValueAdapter =
-      SpecificationValueAdapter.getInstance(strapiUrl);
+      SpecificationValueAdapter.getInstance();
   }
 
-  public static getInstance(strapiUrl: string): ProductAdapter {
+  public static getInstance(): ProductAdapter {
     if (!ProductAdapter.instance) {
-      ProductAdapter.instance = new ProductAdapter(strapiUrl);
+      ProductAdapter.instance = new ProductAdapter();
     }
     return ProductAdapter.instance;
   }

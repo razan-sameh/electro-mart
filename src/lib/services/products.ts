@@ -1,9 +1,9 @@
 import { ProductAdapter } from "@/adapters/ProductAdapter";
-import { apiClient, STRAPI_URL } from "../apiClient";
+import { apiClient } from "../apiClient";
 import { typProductFilters, typProduct } from "@/content/types";
 import { notFound } from "next/navigation";
 
-const productAdapter = ProductAdapter.getInstance(STRAPI_URL);
+const productAdapter = ProductAdapter.getInstance();
 
 export const fetchProducts = async (
   locale: string,
