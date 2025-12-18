@@ -1,47 +1,54 @@
 import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 // POST /api/cart/items - Add single item to cart
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("jwtToken")?.value;
 
     if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
 
     const { productId, quantity, productColorId } = body;
 
-    // ✅ Validate required fields
+    // Validate required fields
     if (!productId || !quantity) {
-      return Response.json(
+      return NextResponse.json(
         { error: "productId and quantity are required" },
         { status: 400 }
       );
     }
 
-    // ✅ Call your Strapi endpoint with correct field names
+    // Log the full request details
+    const requestPayload = {
+      productId,
+      quantity,
+      productColorId,
+    };
+
     const data = await serverApiClient("/cart/items", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        productId,      // Strapi expects this
-        quantity,       // Strapi expects this
-        productColorId, // Strapi expects this (optional)
-      }),
+      credentials: "include",
+      body: JSON.stringify(requestPayload),
     });
 
-    return Response.json(data);
+    return NextResponse.json(data);
   } catch (error: any) {
     console.error("❌ Add to cart error:", error);
-    return Response.json(
-      { error: error.message || "Failed to add to cart" },
+    return NextResponse.json(
+      {
+        error: error.message || "Failed to add to cart",
+        details: error.toString(),
+      },
       { status: 500 }
     );
   }

@@ -5,7 +5,7 @@ import { CartItemsAdapter } from "@/adapters/CartItemsAdapter";
 const cartAdapter = CartAdapter.getInstance();
 const cartItemsAdapter = CartItemsAdapter.getInstance();
 
-export async function mergeCart(cartItems: typCartItem[]) {  
+export async function mergeCart(cartItems: typCartItem[]) {
   const cartRes = await fetch("/api/cart", {
     method: "POST",
     credentials: "include",
@@ -44,13 +44,18 @@ export async function addCartItem(
   const res = await fetch("/api/cart/items", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
-      productId: product.documentId,
+      productId: product.id,
       quantity: quantity,
-      productColorId: selectedColor.documentId,
+      productColorId: selectedColor.id,
     }),
   });
-
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Strapi error:", text);
+    throw new Error(text);
+  }
   if (!res.ok) throw new Error("Failed to add to cart");
   const data = await res.json();
 
