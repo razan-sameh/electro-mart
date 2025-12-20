@@ -14,14 +14,17 @@ function Cart() {
   const t = useTranslations("Cart");
 
   if (isLoading) {
-    return <LoadingSpinner/>;
+    return <LoadingSpinner />;
   }
 
-  if (!cart || cart.length === 0) {
-    return (
-      <p className="text-gray-500 text-center mt-12">Your cart is empty</p>
-    );
-  }
+if (!cart || cart.length === 0) {
+  return (
+    <div className="flex items-center justify-center h-[60vh]">
+      <p className="text-gray-500 text-center text-lg">{t("empty")}</p>
+    </div>
+  );
+}
+
   const handleCheckout = async () => {
     const res = await fetch("/api/auth/me");
     const data = await res.json();
@@ -43,9 +46,7 @@ function Cart() {
           <div className="w-full lg:w-[392px] flex-shrink-0">
             <CartSummary items={cart} onButtonClick={handleCheckout} />
             {isGuest && (
-              <p className="text-sm text-gray-400 mt-4">
-                You’re shopping as a guest — log in to sync your cart.
-              </p>
+              <p className="text-sm text-gray-400 mt-4">{t("guestNotice")}</p>
             )}
           </div>
         </div>

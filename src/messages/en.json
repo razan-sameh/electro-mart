@@ -116,7 +116,9 @@
   "Cart": {
     "title": "Shopping Cart",
     "brand": "Brand",
-    "color": "Color"
+    "color": "Color",
+    "empty": "Your cart is empty",
+    "guestNotice": "You’re shopping as a guest — log in to sync your cart."
   },
   "Checkout": {
     "deliveryDetails": "Delivery Details",

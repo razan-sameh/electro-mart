@@ -48,7 +48,7 @@ export async function addCartItem(
     body: JSON.stringify({
       productId: product.id,
       quantity: quantity,
-      productColorId: selectedColor.id,
+      productColorId: selectedColor.documentId,
     }),
   });
   if (!res.ok) {
