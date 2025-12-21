@@ -66,8 +66,8 @@ export default function LoginForm() {
 
   const handleGoogleLogin = () => {
     const strapiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
-    window.location.href = `${strapiUrl}/api/connect/google`;
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
+    window.location.href = `${strapiUrl}/connect/google`;
   };
 
   return (
