@@ -43,9 +43,10 @@ export async function addWishlistItem(
   const res = await fetch("/api/wishlist/items", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
-      productId: product.documentId,
-      productColorId: selectedColor.documentId,
+      productId: product.id,
+      productColorId: selectedColor.id,
     }),
   });
 

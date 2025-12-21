@@ -42,6 +42,7 @@ export default function PaymentStep() {
       const res = await fetch("/api/create-setup-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({}), // optionally send any info if needed
       });
       const data = await res.json();

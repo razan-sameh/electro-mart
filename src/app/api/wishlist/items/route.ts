@@ -1,14 +1,15 @@
 import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 // POST /api/wishlist/items - Add single item to wishlist
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("jwtToken")?.value;
 
     if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
 
     // ✅ Validate required fields
     if (!productId) {
-      return Response.json(
+      return NextResponse.json(
         { error: "productId is required" },
         { status: 400 }
       );
@@ -29,16 +30,17 @@ export async function POST(req: Request) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
-        productId,      // Strapi expects this
+        productId, // Strapi expects this
         productColorId, // Optional
       }),
     });
 
-    return Response.json(data);
+    return NextResponse.json(data);
   } catch (error: any) {
     console.error("❌ Add to wishlist error:", error);
-    return Response.json(
+    return NextResponse.json(
       { error: error.message || "Failed to add to wishlist" },
       { status: 500 }
     );

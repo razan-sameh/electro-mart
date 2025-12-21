@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const NEXT_PUBLIC_API_URL =
-   process.env.NEXT_PUBLIC_API_URL || "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://ingenious-agreement-d1c2cbc003.strapiapp.com/api";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     if (!token)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const res = await fetch(`${NEXT_PUBLIC_API_URL}/api/orders/pay-order`, {
+    const res = await fetch(`${NEXT_PUBLIC_API_URL}/orders/pay-order`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

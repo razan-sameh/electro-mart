@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 const NEXT_PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://romeo-pseudocollegiate-vincibly.ngrok-free.dev";
+  "https://ingenious-agreement-d1c2cbc003.strapiapp.com/api";
 
 export async function GET(
   req: NextRequest,
@@ -25,7 +25,7 @@ export async function GET(
 
   try {
     const res = await fetch(
-      `${NEXT_PUBLIC_API_URL}/api/orders/payment-method/${id}`,
+      `${NEXT_PUBLIC_API_URL}/orders/payment-method/${id}`,
       {
         method: "GET",
         headers: {
