@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const NEXT_PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://ingenious-agreement-d1c2cbc003.strapiapp.com/api";
+  "http://localhost:1337/api";
 
 export async function POST(req: NextRequest) {
   try {

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 const NEXT_PUBLIC_API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://ingenious-agreement-d1c2cbc003.strapiapp.com/api";
+  "http://localhost:1337/api";
 
 export async function GET(
   req: NextRequest,
