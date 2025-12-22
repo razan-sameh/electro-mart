@@ -24,6 +24,7 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
       searchParams.get("specialOffer") === "true" ? true : undefined,
   };
 }
+
 export const useProducts = (
   categoryId?: string,
   page: number = 1,
@@ -34,25 +35,16 @@ export const useProducts = (
   const filters = getFiltersFromUrl(searchParams);
   filters.categoryId = categoryId; // merge path + query
   const searchQuery = searchParams.get("q") || undefined;
-  const hasFilters =
-    !!searchQuery ||
-    !!filters.categoryId ||
-    (filters.colorsId?.length ?? 0) > 0 ||
-    (filters.brandsId?.length ?? 0) > 0 ||
-    (filters.specificationValuesId?.length ?? 0) > 0 ||
-    !!filters.price ||
-    !!filters.specialOffer;
-  const safePage = hasFilters ? 1 : page;
 
   return useSuspenseQuery({
-    queryKey: ["products", filters, searchQuery, safePage, pageSize, locale], // React Query automatically serializes the filters object
+    queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
     queryFn: () =>
       fetchProducts(
         locale,
         filters,
         searchQuery,
         undefined,
-        safePage,
+        page,
         pageSize
       ),
     retry: 1, // 👈 Avoid infinite retry loops
