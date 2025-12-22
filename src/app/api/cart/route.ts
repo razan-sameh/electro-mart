@@ -64,13 +64,14 @@ export async function POST(req: Request) {
         if (!item.quantity) {
           throw new Error("Missing quantity");
         }
-
+        
         const result = await serverApiClient("/cart/items", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             productId: item.product.id,
             quantity: item.quantity,
