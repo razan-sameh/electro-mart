@@ -40,7 +40,7 @@ export const fetchProducts = async (
   if (filters?.specificationValuesId?.length) {
     filters.specificationValuesId.forEach((id, index) => {
       queryParams[
-        `filters[$or][${index}][specification_values][documentId][$eq]`
+        `filters[$and][${index}][specification_values][documentId][$eq]`
       ] = id;
     });
   }
@@ -89,7 +89,6 @@ export const fetchProducts = async (
 
 export const fetchProductById = async (locale: string, productId: string) => {
   const queryParams: Record<string, any> = {
-    // "filters[documentId][$eq]": productId, // filter by product ID
     "populate[brand]": true,
     "populate[category]": true,
     "populate[special_offers]": true,

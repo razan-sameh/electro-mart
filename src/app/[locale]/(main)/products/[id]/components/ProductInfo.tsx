@@ -1,7 +1,7 @@
 "use client";
 
 import { typProduct } from "@/content/types";
-import { FaStar, FaCheckCircle } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { FiHeart, FiMinus, FiPlus } from "react-icons/fi";
 import { useReducer } from "react";
 import { calculateDiscountedPrice } from "@/content/utils";
