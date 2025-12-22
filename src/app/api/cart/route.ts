@@ -58,8 +58,8 @@ export async function POST(req: Request) {
 
       try {
         // Validate item structure
-        if (!item.product?.documentId) {
-          throw new Error("Missing product.documentId");
+        if (!item.product?.id) {
+          throw new Error("Missing product.id");
         }
         if (!item.quantity) {
           throw new Error("Missing quantity");
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            productId: item.product.documentId,
+            productId: item.product.id,
             quantity: item.quantity,
             productColorId: item.selectedColor?.documentId || null,
           }),
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
         console.error(`❌ Failed to add item ${i + 1}:`, error);
         errors.push({
           item: {
-            productId: item.product?.documentId,
+            productId: item.product?.id,
             quantity: item.quantity,
           },
           error: error.message,

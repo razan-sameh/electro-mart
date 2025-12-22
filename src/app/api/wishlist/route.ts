@@ -68,18 +68,18 @@ export async function POST(req: Request) {
       const item = body.wishlist_items[i];
 
       try {
-        const productId = item.product?.documentId;
-        const colorId = item.selectedColor?.documentId || null;
+        const productId = item.product?.id;
+        const colorId = item.selectedColor?.id || null;
 
         if (!productId) {
-          throw new Error("Missing product.documentId");
+          throw new Error("Missing product.id");
         }
 
         // ✅ 3. Check if already exists (same product & color)
         const alreadyExists = existingItems.some(
           (w: any) =>
-            w.product?.documentId === productId &&
-            (w.selectedColor?.documentId || null) === colorId
+            w.product?.id === productId &&
+            (w.selectedColor?.id || null) === colorId
         );
 
         if (alreadyExists) {
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
       } catch (error: any) {
         console.error(`❌ Failed to add wishlist item ${i + 1}:`, error);
         errors.push({
-          item: { productId: item.product?.documentId },
+          item: { productId: item.product?.id },
           error: error.message,
         });
       }
