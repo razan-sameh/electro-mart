@@ -95,9 +95,6 @@ export function useProductsById(productId: string) {
     queryKey: ["product", locale, productId],
     queryFn: () => fetchProductById(locale, productId), // filters: specialOffer only
     retry: 1, // 👈 Avoid infinite retry loops
-    staleTime: 1000 * 60 * 5, // ✅ 5 minutes
-    refetchOnMount: false, // ✅ important
-    refetchOnWindowFocus: false, // optional
   });
 }
 
