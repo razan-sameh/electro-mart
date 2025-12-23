@@ -63,9 +63,8 @@ export function useSignup() {
         queryClient.setQueryData(["auth", "me"], data.user);
         await mergeCart();
         await mergeWishlist();
-        // 3. Invalidate to refresh cart and wishlist
-        await queryClient.invalidateQueries({ queryKey: ["cart"] });
-        await queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+        await queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+        await queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
       }
     },
   });

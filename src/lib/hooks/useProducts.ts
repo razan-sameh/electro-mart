@@ -29,7 +29,7 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
 export const useProducts = (
   categoryId?: string,
   page: number = 1,
-  pageSize: number = 9,
+  pageSize: number = 9
 ) => {
   const locale = useLocale();
   const searchParams = useSearchParams();
@@ -38,7 +38,7 @@ export const useProducts = (
   const searchQuery = searchParams.get("q") || undefined;
 
   return useSuspenseQuery({
-    queryKey: ["products", { filters, searchQuery, page, pageSize, locale }], // React Query automatically serializes the filters object
+    queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
     queryFn: () =>
       fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
     retry: 1, // 👈 Avoid infinite retry loops
@@ -79,7 +79,7 @@ export function useProductsById(productId: string) {
   const locale = useLocale();
 
   return useSuspenseQuery({
-    queryKey: ["product", locale, productId],
+    queryKey: ["product", productId, locale],
     queryFn: () => fetchProductById(locale, productId), // filters: specialOffer only
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
