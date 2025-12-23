@@ -174,3 +174,28 @@ export const fetchSimilarProducts = async (
   }
   return res.data.map((p: any) => productAdapter.adapt(p));
 };
+
+export const fetchProductsByCategoryName = async (
+  locale: string,
+  categoryName: string,
+  limit: number,
+): Promise<typProduct[]> => {
+  const queryParams: Record<string, any> = {
+    "filters[category][CategoryName][$eq]": categoryName, // 👈 Filter by category name (case-insensitive)
+    "populate[brand]": true,
+    "populate[category]": true,
+    "populate[special_offers]": true,
+    "populate[ImageURL]": true,
+    "populate[product_colors]": true,
+    "pagination[limit]": limit,
+  };
+
+  const res = await apiClient<any>("/products", {}, queryParams, locale);
+
+  if (!res.data) {
+    notFound();
+  }
+
+  return res.data.map((p: any) => productAdapter.adapt(p));
+
+};

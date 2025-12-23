@@ -5,6 +5,7 @@ import {
   fetchProducts,
   fetchProductById,
   fetchSimilarProducts,
+  fetchProductsByCategoryName,
 } from "../services/products";
 import { useLocale } from "next-intl";
 import { typProductFilters } from "@/content/types";
@@ -28,7 +29,7 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
 export const useProducts = (
   categoryId?: string,
   page: number = 1,
-  pageSize: number = 9
+  pageSize: number = 9,
 ) => {
   const locale = useLocale();
   const searchParams = useSearchParams();
@@ -96,6 +97,17 @@ export const useSimilarProducts = (
     queryKey: ["similar-products", productId, categoryId, brandId, locale],
     queryFn: () => fetchSimilarProducts(locale, productId, categoryId, brandId),
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
+  });
+};
+
+export const useAccessoriesProducts = (limit: number = 5) => {
+  const locale = useLocale();
+
+  return useSuspenseQuery({
+    queryKey: ["accessories-products", limit, locale],
+    queryFn: () => fetchProductsByCategoryName(locale, "Accessories", limit),
+    retry: 1,
     staleTime: Infinity,
   });
 };
