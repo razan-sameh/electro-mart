@@ -37,19 +37,11 @@ export const useProducts = (
   const searchQuery = searchParams.get("q") || undefined;
 
   return useSuspenseQuery({
-    queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
+    queryKey: ["products", { filters, searchQuery, page, pageSize, locale }], // React Query automatically serializes the filters object
     queryFn: () =>
-      fetchProducts(
-        locale,
-        filters,
-        searchQuery,
-        undefined,
-        page,
-        pageSize
-      ),
+      fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
     retry: 1, // 👈 Avoid infinite retry loops
-
-    // staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: Infinity,
   });
 };
 
@@ -61,6 +53,7 @@ export const useSpecialOffers = (limit?: number) => {
     queryFn: () =>
       fetchProducts(locale, { specialOffer: true }, undefined, limit), // filters: specialOffer only
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 };
 
@@ -77,6 +70,7 @@ export const usePriceRange = (categoryId?: string) => {
       return { minPrice, maxPrice };
     },
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 };
 
@@ -87,6 +81,7 @@ export function useProductsById(productId: string) {
     queryKey: ["product", locale, productId],
     queryFn: () => fetchProductById(locale, productId), // filters: specialOffer only
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 }
 
@@ -101,5 +96,6 @@ export const useSimilarProducts = (
     queryKey: ["similar-products", productId, categoryId, brandId, locale],
     queryFn: () => fetchSimilarProducts(locale, productId, categoryId, brandId),
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 };

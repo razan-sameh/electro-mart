@@ -12,5 +12,6 @@ export function useBrands() {
     queryKey: ["brands", locale],
     queryFn,
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 }

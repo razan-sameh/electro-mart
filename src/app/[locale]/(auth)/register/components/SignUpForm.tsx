@@ -12,10 +12,7 @@ import { useSearchParams } from "next/navigation";
 import InputField from "../../../../../components/reusable/InputField";
 import { typSignupData, SignupSchema } from "../components/schemas";
 import { Link, useRouter } from "@/i18n/navigation";
-import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
-import { useCart } from "@/lib/hooks/useCart";
-import { useWishlist } from "@/lib/hooks/useWishlist";
-import { useMergeGuestWishlistToUser } from "@/hooks/useMergeGuestWishlistToUser";
+import { useSignup } from "@/lib/hooks/useAuth";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -33,35 +30,22 @@ export default function SignUpForm() {
       confirmPassword: "",
     },
   });
-  const { merge: mergeCart } = useMergeGuestCartToUser();
-  const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
-  const { refetch: refreshCart } = useCart();
-  const { refetch: refreshWishlist } = useWishlist();
+  const signupMutation = useSignup();
 
   const onSubmit = async (data: typSignupData) => {
     setIsLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          username: `${data.firstName} ${data.lastName}`,
-        }),
+      const result = await signupMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
+        username: `${data.firstName} ${data.lastName}`,
       });
 
-      const result = await response.json();
-      if (!response.ok)
-        throw new Error(result.error || "Failed to create user");
       if (result.success && result.user) {
-        await mergeCart();
-        await refreshCart();
-        await mergeWishlist();
-        await refreshWishlist();
+        // Redirect to the intended page
+        router.push(redirect);
       }
-      router.push(redirect);
     } catch (err: any) {
       setError(err.message);
     } finally {

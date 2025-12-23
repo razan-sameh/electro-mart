@@ -12,5 +12,6 @@ export function useColors() {
     queryKey: ["product-colors", locale],
     queryFn,
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }

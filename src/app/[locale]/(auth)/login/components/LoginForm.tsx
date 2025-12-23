@@ -9,10 +9,7 @@ import InputField from "../../../../../components/reusable/InputField";
 import { Link, useRouter } from "@/i18n/navigation";
 import { loginSchema, typLoginData } from "./schemas";
 import { FcGoogle } from "react-icons/fc";
-import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
-import { useCart } from "@/lib/hooks/useCart";
-import { useMergeGuestWishlistToUser } from "@/hooks/useMergeGuestWishlistToUser";
-import { useWishlist } from "@/lib/hooks/useWishlist";
+import { useLogin } from "@/lib/hooks/useAuth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -28,35 +25,23 @@ export default function LoginForm() {
       password: "",
     },
   });
-  const { merge: mergeCart } = useMergeGuestCartToUser();
-  const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
-  const { refetch: refreshCart } = useCart();
-  const { refetch: refreshWishlist } = useWishlist();
+  const loginMutation = useLogin();
 
   const onSubmit = async (data: typLoginData) => {
     setIsLoading(true);
+
     setError("");
+
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: data.email,
-          password: data.password,
-        }),
+      const result = await loginMutation.mutateAsync({
+        identifier: data.email,
+        password: data.password,
       });
 
-      const text = await response.text();
-      const result = text ? JSON.parse(text) : {};
-
-      if (!response.ok) throw new Error(result.error || "Failed to login");
       if (result.success && result.user) {
-        await mergeCart();
-        await refreshCart();
-        await mergeWishlist();
-        await refreshWishlist();
+        // Redirect to the intended page
+        router.push(redirect);
       }
-      router.push(redirect);
     } catch (err: any) {
       setError(err.message);
     } finally {

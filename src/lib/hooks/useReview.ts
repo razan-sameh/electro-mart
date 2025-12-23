@@ -42,6 +42,7 @@ export function useReviews(productId: string, pageSize: number = 10) {
       ),
     enabled: !!productId,
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: 10 * 60 * 1000, // 👈 10 minutes
   });
 
   // ➕ Create review

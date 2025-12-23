@@ -11,6 +11,7 @@ export const useSpecification = (
     queryKey: ["specs", categoryId, locale],
     queryFn: () => fetchSpecification(locale, categoryId),
     retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
   });
 
   return query.data;
