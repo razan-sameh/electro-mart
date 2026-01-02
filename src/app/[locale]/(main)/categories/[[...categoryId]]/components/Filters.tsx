@@ -10,9 +10,12 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 
 interface FiltersProps {
   categoryId?: string;
-  isMobile?:boolean
+  isMobile?: boolean;
 }
-export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
+export default function Filters({
+  categoryId,
+  isMobile = false,
+}: FiltersProps) {
   const { data: colors } = useColors();
   const { data: brands } = useBrands();
   const priceRangeQuery = usePriceRange(categoryId!);
@@ -145,10 +148,10 @@ export default function Filters({ categoryId ,isMobile = false}: FiltersProps) {
                   value={val.id}
                   checked={checked}
                   onChange={() => {
-                    let newSpecs = new Set(selectedSpecs);
-                    if (checked) newSpecs.delete(val.id);
-                    else newSpecs.add(val.id);
-                    updateParam("brandsId", Array.from(newSpecs));
+                    let newBrands = new Set(selectedBrands);
+                    if (checked) newBrands.delete(val.id);
+                    else newBrands.add(val.id);
+                    updateParam("brandsId", Array.from(newBrands));
                   }}
                 />
                 {val.name}

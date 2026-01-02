@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import {
   getMaxPrice,
   getMinPrice,
@@ -8,10 +8,10 @@ import {
   fetchProductsByCategoryName,
 } from "../services/products";
 import { useLocale } from "next-intl";
-import { typProductFilters } from "@/content/types";
+import { typProduct, typProductFilters } from "@/content/types";
 import { useSearchParams } from "next/navigation";
 
-function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
+export function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
   return {
     categoryId: searchParams.get("categoryId") || undefined,
     colorsId: searchParams.get("colorsId")?.split(",") || [],
@@ -25,6 +25,13 @@ function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
       searchParams.get("specialOffer") === "true" ? true : undefined,
   };
 }
+export const productsQueryKey = (
+  filters: typProductFilters,
+  search: string | undefined,
+  page: number,
+  pageSize: number,
+  locale: string
+) => ["products", filters, search, page, pageSize, locale];
 
 export const useProducts = (
   categoryId?: string,
@@ -38,13 +45,32 @@ export const useProducts = (
   const searchQuery = searchParams.get("q") || undefined;
 
   return useSuspenseQuery({
-    queryKey: ["products", filters, searchQuery, page, pageSize, locale], // React Query automatically serializes the filters object
+    queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale), // React Query automatically serializes the filters object
     queryFn: () =>
       fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
   });
 };
+
+export function usePrefetchProducts() {
+  const queryClient = useQueryClient();
+  const locale = useLocale();
+  const searchParams = useSearchParams();
+
+  return (page: number, pageSize: number, categoryId?: string) => {
+    const filters = getFiltersFromUrl(searchParams);
+    filters.categoryId = categoryId;
+    const searchQuery = searchParams.get("q") || undefined;
+    queryClient.prefetchQuery({
+      queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale),
+      queryFn: () =>
+        fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
+      retry: 1,
+      staleTime: Infinity,
+    });
+  };
+}
 
 export const useSpecialOffers = (limit?: number) => {
   const locale = useLocale();

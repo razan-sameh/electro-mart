@@ -3,9 +3,14 @@
 import ProductCard from "@/components/reusable/ProductCard";
 import { typProduct } from "@/content/types";
 import { useCategoryById } from "@/lib/hooks/useCategories";
-import { useProducts } from "@/lib/hooks/useProducts";
+import {
+  getFiltersFromUrl,
+  usePrefetchProducts,
+  useProducts,
+} from "@/lib/hooks/useProducts";
 import Pagination from "../../../../../../components/reusable/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface ShopProductsProps {
   categoryId?: string;
@@ -21,6 +26,21 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
   );
   const products = productsWithMeta?.data || [];
   const meta = productsWithMeta?.meta;
+  const prefetchProducts = usePrefetchProducts();
+  const searchParams = useSearchParams();
+  const filtersKeyString = JSON.stringify(getFiltersFromUrl(searchParams));
+  const searchQuery = searchParams.get("q") || undefined;
+
+  useEffect(() => {    
+    setPaginate(1);
+  }, [categoryId, searchQuery, filtersKeyString]);
+
+  // prefetch next page
+  useEffect(() => {
+    if (meta?.total && paginate < Math.ceil(meta.total / pageSize)) {
+      prefetchProducts(paginate + 1, pageSize, categoryId);
+    }
+  }, [paginate, categoryId, pageSize]);
 
   return (
     <main className="flex-1 flex flex-col min-h-screen">
