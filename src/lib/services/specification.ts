@@ -9,7 +9,7 @@ const specificationTypeAdapter =
 // categoryId optional
 export const fetchSpecification = async (
   locale: string,
-  categoryId?: string
+  categoryId?: number
 ) => {
   const queryParams: Record<string, any> = {
     "populate[specification_values][populate]": "specification_type",

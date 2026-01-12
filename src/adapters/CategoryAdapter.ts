@@ -1,9 +1,9 @@
 import { typCategory } from "@/content/types";
 import { BaseAdapter } from './base/BaseAdapter';
-import { StrapiCategory } from "./interfaces/types";
 import { SpecificationTypeAdapter } from "./SpecificationTypeAdapter";
+import { CategoryDB } from "./interfaces/types";
 
-export class CategoryAdapter extends BaseAdapter<StrapiCategory, typCategory> {
+export class CategoryAdapter extends BaseAdapter<CategoryDB, typCategory> {
   private static instance: CategoryAdapter;
   private specificationTypeAdapter: SpecificationTypeAdapter;
 
@@ -19,13 +19,12 @@ export class CategoryAdapter extends BaseAdapter<StrapiCategory, typCategory> {
     return CategoryAdapter.instance;
   }
 
-  adapt(source: StrapiCategory): typCategory {
+  adapt(source: CategoryDB): typCategory {
     return {
-      id: source.documentId,
-      // Handle both possible field names
-      name: this.handleNullUndefined(source.CategoryName || source.name, ''),
-      icon: source.icon,
-      imageUrl: this.adaptImageUrlSingle(source.ImageURL || source.LogoURL),
+      id: source.category.id,
+      name: source.title,
+      icon: source.category.icon,
+      imageUrl: source.category.image_url || "",
       specificationTypes: source.specification_types ? this.specificationTypeAdapter.adaptMany(source.specification_types) : undefined,
     };
   }

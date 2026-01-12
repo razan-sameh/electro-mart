@@ -3,46 +3,74 @@ import { typCategory } from "@/content/types";
 import { apiClient } from "../apiClient";
 import { CategoryAdapter } from "@/adapters/CategoryAdapter";
 import { notFound } from "next/navigation";
+import supabase from "../supabase";
+import { CategoryDB } from "@/adapters/interfaces/types";
 
 const categoryAdapter = CategoryAdapter.getInstance();
 
 export async function fetchCategories(locale: string): Promise<typCategory[]> {
-  const data = await apiClient<any>(
-    "/categories",
-    {}, // ✅ Let it use default force-cache
-    { populate: "*" },
-    locale
-  );
+  const { data, error } = await supabase
+    .from("category_translations")
+    .select(
+      `
+      title,
+      category (
+        id,
+        image_url,
+        icon
+      )
+    `
+    )
+    .eq("lang", locale);
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
+  if (!data || data.length === 0) {
+    notFound();
+  }
+
+  // adapt data to typCategory
+  return data.map((category: any) => categoryAdapter.adapt(category));
+}
+
+export async function fetchCategoryById(
+  id: number,
+  locale: string
+): Promise<typCategory> {
+  const { data, error } = await supabase
+    .from("category_translations")
+    .select(
+      `
+      title,
+      category (
+        id,
+        image_url,
+        icon
+      )
+    `
+    )
+    .eq("lang", locale)
+    .eq("category_id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    notFound();
+  }
+
   if (!data) {
     notFound();
   }
-  return data.data.map((category: any) => categoryAdapter.adapt(category));
-}
-
-export async function fetchCategoryById(id: string, locale: string) {
-  const data = await apiClient<any>(
-    `/categories/${id}`, // single category endpoint
-    {},
-    { populate: "*" },
-    locale
-  );
-  if (!data) {
-    notFound();
-  }
-  // adapt single object instead of mapping
-  return categoryAdapter.adapt(data.data);
-}
-
-export async function fetchCategoryByName(name: string, locale: string) {
-  const queryParams: Record<string, any> = {
-    "filters[CategoryName][$eq]": name, // $eqi → case-insensitive
+  // tell TypeScript that categories is object
+  const categoryDB: CategoryDB = {
+    title: data.title,
+    category: Array.isArray(data.category)
+      ? data.category[0]
+      : data.category,
   };
 
-  const data = await apiClient<any>("/categories", {}, queryParams, locale);
-
-  if (!data.data?.[0]) {
-    notFound();
-  }
-
-  return categoryAdapter.adapt(data.data[0]);
+  return categoryAdapter.adapt(categoryDB);
 }

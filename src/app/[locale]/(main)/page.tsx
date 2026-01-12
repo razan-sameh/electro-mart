@@ -1,4 +1,3 @@
-
 import SpecialOffers from "./components/SpecialOffers";
 import Brands from "./components/Brands";
 import Categories from "./components/Categories";
@@ -12,7 +11,7 @@ export default function Home() {
     <div className="bg-background">
       <Hero />
       <Container>
-        <SpecialOffers />
+        {/* <SpecialOffers /> */}
         <Features />
         <Categories />
         <ProductAds />

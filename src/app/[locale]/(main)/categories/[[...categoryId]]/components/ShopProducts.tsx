@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 interface ShopProductsProps {
-  categoryId?: string;
+  categoryId?: number;
 }
 export default function ShopProducts({ categoryId }: ShopProductsProps) {
   const [paginate, setPaginate] = useState(1);

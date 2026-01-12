@@ -1,8 +1,4 @@
-import {
-  enmStrapiPaymentStatus,
-  enmStrapiOrderStatus,
-  enmStrapiDiscountType,
-} from "./enms";
+import { enmStrapiPaymentStatus, enmStrapiOrderStatus } from "./enms";
 
 export interface StrapiImage {
   id: number;
@@ -23,14 +19,13 @@ export interface StrapiImageFormat {
   height: number;
 }
 
-export interface StrapiCategory {
-  id: number;
-  documentId: string;
-  name: string;
-  CategoryName?: string; // Add this if your API uses CategoryName
-  icon?: string;
-  ImageURL?: StrapiImage; // Single image object
-  LogoURL?: StrapiImage; // Single image object (alternative field name)
+export interface CategoryDB {
+  title: string; // name in current locale
+  category: {
+    id: number; // category id
+    icon?: string; // icon name
+    image_url?: string; // full image URL
+  };
   products?: StrapiProduct[];
   specification_types?: StrapiSpecificationType[];
 }
@@ -40,7 +35,7 @@ export interface StrapiSpecificationType {
   documentId: string;
   name: string;
   specification_values?: StrapiSpecificationValue[]; // Add this if your API uses CategoryName
-  categories?: StrapiCategory[];
+  categories?: CategoryDB[];
 }
 
 export interface StrapiSpecificationValue {
@@ -62,11 +57,12 @@ export interface StrapiSpecialOffer {
   products?: StrapiProduct[];
 }
 
-export interface StrapiBrand {
-  id: number;
-  documentId: string;
-  Name: string;
-  LogoURL?: StrapiImage;
+export interface BrandDB {
+  name: string;
+  brand: {
+    id: number;
+    logo_url?: string;
+  };
   products?: StrapiProduct[];
 }
 export type StrapiPaymentMethod = {
@@ -95,7 +91,7 @@ export interface StrapiOrderItem {
   discount_value: number;
   selected_color: StrapiColor;
   total: number;
-  subtotal:number
+  subtotal: number;
 }
 
 export interface StrapiUser {
@@ -152,8 +148,8 @@ export interface StrapiProduct {
   Price: number;
   StockQuantity: number;
   ImageURL?: StrapiImage[];
-  brand: StrapiBrand;
-  category: StrapiCategory;
+  brand: BrandDB;
+  category: CategoryDB;
   special_offers?: StrapiSpecialOffer[];
   product_colors?: StrapiColor[];
   specification_values?: StrapiSpecificationValue[];
@@ -170,7 +166,7 @@ export type StrapiReview = {
   product: StrapiProduct;
   createdAt: string;
   updatedAt: string;
-  user:StrapiUser
+  user: StrapiUser;
 };
 
 export type StrapiCartItem = {

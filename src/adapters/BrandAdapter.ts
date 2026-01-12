@@ -1,9 +1,9 @@
 // File: adapters/BrandAdapter.ts
 import { typBrand } from "@/content/types";
 import { BaseAdapter } from './base/BaseAdapter';
-import { StrapiBrand } from "./interfaces/types";
+import { BrandDB } from "./interfaces/types";
 
-export class BrandAdapter extends BaseAdapter<StrapiBrand, typBrand> {
+export class BrandAdapter extends BaseAdapter<BrandDB, typBrand> {
   private static instance: BrandAdapter;
 
   private constructor() {
@@ -17,12 +17,11 @@ export class BrandAdapter extends BaseAdapter<StrapiBrand, typBrand> {
     return BrandAdapter.instance;
   }
 
-  adapt(source: StrapiBrand): typBrand {
+  adapt(source: BrandDB): typBrand {
     return {
-      id: source.documentId,
-      name: this.handleNullUndefined(source.Name, ''),
-      imageUrl: this.adaptImageUrlSingle(source.LogoURL),
-      // Don't adapt products here to avoid circular dependencies
+      id: source.brand.id,
+      name: this.handleNullUndefined(source.name, ""),
+      imageUrl: source.brand.logo_url || "",
     };
   }
 }

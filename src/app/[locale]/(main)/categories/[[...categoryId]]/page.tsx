@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 export default async function CategoryPage({
   params,
 }: {
-  params: Promise<{ categoryId: string[] }>;
+  params: Promise<{ categoryId: number[] }>;
 }) {
   const { categoryId } = await params;
 

@@ -3,7 +3,7 @@ import { enmDiscountType, enmOrderStatus } from "./enums";
 
 // Category
 export type typCategory = {
-  id: string;
+  id: number;
   name: string;
   icon?: string;
   imageUrl?: string;
@@ -26,7 +26,7 @@ export type typSpecificationValues = {
 };
 
 export type typBrand = {
-  id: string;
+  id: number;
   name: string;
   imageUrl?: string;
   products?: typProduct[];
@@ -42,7 +42,7 @@ export type typSpecialOffer = {
 };
 export type typProductFilters = {
   specialOffer?: boolean;
-  categoryId?: string;
+  categoryId?: number;
   brandId?: string;
   specificationValuesId?: string[];
   colorsId?: string[];

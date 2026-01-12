@@ -5,7 +5,7 @@ import Filters from "./Filters";
 import { FaFilter } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 
-export default function MobileFilters({ categoryId }: { categoryId?: string }) {
+export default function MobileFilters({ categoryId }: { categoryId?: number }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const t = useTranslations("Filters");

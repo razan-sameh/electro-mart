@@ -13,7 +13,7 @@ import { useSearchParams } from "next/navigation";
 
 export function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
   return {
-    categoryId: searchParams.get("categoryId") || undefined,
+    categoryId: Number(searchParams.get("categoryId")) || undefined,
     colorsId: searchParams.get("colorsId")?.split(",") || [],
     brandsId: searchParams.get("brandsId")?.split(",") || [],
     specificationValuesId:
@@ -34,7 +34,7 @@ export const productsQueryKey = (
 ) => ["products", filters, search, page, pageSize, locale];
 
 export const useProducts = (
-  categoryId?: string,
+  categoryId?: number,
   page: number = 1,
   pageSize: number = 9
 ) => {
@@ -58,7 +58,7 @@ export function usePrefetchProducts() {
   const locale = useLocale();
   const searchParams = useSearchParams();
 
-  return (page: number, pageSize: number, categoryId?: string) => {
+  return (page: number, pageSize: number, categoryId?: number) => {
     const filters = getFiltersFromUrl(searchParams);
     filters.categoryId = categoryId;
     const searchQuery = searchParams.get("q") || undefined;
@@ -84,7 +84,7 @@ export const useSpecialOffers = (limit?: number) => {
   });
 };
 
-export const usePriceRange = (categoryId?: string) => {
+export const usePriceRange = (categoryId?: number) => {
   const locale = useLocale();
   return useSuspenseQuery({
     queryKey: ["price-range", categoryId, locale],

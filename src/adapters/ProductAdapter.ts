@@ -45,10 +45,10 @@ export class ProductAdapter extends BaseAdapter<StrapiProduct, typProduct> {
       imagesUrl: this.adaptImageUrls(source.ImageURL),
       brand: source.brand
         ? this.brandAdapter.adapt(source.brand)
-        : { id: "unknown", name: "" },
+        : { id: 0, name: "" },
       category: source.category
         ? this.categoryAdapter.adapt(source.category)
-        : { id: "unknown", name: "" },
+        : { id: 0, name: "" },
       specialOffers: this.specialOfferAdapter.adaptMany(
         source.special_offers || []
       ),

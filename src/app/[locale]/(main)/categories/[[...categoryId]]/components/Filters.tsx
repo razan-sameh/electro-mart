@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
 interface FiltersProps {
-  categoryId?: string;
+  categoryId?: number;
   isMobile?: boolean;
 }
 export default function Filters({
@@ -140,7 +140,7 @@ export default function Filters({
         <h3 className="mb-2 text-xl">{t("brands")}</h3>
         <div className="flex flex-col gap-2 text-sm ">
           {brands?.map((val) => {
-            const checked = selectedBrands.includes(val.id);
+            const checked = selectedBrands.includes(val.id.toString());
             return (
               <label key={val.id} className="flex items-center gap-2">
                 <input
@@ -149,8 +149,8 @@ export default function Filters({
                   checked={checked}
                   onChange={() => {
                     let newBrands = new Set(selectedBrands);
-                    if (checked) newBrands.delete(val.id);
-                    else newBrands.add(val.id);
+                    if (checked) newBrands.delete(val.id.toString());
+                    else newBrands.add(val.id.toString());
                     updateParam("brandsId", Array.from(newBrands));
                   }}
                 />
