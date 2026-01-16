@@ -52,7 +52,7 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {products?.map((item: typProduct) => (
-          <ProductCard item={item} key={item.documentId} />
+          <ProductCard item={item} key={item.id} />
         ))}
       </div>
 

@@ -1,10 +1,9 @@
 // File: adapters/SpecialOfferAdapter.ts
-import { typSpecialOffer } from "@/content/types";
+import { typProductOffer } from "@/content/types";
 import { BaseAdapter } from './base/BaseAdapter';
-import { enmDiscountType } from "@/content/enums";
-import { StrapiSpecialOffer } from "./interfaces/types";
+import { ProductOfferDB } from "./interfaces/types";
 
-export class SpecialOfferAdapter extends BaseAdapter<StrapiSpecialOffer, typSpecialOffer> {
+export class SpecialOfferAdapter extends BaseAdapter<ProductOfferDB, typProductOffer> {
   private static instance: SpecialOfferAdapter;
 
   private constructor() {
@@ -18,15 +17,13 @@ export class SpecialOfferAdapter extends BaseAdapter<StrapiSpecialOffer, typSpec
     return SpecialOfferAdapter.instance;
   }
 
-  adapt(source: StrapiSpecialOffer): typSpecialOffer {
+  adapt(source: ProductOfferDB): typProductOffer {
     return {
-      id: source.documentId,
       title: this.handleNullUndefined(source.title, ''),
-      discountType: source.discount_type as enmDiscountType,
-      discountValue: this.handleNullUndefined(source.discount_value, 0),
+      discount_percent: source.discount_percent,
+      discount_amount: this.handleNullUndefined(source.discount_amount, 0),
       startDate: this.handleNullUndefined(source.start_date, ''),
       endDate: this.handleNullUndefined(source.end_date, ''),
-      // Don't adapt products here to avoid circular dependencies
     };
   }
 }

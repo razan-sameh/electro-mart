@@ -7,18 +7,9 @@ import supabase from "../supabase";
 const brandAdapter = BrandAdapter.getInstance();
 
 export async function fetchBrands(locale: string): Promise<typBrand[]> {
-  const { data, error } = await supabase
-    .from("brand_translations")
-    .select(
-      `
-      name,
-      brand (
-        id,
-        logo_url
-      )
-    `
-    )
-    .eq("lang", locale);
+  const { data, error } = await supabase.rpc("get_brands_by_locale", {
+    locale: locale,
+  });
 
   if (error) {
     console.error(error);

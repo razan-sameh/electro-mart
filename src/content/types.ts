@@ -40,15 +40,6 @@ export type typSpecialOffer = {
   endDate: string;
   products?: typProduct[];
 };
-export type typProductFilters = {
-  specialOffer?: boolean;
-  categoryId?: number;
-  brandId?: string;
-  specificationValuesId?: string[];
-  colorsId?: string[];
-  brandsId?: string[];
-  price?: number;
-};
 
 export type typColor = {
   id: number;
@@ -57,23 +48,74 @@ export type typColor = {
   hexCode: string;
 };
 
+export type typProductImage = {
+  url: string;
+  is_main: boolean;
+  position?: number;
+};
+export type typProductSpec = {
+  key: string;
+  value: string;
+  is_filterable?: boolean;
+};
+
+export type typProductAttribute = {
+  id:number;
+  attribute: string;
+  value: string;
+  hex_code?:string
+};
+export type typProductOffer = {
+  discount_percent?: number;
+  discount_amount?: number;
+  title?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type typProductVariant = {
+  id: number;
+  sku: string;
+  price: number;
+  stock: number;
+  is_active: boolean;
+  offer: typProductOffer | null;
+  attributes: typProductAttribute[];
+};
 // Product
+// export type typProduct = {
+//   id: number;
+//   imagesUrl: typProductImage[];
+//   name: string;
+//   price: number;
+//   category: typCategory;
+//   brand: typBrand;
+//   description: string;
+//   stockQuantity: number;
+//   specialOffers?: typSpecialOffer[];
+//   colors?: typColor[];
+//   specificationValues?: typSpecificationValues[];
+//   averageRating: number;
+//   totalReviews: number;
+//   reviews?: typReview[];
+// };
+
 export type typProduct = {
   id: number;
-  documentId: string;
-  imagesUrl: string[];
+  slug: string;
   name: string;
-  price: number;
-  category: typCategory;
-  brand: typBrand;
   description: string;
-  stockQuantity: number;
-  specialOffers?: typSpecialOffer[];
-  colors?: typColor[];
-  specificationValues?: typSpecificationValues[];
+  brand: typBrand;
+  category: typCategory;
+  imagesUrl: typProductImage[];
+  specs: typProductSpec[];
+  variants: typProductVariant[];
+  specialOffers?: typProductOffer;
   averageRating: number;
   totalReviews: number;
   reviews?: typReview[];
+  displayPrice: number;
+  originalPrice: number;
 };
 
 export type typReview = {
@@ -190,3 +232,27 @@ export type typOrder = {
   payment: typPayment;
   user: typUser;
 };
+
+export type typProductFilters = {
+  categoryId?: number;
+  brandIds?: number[];
+  minPrice?: number;
+  maxPrice?: number;
+  attributes?: { attribute_id: number; value_id: number }[];
+  specs?: { spec_id: number; value_id: number }[];
+  hasOffer?: boolean;
+};
+
+export type PriceRange = {
+  min: number;
+  max: number;
+};
+
+export type typSidebarFilters = {
+  categories: typCategory[];
+  brands: typBrand[];
+  specs: typProductSpec[];
+  attributes: typProductAttribute[];
+  price_range: PriceRange;
+};
+

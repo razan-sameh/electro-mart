@@ -6,20 +6,15 @@ interface ProductPriceProps {
   item: typProduct;
 }
 function ProductPrice({ item }: ProductPriceProps) {
-  const discountedPrice = calculateDiscountedPrice(item);
-  const formattedDiscountedPrice =
-    discountedPrice.toLocaleString(undefined, {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }) + " E£";
-
   return (
     <div className="flex gap-2 items-center mb-2 flex-wrap">
-      {item.specialOffers?.[0] && (
-        <span className="text-gray-400 line-through">{item.price} E£</span>
+      {item.specialOffers?.title && (
+        <span className="text-gray-400 line-through">
+          {item.originalPrice} E£
+        </span>
       )}
       <span className="text-lg font-bold text-secondary">
-        {formattedDiscountedPrice}
+        {item.displayPrice} E£
       </span>
     </div>
   );

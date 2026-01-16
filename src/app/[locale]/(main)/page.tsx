@@ -11,7 +11,7 @@ export default function Home() {
     <div className="bg-background">
       <Hero />
       <Container>
-        {/* <SpecialOffers /> */}
+        <SpecialOffers />
         <Features />
         <Categories />
         <ProductAds />

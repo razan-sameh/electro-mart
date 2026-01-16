@@ -48,7 +48,7 @@ export default function MobileFilters({ categoryId }: { categoryId?: number }) {
                 ✕
               </button>
             </div>
-            <Filters categoryId={categoryId} isMobile={true} />
+            <Filters isMobile={true} />
           </div>
         </div>
       )}

@@ -1,11 +1,11 @@
 // File: adapters/BrandAdapter.ts
-import { typSpecificationValues } from "@/content/types";
+import { typProductSpec } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiSpecificationValue } from "./interfaces/types";
+import { ProductSpecDB } from "./interfaces/types";
 
 export class SpecificationValueAdapter extends BaseAdapter<
-  StrapiSpecificationValue,
-  typSpecificationValues
+  ProductSpecDB,
+  typProductSpec
 > {
   private static instance: SpecificationValueAdapter;
 
@@ -15,24 +15,16 @@ export class SpecificationValueAdapter extends BaseAdapter<
 
   public static getInstance(): SpecificationValueAdapter {
     if (!SpecificationValueAdapter.instance) {
-      SpecificationValueAdapter.instance = new SpecificationValueAdapter(
-        
-      );
+      SpecificationValueAdapter.instance = new SpecificationValueAdapter();
     }
     return SpecificationValueAdapter.instance;
   }
 
-  adapt(source: StrapiSpecificationValue): typSpecificationValues {
+  adapt(source: ProductSpecDB): typProductSpec {
     return {
-      id: source.documentId,
-      name: this.handleNullUndefined(source.value, ""),
-      specificationType: source.specification_type
-        ? {
-            id: source.specification_type.documentId,
-            name: source.specification_type.name,
-          }
-        : undefined,
-      // Don't adapt products here to avoid circular dependencies
+      key: this.handleNullUndefined(source.key, ""),
+      value: this.handleNullUndefined(source.value, ""),
+      is_filterable: source.is_filterable
     };
   }
 }

@@ -25,7 +25,7 @@ export default function CartSummary({
   const t = useTranslations("CartSummary");
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + item.product.displayPrice * item.quantity,
     0
   );
   const discountedTotal = items.reduce(

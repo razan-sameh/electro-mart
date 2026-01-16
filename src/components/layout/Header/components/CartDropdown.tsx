@@ -16,7 +16,7 @@ export default function CartDropdown({ onClose }: Props) {
   const isRTL = locale === "ar";
   const total = Array.isArray(items)
     ? items.reduce((sum, item) => {
-        const price = item?.product?.price ?? 0;
+        const price = item?.product?.displayPrice ?? 0;
         const quantity = item?.quantity ?? 0;
         return sum + price * quantity;
       }, 0)

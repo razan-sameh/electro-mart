@@ -21,10 +21,10 @@ export class CategoryAdapter extends BaseAdapter<CategoryDB, typCategory> {
 
   adapt(source: CategoryDB): typCategory {
     return {
-      id: source.category.id,
+      id: source.id,
       name: source.title,
-      icon: source.category.icon,
-      imageUrl: source.category.image_url || "",
+      icon: source.icon,
+      imageUrl: source.image_url || "",
       specificationTypes: source.specification_types ? this.specificationTypeAdapter.adaptMany(source.specification_types) : undefined,
     };
   }

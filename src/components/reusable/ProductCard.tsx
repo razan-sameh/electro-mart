@@ -7,21 +7,21 @@ type ProductCardProps = {
   item: typProduct;
 };
 
-export default function ProductCard({ item }: ProductCardProps) {
+export default function ProductCard({ item }: ProductCardProps) {  
   return (
     <Link
-      href={`/products/${item.documentId}`}
+      href={`/products/${item.id}`}
       className="bg-lightGray/20 rounded-lg shadow hover:shadow-lg transition text-start w-full cursor-pointer"
     >
       {/* Discount badge */}
       <div className="relative">
-        {item.specialOffers?.[0] && (
+        {item.specialOffers?.title && (
           <span className="absolute top-2 bg-secondary text-white text-xs px-2 py-1 rounded-e-sm">
-            {item.specialOffers[0].title}
+            {item.specialOffers.title}
           </span>
         )}
         <img
-          src={item.imagesUrl[0]}
+          src={item.imagesUrl[0].url}
           alt={item.name}
           className="w-full h-36 object-contain mb-3"
         />

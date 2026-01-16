@@ -19,9 +19,9 @@ export class BrandAdapter extends BaseAdapter<BrandDB, typBrand> {
 
   adapt(source: BrandDB): typBrand {
     return {
-      id: source.brand.id,
+      id: source.id,
       name: this.handleNullUndefined(source.name, ""),
-      imageUrl: source.brand.logo_url || "",
+      imageUrl: source.logo_url || "",
     };
   }
 }

@@ -134,7 +134,7 @@ export default function ProductInfo({ product }: Props) {
       <div className="flex items-baseline gap-3">
         {product.specialOffers?.[0] && (
           <span className="text-gray-400 line-through text-lg">
-            {product.price} E£
+            {product.displayPrice} E£
           </span>
         )}
         <span className="text-2xl font-bold text-secondary">
