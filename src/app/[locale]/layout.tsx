@@ -7,22 +7,22 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Providers from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"], // choose weights you need
-  variable: "--font-roboto",
-  display: "swap", // recommended for performance
-});
+// const roboto = Roboto({
+//   subsets: ["latin"],
+//   weight: ["400", "500", "700"], // choose weights you need
+//   variable: "--font-roboto",
+//   display: "swap", // recommended for performance
+// });
 
 export const metadata: Metadata = {
   title: "Electric.Mart",
@@ -56,7 +56,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>

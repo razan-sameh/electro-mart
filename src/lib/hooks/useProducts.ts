@@ -17,7 +17,9 @@ export function getFiltersFromUrl(
 ): typProductFilters {
   return {
     categoryId: Number(searchParams.get("categoryId")) || undefined,
-
+    maxPrice: Number(searchParams.get("maxPrice")) || undefined,
+    minPrice: Number(searchParams.get("minPrice")) || undefined,
+    
     attributes: searchParams
       .get("attributes")
       ?.split(",")
@@ -75,7 +77,7 @@ export const useProducts = (
   const searchQuery = searchParams.get("q") || undefined;
 
   return useSuspenseQuery({
-    queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale), // React Query automatically serializes the filters object
+    queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale),
     queryFn: () => fetchProducts(locale, filters, searchQuery!, pageSize, page),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
@@ -135,14 +137,13 @@ export function useFilters() {
 }
 
 export const useSimilarProducts = (
-  productId: string,
-  categoryId: string,
-  brandId?: string
+  productId: number,
+  categoryId: number,
 ) => {
   const locale = useLocale();
 
   return useSuspenseQuery({
-    queryKey: ["similar-products", productId, categoryId, brandId, locale],
+    queryKey: ["similar-products", productId, categoryId, locale],
     queryFn: () => fetchSimilarProducts(locale, productId, categoryId),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,

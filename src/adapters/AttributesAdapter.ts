@@ -23,7 +23,7 @@ export class AttributesAdapter extends BaseAdapter<
     return {
       id: this.handleNullUndefined(source.id, 0),
       attribute: this.handleNullUndefined(source.attribute, ""),
-      hex_code: this.handleNullUndefined(source.hexCode, ""),
+      hexCode: this.handleNullUndefined(source.hex_code, ""),
       value: this.handleNullUndefined(source.value, ""),
     };
   }

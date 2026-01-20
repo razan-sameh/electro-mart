@@ -34,7 +34,7 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
 
   adapt(source: ProductDB): typProduct {
     return {
-      id: source.product_id,
+      id: source.id,
       slug: source.slug,
       name: this.handleNullUndefined(source.title, ""),
       description: this.handleNullUndefined(source.description, ""),

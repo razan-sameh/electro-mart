@@ -1,15 +1,12 @@
 import { typCategory } from "@/content/types";
-import { BaseAdapter } from './base/BaseAdapter';
-import { SpecificationTypeAdapter } from "./SpecificationTypeAdapter";
+import { BaseAdapter } from "./base/BaseAdapter";
 import { CategoryDB } from "./interfaces/types";
 
 export class CategoryAdapter extends BaseAdapter<CategoryDB, typCategory> {
   private static instance: CategoryAdapter;
-  private specificationTypeAdapter: SpecificationTypeAdapter;
 
   private constructor() {
     super();
-    this.specificationTypeAdapter = SpecificationTypeAdapter.getInstance();
   }
 
   public static getInstance(): CategoryAdapter {
@@ -25,7 +22,6 @@ export class CategoryAdapter extends BaseAdapter<CategoryDB, typCategory> {
       name: source.title,
       icon: source.icon,
       imageUrl: source.image_url || "",
-      specificationTypes: source.specification_types ? this.specificationTypeAdapter.adaptMany(source.specification_types) : undefined,
     };
   }
 }

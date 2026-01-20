@@ -43,7 +43,7 @@ export function useCart() {
   const mergeMutation = useMutation({
     mutationFn: ({ product, quantity = 1, selectedColor }: MergeCartInput) =>
       mergeCart([
-        { id: -1, documentId: "cart", product, quantity, selectedColor },
+        { id: -1, documentId: 0, product, quantity, selectedColor },
       ]),
 
     onMutate: ({ product, quantity = 1, selectedColor }) => {
@@ -51,14 +51,14 @@ export function useCart() {
 
       const existing = prevCart.items.find(
         (i) =>
-          String(i.product.documentId) === String(product.documentId) &&
+          String(i.product.id) === String(product.id) &&
           i.selectedColor?.documentId === selectedColor?.documentId
       );
 
       let newItems;
       if (existing) {
         newItems = prevCart.items.map((i) =>
-          String(i.product.documentId) === String(product.documentId) &&
+          String(i.product.id) === String(product.id) &&
           i.selectedColor?.documentId === selectedColor?.documentId
             ? { ...i, quantity: i.quantity + quantity }
             : i
@@ -68,7 +68,7 @@ export function useCart() {
           ...prevCart.items,
           {
             id: -1,
-            documentId: product.documentId,
+            documentId: product.id,
             product,
             quantity,
             selectedColor,
@@ -118,7 +118,7 @@ export function useCart() {
             ...old.items,
             {
               id: Date.now(), // temporary id
-              documentId: product.documentId,
+              documentId: product.id,
               product,
               quantity,
               selectedColor,
@@ -141,8 +141,8 @@ export function useCart() {
           // Find and replace the optimistic item with the server response
           const existingIndex = old.items.findIndex(
             (item) =>
-              String(item.product.documentId) ===
-                String(data.product.documentId) &&
+              String(item.product.id) ===
+                String(data.product.id) &&
               item.selectedColor?.documentId === data.selectedColor?.documentId
           );
 

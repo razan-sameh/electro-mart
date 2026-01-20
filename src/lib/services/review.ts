@@ -5,7 +5,7 @@ import { typReview } from "@/content/types";
 const reviewAdapter = ReviewAdapter.getInstance();
 
 export const fetchReviewsByProductId = async (
-  productId: string,
+  productId: number,
   page: number = 1,
   pageSize: number = 10,
   searchComment?: string,

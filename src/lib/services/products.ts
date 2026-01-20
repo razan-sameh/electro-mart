@@ -36,8 +36,8 @@ export async function fetchProducts(
       brand_filter: brandIds,
       attribute_filters: attributes,
       spec_filters: specs,
-      min_price: minPrice ?? null,
-      max_price: maxPrice ?? null,
+      min_price: minPrice,
+      max_price: maxPrice,
       search: search ?? null,
       has_offer: hasOffer,
     }
@@ -78,16 +78,17 @@ export async function fetchProductById(productId: number, locale: string) {
 
 export const fetchSimilarProducts = async (
   locale: string,
-  productId: string,
-  categoryId: string,
+  productId: number,
+  categoryId: number,
   limit: number = 5
 ) => {
   const { data, error } = await supabase.rpc("get_similar_products", {
     current_product_id: productId,
-    category_id: categoryId,
+    categoryid: categoryId,
     locale: locale,
     limit_count: limit,
   });
+
 
   if (error) {
     console.error(error);
@@ -98,7 +99,7 @@ export const fetchSimilarProducts = async (
     notFound();
   }
 
-  return data.map((p: any) => productAdapter.adapt(p));
+  return data.data.map((p: any) => productAdapter.adapt(p));
 };
 
 export const fetchProductsByCategoryName = async (
@@ -121,7 +122,7 @@ export const fetchProductsByCategoryName = async (
     notFound();
   }
 
-  return data.map((p: any) => productAdapter.adapt(p));
+  return data.data.map((p: any) => productAdapter.adapt(p));
 };
 
 export async function fetchSidebarFilters(

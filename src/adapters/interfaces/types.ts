@@ -214,10 +214,10 @@ export interface ProductSpecDB {
 }
 
 export interface ProductAttributeDB {
-  id:number;
+  id: number;
   attribute: string;
   value: string;
-  hexCode?:string
+  hex_code?: string;
 }
 export interface ProductOfferDB {
   discount_percent?: number;
@@ -240,9 +240,7 @@ export interface CategoryDB {
   title: string;
   id: number;
   icon?: string;
-  image_url?: string; 
-  products?: ProductDB[];
-  specification_types?: StrapiSpecificationType[];
+  image_url?: string;
 }
 
 export interface BrandDB {
@@ -252,7 +250,7 @@ export interface BrandDB {
   products?: ProductDB[];
 }
 export interface ProductDB {
-  product_id: number;
+  id: number;
   slug: string;
   title: string;
   description: string;
@@ -261,11 +259,11 @@ export interface ProductDB {
   images: ProductImageDB[];
   specs: ProductSpecDB[];
   variants: ProductVariantDB[];
-  offer: ProductOfferDB| null;
+  offer: ProductOfferDB | null;
   display_price: number;
   original_price: number;
   max_price: number;
   min_price: number;
-  averageRating:number;
-  totalReviews:number;
+  averageRating: number;
+  totalReviews: number;
 }

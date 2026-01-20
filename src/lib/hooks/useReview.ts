@@ -12,7 +12,7 @@ type CreateReviewInput = {
   comment: string;
 };
 
-export function useReviews(productId: string, pageSize: number = 10) {
+export function useReviews(productId: number, pageSize: number = 10) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
 

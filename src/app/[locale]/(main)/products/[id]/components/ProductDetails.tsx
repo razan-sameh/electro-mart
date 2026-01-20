@@ -10,7 +10,7 @@ import ProductAds from "./ProductAds";
 import { useTranslations } from "next-intl";
 
 interface ProductDetailsProps {
-  productId: string;
+  productId: number;
 }
 
 export default function ProductDetails({ productId }: ProductDetailsProps) {
@@ -22,10 +22,10 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
       {/* Images + Info */}
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="flex-1">
-          <ProductImages images={product.imagesUrl} name={product.name} />
+          <ProductImages images={product?.imagesUrl!} name={product?.name!} />
         </div>
         <div className="flex-1">
-          <ProductInfo product={product} />
+          <ProductInfo product={product!} />
         </div>
       </div>
 
@@ -33,18 +33,18 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
       <div className="flex flex-col lg:flex-row gap-12">
         <div className="flex-1">
           <h2 className="text-xl font-semibold mb-2">{t("description")}</h2>
-          <p>{product.description}</p>
+          <p>{product?.description}</p>
         </div>
-        {product?.specificationValues?.length ? (
+        {product?.specs?.length ? (
           <div className="flex-1">
-            <ProductSpecs specs={product.specificationValues} />
+            <ProductSpecs specs={product.specs} />
           </div>
         ) : null}
       </div>
 
       {/* Extra sections */}
-      <ProductReviews productId={productId} averageRating={product.averageRating} />
-      <SimilarProducts product={product} />
+      {/* <ProductReviews productId={productId} averageRating={product?.averageRating!} /> */}
+      <SimilarProducts product={product!} />
       <ProductAds />
       <ProductAccessories />
     </div>

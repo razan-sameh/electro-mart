@@ -7,8 +7,6 @@ export type typCategory = {
   name: string;
   icon?: string;
   imageUrl?: string;
-  products?: typProduct[];
-  specificationTypes?: typSpecificationType[];
 };
 
 export type typSpecificationType = {
@@ -54,16 +52,17 @@ export type typProductImage = {
   position?: number;
 };
 export type typProductSpec = {
+  id: number;
   key: string;
   value: string;
   is_filterable?: boolean;
 };
 
 export type typProductAttribute = {
-  id:number;
+  id: number;
   attribute: string;
   value: string;
-  hex_code?:string
+  hexCode?: string;
 };
 export type typProductOffer = {
   discount_percent?: number;
@@ -82,23 +81,6 @@ export type typProductVariant = {
   offer: typProductOffer | null;
   attributes: typProductAttribute[];
 };
-// Product
-// export type typProduct = {
-//   id: number;
-//   imagesUrl: typProductImage[];
-//   name: string;
-//   price: number;
-//   category: typCategory;
-//   brand: typBrand;
-//   description: string;
-//   stockQuantity: number;
-//   specialOffers?: typSpecialOffer[];
-//   colors?: typColor[];
-//   specificationValues?: typSpecificationValues[];
-//   averageRating: number;
-//   totalReviews: number;
-//   reviews?: typReview[];
-// };
 
 export type typProduct = {
   id: number;
@@ -176,7 +158,7 @@ export type typPhone = {
 // Cart
 export type typCartItem = {
   id: number;
-  documentId: string;
+  documentId: number;
   product: typProduct;
   quantity: number;
   selectedColor: typColor;
