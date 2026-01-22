@@ -4,7 +4,6 @@ import { useCallback } from "react";
 import {
   fetchCategories,
   fetchCategoryById,
-  fetchCategoryByName,
 } from "../services/categories";
 
 export function useCategories() {
@@ -20,7 +19,7 @@ export function useCategories() {
   });
 }
 
-export function useCategoryById(categoryId?: string) {
+export function useCategoryById(categoryId?: number) {
   const locale = useLocale();
   return useQuery({
     queryKey: categoryId
@@ -35,14 +34,3 @@ export function useCategoryById(categoryId?: string) {
   });
 }
 
-export function useCategoryByName(slug: string) {
-  const locale = useLocale();
-
-  return useQuery({
-    queryKey: ["category-slug", slug, locale],
-    queryFn: () => fetchCategoryByName(slug, locale),
-    enabled: !!slug,
-    retry: 1, // 👈 Avoid infinite retry loops
-    staleTime: Infinity,
-  });
-}

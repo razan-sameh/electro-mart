@@ -1,8 +1,4 @@
-import {
-  enmStrapiPaymentStatus,
-  enmStrapiOrderStatus,
-  enmStrapiDiscountType,
-} from "./enms";
+import { enmStrapiPaymentStatus, enmStrapiOrderStatus } from "./enms";
 
 export interface StrapiImage {
   id: number;
@@ -23,24 +19,12 @@ export interface StrapiImageFormat {
   height: number;
 }
 
-export interface StrapiCategory {
-  id: number;
-  documentId: string;
-  name: string;
-  CategoryName?: string; // Add this if your API uses CategoryName
-  icon?: string;
-  ImageURL?: StrapiImage; // Single image object
-  LogoURL?: StrapiImage; // Single image object (alternative field name)
-  products?: StrapiProduct[];
-  specification_types?: StrapiSpecificationType[];
-}
-
 export interface StrapiSpecificationType {
   id: number;
   documentId: string;
   name: string;
   specification_values?: StrapiSpecificationValue[]; // Add this if your API uses CategoryName
-  categories?: StrapiCategory[];
+  categories?: CategoryDB[];
 }
 
 export interface StrapiSpecificationValue {
@@ -48,7 +32,7 @@ export interface StrapiSpecificationValue {
   documentId: string;
   value: string;
   specification_type?: StrapiSpecificationType; // Add this if your API uses CategoryName
-  products?: StrapiProduct[];
+  products?: ProductDB[];
 }
 
 export interface StrapiSpecialOffer {
@@ -59,16 +43,9 @@ export interface StrapiSpecialOffer {
   discount_value: number;
   start_date?: string;
   end_date?: string;
-  products?: StrapiProduct[];
+  products?: ProductDB[];
 }
 
-export interface StrapiBrand {
-  id: number;
-  documentId: string;
-  Name: string;
-  LogoURL?: StrapiImage;
-  products?: StrapiProduct[];
-}
 export type StrapiPaymentMethod = {
   id: number;
   documentId: string;
@@ -91,11 +68,11 @@ export interface StrapiOrderItem {
   documentId: string;
   Quantity: number;
   UnitPrice: number;
-  product: StrapiProduct;
+  product: ProductDB;
   discount_value: number;
   selected_color: StrapiColor;
   total: number;
-  subtotal:number
+  subtotal: number;
 }
 
 export interface StrapiUser {
@@ -144,46 +121,45 @@ export interface StrapiAddress {
   phone: StrapiPhone;
 }
 
-export interface StrapiProduct {
-  documentId: string;
-  id: number;
-  Name: string;
-  Description: string;
-  Price: number;
-  StockQuantity: number;
-  ImageURL?: StrapiImage[];
-  brand: StrapiBrand;
-  category: StrapiCategory;
-  special_offers?: StrapiSpecialOffer[];
-  product_colors?: StrapiColor[];
-  specification_values?: StrapiSpecificationValue[];
-  averageRating: number;
-  totalReviews: number;
-  reviews?: StrapiReview[];
-}
+// export interface ProductDB {
+//   product_id: number;
+//   title: string;
+//   description: string;
+//   images?: ProductImageDB[];
+//   Price: number;
+//   StockQuantity: number;
+//   brand: BrandDB;
+//   category: CategoryDB;
+//   special_offers?: StrapiSpecialOffer[];
+//   product_colors?: StrapiColor[];
+//   specification_values?: StrapiSpecificationValue[];
+//   averageRating: number;
+//   totalReviews: number;
+//   reviews?: StrapiReview[];
+// }
 
 export type StrapiReview = {
   documentId: string;
   id: number;
   Rating: number;
   Comment: string;
-  product: StrapiProduct;
+  product: ProductDB;
   createdAt: string;
   updatedAt: string;
-  user:StrapiUser
+  user: StrapiUser;
 };
 
 export type StrapiCartItem = {
   documentId: string;
   id: number;
-  product: StrapiProduct;
+  product: ProductDB;
   Quantity: number;
   product_color: StrapiColor;
 };
 export type StrapiBuyNow = {
   documentId: string;
   id: number;
-  product: StrapiProduct;
+  product: ProductDB;
   quantity: number;
   product_color: StrapiColor;
   expiresAt: string;
@@ -198,7 +174,7 @@ export type StrapiCart = {
 export type StrapiWishlistItem = {
   documentId: string;
   id: number;
-  product: StrapiProduct;
+  product: ProductDB;
   product_color: StrapiColor;
 };
 
@@ -223,4 +199,71 @@ export interface StrapiResponse<T> {
 export interface StrapiSingleResponse<T> {
   data: T;
   meta: {};
+}
+////////////////////////////////////////////
+
+export interface ProductImageDB {
+  url: string;
+  is_main: boolean;
+  position?: number;
+}
+export interface ProductSpecDB {
+  key: string;
+  value: string;
+  is_filterable: boolean;
+}
+
+export interface ProductAttributeDB {
+  id: number;
+  attribute: string;
+  value: string;
+  hex_code?: string;
+}
+export interface ProductOfferDB {
+  discount_percent?: number;
+  discount_amount?: number;
+  title?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface ProductVariantDB {
+  id: number;
+  sku: string;
+  price: number;
+  stock: number;
+  is_active: boolean;
+  offer: ProductOfferDB | null;
+  attributes: ProductAttributeDB[];
+}
+export interface CategoryDB {
+  title: string;
+  id: number;
+  icon?: string;
+  image_url?: string;
+}
+
+export interface BrandDB {
+  name: string;
+  id: number;
+  logo_url?: string;
+  products?: ProductDB[];
+}
+export interface ProductDB {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  brand: BrandDB;
+  category: CategoryDB;
+  images: ProductImageDB[];
+  specs: ProductSpecDB[];
+  variants: ProductVariantDB[];
+  offer: ProductOfferDB | null;
+  display_price: number;
+  original_price: number;
+  max_price: number;
+  min_price: number;
+  averageRating: number;
+  totalReviews: number;
 }

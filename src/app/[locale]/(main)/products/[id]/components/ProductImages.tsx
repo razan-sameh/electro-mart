@@ -1,9 +1,10 @@
 "use client";
 
+import { typProductImage } from "@/content/types";
 import { useState } from "react";
 
 interface Props {
-  images: string[];
+  images: typProductImage[];
   name: string;
 }
 
@@ -16,7 +17,7 @@ export default function ProductImages({ images, name }: Props) {
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md h-64 sm:h-80 md:h-96 lg:h-[28rem] rounded-lg  overflow-hidden">
           <img 
-            src={images[selectedImage]} 
+            src={images[selectedImage].url} 
             alt={name} 
             className="w-full h-full object-contain"
           />
@@ -29,7 +30,7 @@ export default function ProductImages({ images, name }: Props) {
           {images.map((img, i) => (
             <img
               key={i}
-              src={img}
+              src={img.url}
               alt={`${name} ${i}`}
               width={100}
               height={80}

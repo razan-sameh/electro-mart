@@ -34,16 +34,17 @@ export function getRatingTable(reviews: typReview[]): RatingBreakdown[] {
 }
 
 export function calculateDiscountedPrice(product: typProduct): number {
-  let discountedPrice = product.price;
+  let discountedPrice = product.displayPrice;
 
   if (product.specialOffers?.length) {
     const offer = product.specialOffers[0];
 
     if (offer?.discountType === enmDiscountType.percentage) {
       discountedPrice =
-        product.price - product.price * (offer.discountValue / 100);
+        product.displayPrice -
+        product.displayPrice * (offer.discountValue / 100);
     } else if (offer?.discountType === enmDiscountType.fixed) {
-      discountedPrice = product.price - offer.discountValue;
+      discountedPrice = product.displayPrice - offer.discountValue;
     }
   }
 

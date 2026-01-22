@@ -1,4 +1,3 @@
-
 import SpecialOffers from "./components/SpecialOffers";
 import Brands from "./components/Brands";
 import Categories from "./components/Categories";

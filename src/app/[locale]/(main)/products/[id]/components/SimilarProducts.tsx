@@ -11,11 +11,13 @@ interface Props {
 
 export default function SimilarProducts({ product }: Props) {
   const { data: similarProducts } = useSimilarProducts(
-    product.documentId,
+    product.id,
     product.category?.id
-    // product.brand?.id
   );
   const t = useTranslations("HomeSection");
+
+  if (!similarProducts || similarProducts.length === 0) return null;
+
   return (
     <div className="mt-12">
       <SectionHeader
@@ -25,7 +27,7 @@ export default function SimilarProducts({ product }: Props) {
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {similarProducts?.map((item: typProduct) => (
-          <ProductCard item={item} key={item.documentId} />
+          <ProductCard item={item} key={item.id} />
         ))}
       </div>
     </div>

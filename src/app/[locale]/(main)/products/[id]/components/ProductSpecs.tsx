@@ -1,9 +1,9 @@
 "use client";
-import { typSpecificationValues } from "@/content/types";
+import { typProductSpec, typSpecificationValues } from "@/content/types";
 import { useTranslations } from "next-intl";
 
 interface Props {
-  specs: typSpecificationValues[];
+  specs: typProductSpec[];
 }
 
 export default function ProductSpecs({ specs }: Props) {
@@ -16,13 +16,13 @@ export default function ProductSpecs({ specs }: Props) {
         <tbody>
           {specs.map((item, index) => (
             <tr
-              key={item.id}
+              key={`${item.id || index}-${item.key}`}
               className={index % 2 === 0 ? "bg-lightGray/20" : "bg-body"}
             >
               <td className="w-1/2 p-2 font-medium capitalize border-e border-body">
-                {item.specificationType?.name}
+                {item.key}
               </td>
-              <td className="w-1/2 p-2">{item.name}</td>
+              <td className="w-1/2 p-2">{item.value}</td>
             </tr>
           ))}
         </tbody>

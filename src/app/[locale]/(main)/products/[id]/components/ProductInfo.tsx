@@ -1,225 +1,95 @@
 "use client";
 
-import { typProduct } from "@/content/types";
-import { FaStar } from "react-icons/fa";
-import { FiHeart, FiMinus, FiPlus } from "react-icons/fi";
-import { useReducer } from "react";
-import { calculateDiscountedPrice } from "@/content/utils";
+import { typProduct, typProductVariant } from "@/content/types";
+import { useReducer, useMemo, useCallback } from "react";
 import { cartItemReducer } from "./cartItemReducer";
-import toast from "react-hot-toast";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
-import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
-import { FaHeart } from "react-icons/fa";
+import ProductHeader from "./ProductHeader";
+import ProductAttributes from "./ProductAttributes";
+import QuantitySelector from "./QuantitySelector";
+import ProductActions from "./ProductActions";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
-  const { cartItems: cart, addItem, updateQuantity } = useUnifiedCart(); // ✅ unified cart hook
-  const router = useRouter();
-  // useReducer instead of multiple useStates
+  // Extract all attribute types (Color, Storage, RAM, etc)
+  const attributesMap = useMemo(() => {
+    const map: Record<string, Set<string>> = {};
+
+    product.variants.forEach((v) => {
+      v.attributes.forEach((attr) => {
+        if (!map[attr.attribute]) map[attr.attribute] = new Set();
+        map[attr.attribute].add(attr.value);
+      });
+    });
+
+    return map;
+  }, [product.variants]);
+
+  // Default selected attributes
+  const defaultSelectedAttributes = useMemo(() => {
+    const result: Record<string, string> = {};
+    Object.keys(attributesMap).forEach((key) => {
+      result[key] = Array.from(attributesMap[key])[0];
+    });
+    return result;
+  }, [attributesMap]);
+
   const [state, dispatch] = useReducer(cartItemReducer, {
     quantity: 1,
-    selectedColor: product.colors?.[0], // 👈 default color
+    selectedAttributes: defaultSelectedAttributes,
   });
-  const t = useTranslations("ProductDetails");
-  const {
-    wishlistItems: wishlist,
-    addItem: addToWishlist,
-    removeItem: removeFromWishlist,
-  } = useUnifiedWishlist();
 
-  const discountedPrice = calculateDiscountedPrice(product);
+  // Find matching variant based on selected attributes
+  const selectedVariant = useMemo(() => {
+    return product.variants.find((v) =>
+      v.attributes.every(
+        (attr) => state.selectedAttributes[attr.attribute] === attr.value
+      )
+    );
+  }, [product.variants, state.selectedAttributes]);
+
+  const discountedPrice = useMemo(() => {
+    if (!selectedVariant) return 0;
+
+    const offer = selectedVariant.offer;
+    const price = selectedVariant.price;
+
+    if (offer && offer.discount_percent) {
+      return price - (price * offer.discount_percent) / 100;
+    }
+    return price;
+  }, [selectedVariant]);
+
   const formattedDiscountedPrice =
     discountedPrice.toLocaleString(undefined, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }) + " E£";
-  const isInWishlist = wishlist.some(
-    (i) =>
-      i.product.documentId === product.documentId &&
-      i.selectedColor?.documentId === state.selectedColor?.documentId
-  );
-
-  const handleAddToCart = async () => {
-    if (!state.selectedColor) return;
-
-    // 1️⃣ Check if product + color already exists in cart
-    const existingItem = cart.find(
-      (i) =>
-        i.product.documentId === product.documentId &&
-        i.selectedColor?.documentId === state.selectedColor!.documentId
-    );
-
-    if (existingItem) {
-      // 2️⃣ Update quantity
-      await updateQuantity(
-        existingItem,
-        existingItem.quantity + state.quantity
-      );
-    } else {
-      // 3️⃣ Add new item
-      await addItem({
-        product,
-        quantity: state.quantity,
-        selectedColor: state.selectedColor,
-      });
-    }
-    toast.success(t("successAdded", { product: product.name }));
-  };
-
-  const handleAddToWishlist = async () => {
-    if (!state.selectedColor) return;
-
-    // 1️⃣ Check if product + color already exists in wishlist
-    const existingItem = wishlist.find(
-      (i) =>
-        i.product.documentId === product.documentId &&
-        i.selectedColor?.documentId === state.selectedColor!.documentId
-    );
-
-    if (existingItem) {
-      // 2️⃣ Add new item
-      await removeFromWishlist(existingItem);
-    } else {
-      // 2️⃣ Add new item
-      await addToWishlist({
-        product,
-        selectedColor: state.selectedColor,
-      });
-    }
-    toast.success(t("successAdded", { product: product.name }));
-  };
-  const handleBuyNow = async () => {
-    if (!state.selectedColor) return;
-
-    const body = {
-      productId: product.id,
-      colorId: state.selectedColor.id,
-    };
-
-    const res = await fetch("/api/buy-now", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.success) {
-      // نضيف param عشان Checkout تعرف انها Buy Now
-      router.push("/checkout/shipping?isBuyNow=1");
-    } else {
-      console.error(data.error || "Something went wrong");
-    }
-  };
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Product Name */}
-      <h1 className="text-3xl font-bold text-content">{product.name}</h1>
+      <ProductHeader
+        product={product}
+        selectedVariant={selectedVariant}
+        formattedDiscountedPrice={formattedDiscountedPrice}
+      />
 
-      {/* Rating */}
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <FaStar size={16} className="fill-secondary" />
-        <span className="text-content">
-          {product.averageRating.toFixed(2)} ({product.totalReviews})
-        </span>
-      </div>
+      <ProductAttributes
+        product={product}
+        attributesMap={attributesMap}
+        state={state}
+        dispatch={dispatch}
+      />
 
-      {/* Price */}
-      <div className="flex items-baseline gap-3">
-        {product.specialOffers?.[0] && (
-          <span className="text-gray-400 line-through text-lg">
-            {product.price} E£
-          </span>
-        )}
-        <span className="text-2xl font-bold text-secondary">
-          {formattedDiscountedPrice}
-        </span>
-      </div>
+      <QuantitySelector quantity={state.quantity} dispatch={dispatch} />
 
-      {/* Colors */}
-      {product.colors?.length && (
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-medium">{t("chooseColor")}</h3>
-          <div className="flex gap-2 flex-wrap">
-            {product.colors.map((color) => (
-              <div
-                key={color.documentId}
-                onClick={() =>
-                  dispatch({ type: "SELECT_COLOR", payload: color })
-                }
-                className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
-                  state.selectedColor?.documentId === color.documentId
-                    ? "border-primary scale-110"
-                    : "border-gray-300"
-                }`}
-                style={{ backgroundColor: color.hexCode }}
-                title={color.name}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Quantity Selector */}
-      <div className="flex items-center gap-3 mt-2">
-        <button
-          onClick={() => dispatch({ type: "DECREASE" })}
-          className="px-3 py-2 border border-lightGray rounded-md"
-        >
-          <FiMinus />
-        </button>
-        <input
-          type="number"
-          min={1}
-          value={state.quantity}
-          onChange={(e) =>
-            dispatch({
-              type: "SET_QUANTITY",
-              payload: parseInt(e.target.value, 10) || 1,
-            })
-          }
-          className="w-16 text-center border border-lightGray rounded-md py-1"
-        />
-        <button
-          onClick={() => dispatch({ type: "INCREASE" })}
-          className="px-3 py-2 border border-lightGray rounded-md"
-        >
-          <FiPlus />
-        </button>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-4 mt-4">
-        <button
-          onClick={handleAddToCart}
-          className="flex-1 px-6 py-3 bg-primary text-white rounded-lg shadow hover:bg-primary/90 transition"
-        >
-          {t("addToCart")}
-        </button>
-
-        <button
-          onClick={handleBuyNow}
-          className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
-        >
-          {t("buyNow")}
-        </button>
-        <button
-          onClick={handleAddToWishlist}
-          className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
-        >
-          {isInWishlist ? (
-            <FaHeart size={20} className="text-secondary" />
-          ) : (
-            <FiHeart size={20} />
-          )}
-        </button>
-      </div>
+      <ProductActions
+        product={product}
+        state={state}
+        selectedVariant={selectedVariant}
+      />
     </div>
   );
 }

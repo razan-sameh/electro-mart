@@ -1,6 +1,7 @@
 "use client";
 import ProductCard from "@/components/reusable/ProductCard";
 import SectionHeader from "@/components/reusable/SectionHeader";
+import { typProduct } from "@/content/types";
 import { useAccessoriesProducts } from "@/lib/hooks/useProducts";
 import { useTranslations } from "next-intl";
 
@@ -18,8 +19,8 @@ export default function ProductAccessories() {
         linkHref={`/categories/${accessories[0].category.id}`}
       />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {accessories.map((item) => (
-          <ProductCard key={item.documentId} item={item} />
+        {accessories.map((item:typProduct) => (
+          <ProductCard key={item.id} item={item} />
         ))}
       </div>
     </div>

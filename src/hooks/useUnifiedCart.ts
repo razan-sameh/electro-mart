@@ -59,7 +59,7 @@ export function useUnifiedCart() {
   const unifiedRemoveItem = async (item: typCartItem) => {
     if (isGuest) {
       guestCartStore.removeFromCart(
-        item.product.documentId,
+        item.product.id,
         item.selectedColor
       );
     } else {
@@ -70,7 +70,7 @@ export function useUnifiedCart() {
   const unifiedUpdateQuantity = async (item: typCartItem, quantity: number) => {
     if (isGuest) {
       guestCartStore.updateQuantity(
-        item.product.documentId,
+        item.product.id,
         quantity,
         item.selectedColor
       );

@@ -1,21 +1,25 @@
 // lib/services/categories.ts
 import { typBrand } from "@/content/types";
-import { apiClient } from "../apiClient";
 import { BrandAdapter } from "@/adapters/BrandAdapter";
 import { notFound } from "next/navigation";
+import supabase from "../supabase";
 
 const brandAdapter = BrandAdapter.getInstance();
 
 export async function fetchBrands(locale: string): Promise<typBrand[]> {
-  const data = await apiClient<any>(
-    "/brands",
-    { }, // ✅ Let it use default force-cache
-    { populate: "*" },
-    locale
-  );
-  if (!data.data) {
+  const { data, error } = await supabase.rpc("get_brands_by_locale", {
+    locale: locale,
+  });
+
+  if (error) {
+    console.error(error);
     notFound();
   }
-  return data.data.map((brand: any) => brandAdapter.adapt(brand));
 
+  if (!data || data.length === 0) {
+    notFound();
+  }
+
+  // adapt data to typCategory
+  return data.map((brand: any) => brandAdapter.adapt(brand));
 }

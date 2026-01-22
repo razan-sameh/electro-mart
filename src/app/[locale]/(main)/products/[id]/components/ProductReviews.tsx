@@ -10,7 +10,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Props {
   averageRating: number;
-  productId: string;
+  productId: number;
 }
 
 export default function ProductReviews({ averageRating, productId }: Props) {

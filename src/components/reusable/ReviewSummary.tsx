@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 interface ReviewSummaryProps {
   averageRating: number;
   breakdown: RatingBreakdown[];
-  productId: string;
+  productId: number;
 }
 
 export default function ReviewSummary({

@@ -1,30 +1,62 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import {
-  getMaxPrice,
-  getMinPrice,
+  // getMaxPrice,
+  // getMinPrice,
   fetchProducts,
   fetchProductById,
   fetchSimilarProducts,
   fetchProductsByCategoryName,
+  fetchSidebarFilters,
 } from "../services/products";
 import { useLocale } from "next-intl";
-import { typProduct, typProductFilters } from "@/content/types";
+import { typProductFilters } from "@/content/types";
 import { useSearchParams } from "next/navigation";
 
-export function getFiltersFromUrl(searchParams: URLSearchParams): typProductFilters {
+export function getFiltersFromUrl(
+  searchParams: URLSearchParams
+): typProductFilters {
   return {
-    categoryId: searchParams.get("categoryId") || undefined,
-    colorsId: searchParams.get("colorsId")?.split(",") || [],
-    brandsId: searchParams.get("brandsId")?.split(",") || [],
-    specificationValuesId:
-      searchParams.get("specificationValuesId")?.split(",") || [],
-    price: searchParams.get("price")
-      ? Number(searchParams.get("price"))
-      : undefined,
-    specialOffer:
-      searchParams.get("specialOffer") === "true" ? true : undefined,
+    categoryId: Number(searchParams.get("categoryId")) || undefined,
+    maxPrice: Number(searchParams.get("maxPrice")) || undefined,
+    minPrice: Number(searchParams.get("minPrice")) || undefined,
+    
+    attributes: searchParams
+      .get("attributes")
+      ?.split(",")
+      .map((s) => {
+        const [attribute_id, value_id] = s.split(":").map(Number);
+        return { attribute_id, value_id };
+      })
+      .filter(
+        (s): s is { attribute_id: number; value_id: number } =>
+          s.attribute_id != null && s.value_id != null
+      ) || [],
+
+    brandIds:
+      searchParams
+        .get("brandsId")
+        ?.split(",")
+        .map(Number)
+        .filter((id) => !isNaN(id)) || [],
+
+    specs:
+      searchParams
+        .get("specs")
+        ?.split(",")
+        .map((s) => {
+          const [spec_id, value_id] = s.split(":").map(Number);
+          return { spec_id, value_id };
+        })
+        .filter(
+          (s): s is { spec_id: number; value_id: number } =>
+            s.spec_id != null && s.value_id != null
+        ) || [],
+
+    hasOffer: searchParams.get("specialOffer") === "true" ? true : undefined,
   };
 }
+
+
 export const productsQueryKey = (
   filters: typProductFilters,
   search: string | undefined,
@@ -34,7 +66,7 @@ export const productsQueryKey = (
 ) => ["products", filters, search, page, pageSize, locale];
 
 export const useProducts = (
-  categoryId?: string,
+  categoryId?: number,
   page: number = 1,
   pageSize: number = 9
 ) => {
@@ -45,9 +77,8 @@ export const useProducts = (
   const searchQuery = searchParams.get("q") || undefined;
 
   return useSuspenseQuery({
-    queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale), // React Query automatically serializes the filters object
-    queryFn: () =>
-      fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
+    queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale),
+    queryFn: () => fetchProducts(locale, filters, searchQuery!, pageSize, page),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
   });
@@ -58,14 +89,14 @@ export function usePrefetchProducts() {
   const locale = useLocale();
   const searchParams = useSearchParams();
 
-  return (page: number, pageSize: number, categoryId?: string) => {
+  return (page: number, pageSize: number, categoryId?: number) => {
     const filters = getFiltersFromUrl(searchParams);
     filters.categoryId = categoryId;
     const searchQuery = searchParams.get("q") || undefined;
     queryClient.prefetchQuery({
       queryKey: productsQueryKey(filters, searchQuery, page, pageSize, locale),
       queryFn: () =>
-        fetchProducts(locale, filters, searchQuery, undefined, page, pageSize),
+        fetchProducts(locale, filters, searchQuery!, pageSize, page),
       retry: 1,
       staleTime: Infinity,
     });
@@ -77,51 +108,43 @@ export const useSpecialOffers = (limit?: number) => {
 
   return useSuspenseQuery({
     queryKey: ["specialOffers", limit, locale],
-    queryFn: () =>
-      fetchProducts(locale, { specialOffer: true }, undefined, limit), // filters: specialOffer only
+    queryFn: () => fetchProducts(locale, { hasOffer: true }, undefined, limit),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
   });
 };
 
-export const usePriceRange = (categoryId?: string) => {
-  const locale = useLocale();
-  return useSuspenseQuery({
-    queryKey: ["price-range", categoryId, locale],
-    queryFn: async () => {
-      const [minPrice, maxPrice] = await Promise.all([
-        getMinPrice(locale, categoryId),
-        getMaxPrice(locale, categoryId),
-      ]);
-
-      return { minPrice, maxPrice };
-    },
-    retry: 1, // 👈 Avoid infinite retry loops
-    staleTime: Infinity,
-  });
-};
-
-export function useProductsById(productId: string) {
+export function useProductsById(productId: number) {
   const locale = useLocale();
 
   return useSuspenseQuery({
     queryKey: ["product", productId, locale],
-    queryFn: () => fetchProductById(locale, productId), // filters: specialOffer only
+    queryFn: () => fetchProductById(productId, locale), // filters: specialOffer only
+    retry: 1, // 👈 Avoid infinite retry loops
+    staleTime: Infinity,
+  });
+}
+
+export function useFilters() {
+  const locale = useLocale();
+
+  return useSuspenseQuery({
+    queryKey: ["filters", locale],
+    queryFn: () => fetchSidebarFilters(locale), // filters: specialOffer only
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
   });
 }
 
 export const useSimilarProducts = (
-  productId: string,
-  categoryId: string,
-  brandId?: string
+  productId: number,
+  categoryId: number,
 ) => {
   const locale = useLocale();
 
   return useSuspenseQuery({
-    queryKey: ["similar-products", productId, categoryId, brandId, locale],
-    queryFn: () => fetchSimilarProducts(locale, productId, categoryId, brandId),
+    queryKey: ["similar-products", productId, categoryId, locale],
+    queryFn: () => fetchSimilarProducts(locale, productId, categoryId),
     retry: 1, // 👈 Avoid infinite retry loops
     staleTime: Infinity,
   });

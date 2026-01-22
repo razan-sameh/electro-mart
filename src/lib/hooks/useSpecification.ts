@@ -4,7 +4,7 @@ import { typSpecificationType } from "@/content/types";
 import { fetchSpecification } from "../services/specification";
 
 export const useSpecification = (
-  categoryId?: string
+  categoryId?: number
 ): typSpecificationType[] | undefined => {
   const locale = useLocale();
   const query = useSuspenseQuery({

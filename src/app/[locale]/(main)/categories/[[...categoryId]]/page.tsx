@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 export default async function CategoryPage({
   params,
 }: {
-  params: Promise<{ categoryId: string[] }>;
+  params: Promise<{ categoryId: number[] }>;
 }) {
   const { categoryId } = await params;
 
@@ -19,7 +19,7 @@ export default async function CategoryPage({
         <div className="flex flex-col md:flex-row gap-6 py-6">
           {/* Sidebar (hidden on mobile, visible on desktop) */}
           <aside className="hidden md:block w-72 lg:w-80 xl:w-80 shrink-0">
-            <Filters categoryId={categoryId?.[0]} />
+            <Filters />
           </aside>
           {/* Filters toggle for mobile */}
           <div className="md:hidden">
