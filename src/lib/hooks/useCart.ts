@@ -9,120 +9,103 @@ import {
   clearCart,
   mergeCart,
 } from "@/lib/services/cart";
-import type { typCart, typColor, typProduct } from "@/content/types";
-import { useCartStore } from "@/stores/cartStore";
-import { useAuth } from "./useAuth";
+import type { typCart, typCartItem } from "@/content/types";
 import { useLocale } from "next-intl";
-
-type MergeCartInput = {
-  product: typProduct;
-  quantity: number;
-  selectedColor: typColor;
-};
 
 export const CART_QUERY_KEY = ["cart"];
 
 export function useCart() {
   const queryClient = useQueryClient();
-  const { isAuthenticated} = useAuth();
   const locale = useLocale();
 
-  // 🧾 Fetch cart
   const cartQuery = useQuery<typCart>({
     queryKey: CART_QUERY_KEY,
     queryFn: async () => {
       const data: typCart = await fetchCart(locale);
-      // Normalize: ensure we always return a typCart object
-      return data ?? { id: "empty", items: [] };
+      return data ?? { id: 0, items: [] };
     },
-    enabled: !!isAuthenticated,
-    retry: 1, // 👈 Avoid infinite retry loops
+    retry: 1,
+    staleTime: Infinity,
   });
 
   // 🔄 Merge local → server
   const mergeMutation = useMutation({
-    mutationFn: ({ product, quantity = 1, selectedColor }: MergeCartInput) =>
-      mergeCart([
-        { id: -1, documentId: 0, product, quantity, selectedColor },
-      ]),
+    mutationFn: (items: typCartItem[]) => mergeCart(items),
 
-    onMutate: ({ product, quantity = 1, selectedColor }) => {
-      const prevCart = { items: [...useCartStore.getState().items] };
+    onMutate: async (items) => {
+      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
+      const previousCart = queryClient.getQueryData<typCart>(CART_QUERY_KEY);
 
-      const existing = prevCart.items.find(
-        (i) =>
-          String(i.product.id) === String(product.id) &&
-          i.selectedColor?.documentId === selectedColor?.documentId
-      );
+      const newItems = [...(previousCart?.items || [])];
 
-      let newItems;
-      if (existing) {
-        newItems = prevCart.items.map((i) =>
-          String(i.product.id) === String(product.id) &&
-          i.selectedColor?.documentId === selectedColor?.documentId
-            ? { ...i, quantity: i.quantity + quantity }
-            : i
-        );
-      } else {
-        newItems = [
-          ...prevCart.items,
-          {
-            id: -1,
-            documentId: product.id,
-            product,
-            quantity,
-            selectedColor,
-          },
-        ];
-      }
+      items.forEach((item) => {
+        const existing = newItems.find((i) => i.variant?.id === item.variant?.id);
+        if (existing) existing.quantity += item.quantity;
+        else newItems.push(item as any);
+      });
 
-      useCartStore.setState({ items: newItems });
-      return prevCart as typCart;
+      queryClient.setQueryData<typCart>(CART_QUERY_KEY, {
+        ...(previousCart || { id: 0, items: [] }),
+        items: newItems,
+      });
+
+      return { previousCart };
     },
 
     onError: (_error, _variables, rollback) => {
-      if (rollback) {
-        useCartStore.setState({ items: rollback.items });
+      if (rollback?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, rollback.previousCart);
       }
-      console.error("❌ Failed to merge guest cart.");
     },
 
     onSuccess: (data) => {
-      useCartStore.getState().clearCart();
-      queryClient.setQueryData<typCart>(CART_QUERY_KEY, data);
+      // Update cache with server response
+      queryClient.setQueryData(CART_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
   // ➕ Add item
   const addMutation = useMutation({
     mutationFn: ({
-      product,
+      variantId,
       quantity,
-      selectedColor,
     }: {
-      product: typProduct;
+      variantId: number;
       quantity: number;
-      selectedColor: typColor;
-    }) => addCartItem(product, quantity, selectedColor),
+    }) => addCartItem(variantId, quantity),
 
-    onMutate: async ({ product, quantity, selectedColor }) => {
+    onMutate: async ({ variantId, quantity }) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<typCart>(CART_QUERY_KEY);
 
       queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
         if (!old) return old;
 
+        const exists = old.items.find((i) => i.variant?.id === variantId);
+        if (exists) {
+          return {
+            ...old,
+            items: old.items.map((i) =>
+              i.variant?.id === variantId
+                ? { ...i, quantity: i.quantity + quantity }
+                : i
+            ),
+          };
+        }
+
         return {
           ...old,
           items: [
             ...old.items,
             {
-              id: Date.now(), // temporary id
-              documentId: product.id,
-              product,
+              id: Date.now(),
+              variant: { id: variantId } as any,
               quantity,
-              selectedColor,
-            },
+              unitPrice: 0,
+              totalPrice: 0,
+              product: {} as any,
+            } as any,
           ],
         };
       });
@@ -130,45 +113,16 @@ export function useCart() {
       return { previousCart };
     },
 
-    onSuccess: (data) => {
-      if (data) {
-        // ✅ Replace the temporary item with the real one from server
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
-          if (!old) {
-            return { id: "temp", items: [data] };
-          }
-
-          // Find and replace the optimistic item with the server response
-          const existingIndex = old.items.findIndex(
-            (item) =>
-              String(item.product.id) ===
-                String(data.product.id) &&
-              item.selectedColor?.documentId === data.selectedColor?.documentId
-          );
-
-          if (existingIndex !== -1) {
-            // Replace the optimistic item with real server data
-            const newItems = [...old.items];
-            newItems[existingIndex] = data;
-            return {
-              ...old,
-              items: newItems,
-            };
-          }
-
-          // If not found (shouldn't happen), just add it
-          return {
-            ...old,
-            items: [...old.items, data],
-          };
-        });
+    onError: (err, variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
     },
 
-    onError: (err, variables, context) => {
-      if (context?.previousCart) {
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, context.previousCart);
-      }
+    onSuccess: (data) => {
+      // Update cache with server response
+      queryClient.setQueryData(CART_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
@@ -195,31 +149,23 @@ export function useCart() {
       return { previousCart };
     },
 
-    onSuccess: (updatedItem) => {
-      queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
-        if (!old) return old;
-
-        return {
-          ...old,
-          items: old.items.map((item) =>
-            item.id === updatedItem.id ? updatedItem : item
-          ),
-        };
-      });
-    },
-
     onError: (err, variables, context) => {
       if (context?.previousCart) {
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, context.previousCart);
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
+    },
+
+    onSuccess: (data) => {
+      queryClient.setQueryData(CART_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
-  // ❌ Remove item
+  // 🗑️ Remove item
   const removeMutation = useMutation({
-    mutationFn: (itemId: number) => removeCartItem(itemId),
+    mutationFn: (variantId: number) => removeCartItem(variantId),
 
-    onMutate: async (itemId) => {
+    onMutate: async (variantId) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<typCart>(CART_QUERY_KEY);
 
@@ -228,33 +174,26 @@ export function useCart() {
 
         return {
           ...old,
-          items: old.items.filter((item) => item.id !== itemId),
+          items: old.items.filter((item) => item.variant?.id !== variantId),
         };
       });
 
       return { previousCart };
     },
 
-    onSuccess: (data) => {
-      queryClient.setQueryData<typCart>(CART_QUERY_KEY, (old) => {
-        if (!old) return old;
-
-        // تأكيد حذف العنصر المحذوف إذا السيرفر رجّع العنصر اللي تم حذفه
-        return {
-          ...old,
-          items: old.items.filter((item) => item.id !== data.id),
-        };
-      });
-    },
-
     onError: (err, variables, context) => {
       if (context?.previousCart) {
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, context.previousCart);
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
+    },
+
+    onSuccess: (data) => {
+      queryClient.setQueryData(CART_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
-  // 🧹 Clear all
+  // 🧹 Clear cart
   const clearMutation = useMutation({
     mutationFn: clearCart,
 
@@ -270,37 +209,29 @@ export function useCart() {
       return { previousCart };
     },
 
-    onSuccess: (data) => {
-      if (data) {
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, data);
+    onError: (err, variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
     },
 
-    onError: (err, variables, context) => {
-      if (context?.previousCart) {
-        queryClient.setQueryData<typCart>(CART_QUERY_KEY, context.previousCart);
-      }
+    onSuccess: (data) => {
+      queryClient.setQueryData(CART_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
   return {
     cart: cartQuery.data,
     isLoading: cartQuery.isLoading,
+    isFetching: cartQuery.isFetching,
     isError: cartQuery.isError,
     refetch: cartQuery.refetch,
-    isFetching: cartQuery.isFetching,
 
-    // Actions
     mergeMutation: mergeMutation.mutateAsync,
     addItem: addMutation.mutateAsync,
     updateItem: updateMutation.mutateAsync,
     removeItem: removeMutation.mutateAsync,
     clearCart: clearMutation.mutateAsync,
-
-    // Mutation states
-    isAdding: addMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isRemoving: removeMutation.isPending,
-    isClearing: clearMutation.isPending,
   };
 }

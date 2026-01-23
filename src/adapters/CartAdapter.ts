@@ -1,10 +1,10 @@
 // File: adapters/BrandAdapter.ts
 import { typCart } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiCart } from "./interfaces/types";
+import { CartDB } from "./interfaces/types";
 import { CartItemsAdapter } from "./CartItemsAdapter";
 
-export class CartAdapter extends BaseAdapter<StrapiCart, typCart> {
+export class CartAdapter extends BaseAdapter<CartDB, typCart> {
   private static instance: CartAdapter;
   private cartItemsAdapter: CartItemsAdapter;
 
@@ -20,10 +20,10 @@ export class CartAdapter extends BaseAdapter<StrapiCart, typCart> {
     return CartAdapter.instance;
   }
 
-  adapt(source: StrapiCart): typCart {
+  adapt(source: CartDB): typCart {
     return {
-      id: source.documentId,
-      items: this.cartItemsAdapter.adaptMany(source.cart_items || []),
+      id: source.id,
+      items: this.cartItemsAdapter.adaptMany(source.items || []),
     };
   }
 }

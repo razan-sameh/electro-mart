@@ -1,134 +1,79 @@
-import { serverApiClient } from "@/app/api/serverApiClient";
+// app/api/cart/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import supabase from "@/lib/supabase";
 
-// GET /api/cart - Get user's cart
-export async function GET(req: Request) {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
+export async function GET(req: NextRequest) {
+  const locale = req.nextUrl.searchParams.get("locale");
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("session_id")?.value;
 
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const { data, error } = await supabase.rpc("get_cart", {
+    p_session_id: sessionId,
+    p_locale: locale,
+  });
 
-    const { searchParams } = new URL(req.url);
-    const locale = searchParams.get("locale") || "en"; // fallback to English
-
-    const data = await serverApiClient(`/cart/me?locale=${locale}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return Response.json(data);
-  } catch (error: any) {
-    console.error("Get cart error:", error);
-    return Response.json(
-      { error: error.message || "Failed to get cart" },
+  if (error) {
+    return NextResponse.json(
+      { error: error.message, details: error.details, hint: error.hint },
       { status: 500 }
     );
   }
+
+  return NextResponse.json({ data });
 }
 
 
 // POST /api/cart/merge - Merge multiple items at once
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
+    const sessionId = cookieStore.get("session_id")?.value;
 
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-
-    if (!body.cart_items || !Array.isArray(body.cart_items)) {
-      return Response.json(
-        { error: "cart_items must be an array" },
-        { status: 400 }
+    if (!sessionId) {
+      return NextResponse.json(
+        { error: "Missing session_id" },
+        { status: 400 },
       );
     }
 
-    const addedItems = [];
-    const errors = [];
+    // call the function
+    const { error } = await supabase.rpc("merge_guest_cart_to_user", {
+      p_session_id: sessionId,
+      p_user_id: userId,
+    });
 
-    for (let i = 0; i < body.cart_items.length; i++) {
-      const item = body.cart_items[i];
-
-      try {
-        // Validate item structure
-        if (!item.product?.id) {
-          throw new Error("Missing product.id");
-        }
-        if (!item.quantity) {
-          throw new Error("Missing quantity");
-        }
-        
-        const result = await serverApiClient("/cart/items", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            productId: item.product.id,
-            quantity: item.quantity,
-            productColorId: item.selectedColor?.documentId || null,
-          }),
-        });
-
-        addedItems.push(result);
-      } catch (error: any) {
-        console.error(`❌ Failed to add item ${i + 1}:`, error);
-        errors.push({
-          item: {
-            productId: item.product?.id,
-            quantity: item.quantity,
-          },
-          error: error.message,
-        });
-      }
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return Response.json({
-      success: true,
-      items: addedItems,
-      errors: errors.length > 0 ? errors : undefined,
-    });
+    return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("❌ Cart merge error:", error);
-    return Response.json(
+    return NextResponse.json(
       { error: error.message || "Failed to merge cart" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // DELETE /api/cart - Clear entire cart
 export async function DELETE() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("session_id")?.value;
+  const { error } = await supabase.rpc("clear_cart", {
+    p_session_id: sessionId,
+  });
 
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const data = await serverApiClient("/cart/clear", {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return Response.json(data);
-  } catch (error: any) {
-    console.error("Clear cart error:", error);
-    return Response.json(
-      { error: error.message || "Failed to clear cart" },
-      { status: 500 }
-    );
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  return NextResponse.json({ data: { success: true } });
 }

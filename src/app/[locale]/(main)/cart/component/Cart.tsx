@@ -3,13 +3,13 @@
 import React from "react";
 import CartList from "./CartList";
 import CartSummary from "../../../../../components/reusable/CartSummary";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useCart } from "@/lib/hooks/useCart";
 
 function Cart() {
-  const { cartItems: cart, isGuest, isLoading } = useUnifiedCart();
+  const { cart, isLoading } = useCart();
   const router = useRouter();
   const t = useTranslations("Cart");
 
@@ -17,7 +17,7 @@ function Cart() {
     return <LoadingSpinner />;
   }
 
-if (!cart || cart.length === 0) {
+if (!cart || cart?.items?.length === 0) {
   return (
     <div className="flex items-center justify-center h-[60vh]">
       <p className="text-gray-500 text-center text-lg">{t("empty")}</p>
@@ -39,15 +39,15 @@ if (!cart || cart.length === 0) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* 🛒 Cart Items */}
           <div className="flex-1">
-            <CartList items={cart} />
+            <CartList items={cart?.items} />
           </div>
 
           {/* 💳 Order Summary */}
           <div className="w-full lg:w-[392px] flex-shrink-0">
-            <CartSummary items={cart} onButtonClick={handleCheckout} />
-            {isGuest && (
+            <CartSummary items={cart?.items} onButtonClick={handleCheckout} />
+            {/* {isGuest && (
               <p className="text-sm text-gray-400 mt-4">{t("guestNotice")}</p>
-            )}
+            )} */}
           </div>
         </div>
       </div>

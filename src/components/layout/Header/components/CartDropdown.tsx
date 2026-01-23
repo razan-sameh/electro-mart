@@ -1,31 +1,32 @@
 "use client";
+
 import CartItemCard from "@/components/reusable/CartItemCard";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
+import { useCart } from "@/lib/hooks/useCart";
 import { useRouter } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import type { typCartItem } from "@/content/types";
+import Loader from "@/components/ui/Loader";
 
 interface Props {
   onClose: () => void;
 }
 
 export default function CartDropdown({ onClose }: Props) {
-  const { cartItems: items, isGuest, isLoading } = useUnifiedCart();
+  const { cart, isFetching } = useCart();
   const router = useRouter();
   const t = useTranslations("CartDropdown");
   const locale = useLocale();
   const isRTL = locale === "ar";
-  const total = Array.isArray(items)
-    ? items.reduce((sum, item) => {
-        const price = item?.product?.displayPrice ?? 0;
-        const quantity = item?.quantity ?? 0;
-        return sum + price * quantity;
-      }, 0)
-    : 0;
+
+  const total =
+    cart?.items?.reduce((acc, item: typCartItem) => {
+      return acc + item.unitPrice * item.quantity;
+    }, 0) ?? 0;
 
   const handleCheckout = async () => {
     onClose();
-    if (isGuest) router.push("/login?redirect=/checkout/shipping");
-    else router.push("/checkout/shipping");
+    // if (isGuest) router.push("/login?redirect=/checkout/shipping");
+    // else router.push("/checkout/shipping");
   };
 
   function handleReviewItems() {
@@ -36,23 +37,20 @@ export default function CartDropdown({ onClose }: Props) {
   return (
     <div
       className={`
-    absolute mt-2 sm:w-96 md:w-[400px] bg-background shadow-xl rounded-lg p-4 z-50 max-w-md
-    ${isRTL ? "left-0" : "right-0"}
-    ${isRTL ? "text-right" : "text-left"}
-  `}
+        absolute mt-2 sm:w-96 md:w-[400px] bg-background shadow-xl rounded-lg p-4 z-50 max-w-md
+        ${isRTL ? "left-0" : "right-0"}
+        ${isRTL ? "text-right" : "text-left"}
+      `}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      {" "}
       {/* Items */}
       <div className="space-y-3 sm:space-y-4 max-h-60 sm:max-h-80 overflow-y-auto">
-        {isLoading ? (
-          <p className="text-center py-6 text-sm sm:text-base">
-            {t("loading")}
-          </p>
-        ) : items.length > 0 ? (
-          items.map((item) => (
+        {isFetching ? (
+          <Loader size={18} />
+        ) : cart?.items?.length! > 0 ? (
+          cart?.items?.map((item) => (
             <CartItemCard
-              key={`${item.id}-${item.selectedColor?.documentId || "default"}`}
+              key={`${item.id}-${item.variant?.id ?? "no-variant"}`}
               item={item}
             />
           ))
@@ -60,8 +58,9 @@ export default function CartDropdown({ onClose }: Props) {
           <p className="text-center py-6 text-sm sm:text-base">{t("empty")}</p>
         )}
       </div>
+
       {/* Summary */}
-      {items.length > 0 && (
+      {cart?.items?.length! > 0 && (
         <>
           <div className="mt-3 sm:mt-4 pt-3 text-xs sm:text-sm border-t border-lightGray/60">
             <div className="flex justify-between">
@@ -70,7 +69,7 @@ export default function CartDropdown({ onClose }: Props) {
             </div>
             <div className="flex justify-between font-semibold mt-2">
               <span>{t("totalAmount")}</span>
-              <span>E£ {total}</span>
+              <span>E£ {total.toFixed(2)}</span>
             </div>
           </div>
 

@@ -68,6 +68,7 @@ export async function fetchProductById(productId: number, locale: string) {
     console.error(error);
     return null;
   }
+console.log({data});
 
   if (!data) {
     notFound();

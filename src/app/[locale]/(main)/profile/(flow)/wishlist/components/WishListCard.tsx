@@ -6,22 +6,22 @@ import { FaStar } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import ProductPrice from "@/components/reusable/ProductPrice";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useTranslations } from "next-intl";
+import { useCart } from "@/lib/hooks/useCart";
 
 type productCardProps = {
   item: typWishlistItem;
   onRemove: (item: typWishlistItem) => void;
 };
 
-export default function ProductCard({ item, onRemove }: productCardProps) {
+export default function WishListCard({ item, onRemove }: productCardProps) {
   const t = useTranslations("Wishlist");
-  const { cartItems, addItem } = useUnifiedCart();
+  const { cart, addItem } = useCart();
   const [added, setAdded] = useState(false);
 
-  const isInCart = cartItems.some(
+  const isInCart = cart?.items.some(
     (cartItem) =>
-      cartItem.product.documentId === item.product.documentId &&
+      cartItem.product.id === item.product.id &&
       cartItem.selectedColor.id === item.selectedColor.id
   );
 

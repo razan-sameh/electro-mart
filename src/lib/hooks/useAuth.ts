@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchMe, loginApi, signupApi } from "../services/auth";
-import { useMergeGuestCartToUser } from "@/hooks/useMergeGuestCartToUser";
 import { useMergeGuestWishlistToUser } from "@/hooks/useMergeGuestWishlistToUser";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { CART_QUERY_KEY } from "./useCart";
@@ -34,7 +33,7 @@ export function useAuth() {
 
 export function useLogin() {
   const queryClient = useQueryClient();
-  const { merge: mergeCart } = useMergeGuestCartToUser();
+  // const { merge: mergeCart } = useMergeGuestCartToUser();
   const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
   return useMutation({
     mutationFn: loginApi,
@@ -42,7 +41,7 @@ export function useLogin() {
       // Set user data directly in cache
       if (data.success && data.user) {
         queryClient.setQueryData(["auth", "me"], data.user);
-        await mergeCart();
+        // await mergeCart();
         await mergeWishlist();
         await queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
         await queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
@@ -53,7 +52,7 @@ export function useLogin() {
 
 export function useSignup() {
   const queryClient = useQueryClient();
-  const { merge: mergeCart } = useMergeGuestCartToUser();
+  // const { merge: mergeCart } = useMergeGuestCartToUser();
   const { merge: mergeWishlist } = useMergeGuestWishlistToUser();
   return useMutation({
     mutationFn: signupApi,
@@ -61,7 +60,7 @@ export function useSignup() {
       if (data.success && data.user) {
         // 1. Set user data in cache
         queryClient.setQueryData(["auth", "me"], data.user);
-        await mergeCart();
+        // await mergeCart();
         await mergeWishlist();
         await queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
         await queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });

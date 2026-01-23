@@ -149,13 +149,6 @@ export type StrapiReview = {
   user: StrapiUser;
 };
 
-export type StrapiCartItem = {
-  documentId: string;
-  id: number;
-  product: ProductDB;
-  Quantity: number;
-  product_color: StrapiColor;
-};
 export type StrapiBuyNow = {
   documentId: string;
   id: number;
@@ -163,12 +156,6 @@ export type StrapiBuyNow = {
   quantity: number;
   product_color: StrapiColor;
   expiresAt: string;
-};
-
-export type StrapiCart = {
-  documentId: string;
-  id: number;
-  cart_items: StrapiCartItem[];
 };
 
 export type StrapiWishlistItem = {
@@ -267,3 +254,15 @@ export interface ProductDB {
   averageRating: number;
   totalReviews: number;
 }
+export type CartItemDB = {
+  id: number;
+  product: ProductDB;
+  variant: ProductVariantDB;
+  quantity: number;
+  total_price:number
+  unit_price:number
+};
+export type CartDB = {
+  id: number;
+  items: CartItemDB[];
+};

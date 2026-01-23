@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { typCartItem } from "@/content/types";
-import { calculateDiscountedPrice } from "@/content/utils";
 import Loader from "../ui/Loader";
 
 interface Props {
@@ -24,15 +23,20 @@ export default function CartSummary({
 }: Props) {
   const t = useTranslations("CartSummary");
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.displayPrice * item.quantity,
+  // السعر قبل الخصم
+  const subtotal = items?.reduce(
+    (sum, item) =>
+      sum + item?.variant?.price * item?.quantity,
     0
   );
-  const discountedTotal = items.reduce(
-    (sum, item) => sum + calculateDiscountedPrice(item.product) * item.quantity,
+
+  // السعر بعد الخصم (جاهز من backend)
+  const total = items?.reduce(
+    (sum, item) => sum + item?.totalPrice,
     0
   );
-  const discount = subtotal - discountedTotal;
+
+  const discount = subtotal - total;
   const discountPercent =
     subtotal > 0 ? ((discount / subtotal) * 100).toFixed(0) : "0";
 
@@ -42,21 +46,26 @@ export default function CartSummary({
       <div className="space-y-4 text-sm">
         <p className="flex justify-between border-b border-lightGray/60 pb-2">
           <span>{t("subtotal")}</span>
-          <span>E£{subtotal.toFixed(2)}</span>
+          <span>E£{subtotal?.toFixed(2)}</span>
         </p>
+
         <p className="flex justify-between border-b border-lightGray/60 pb-2">
           <span>{t("shippingCost")}</span>
           <span>{t("free")}</span>
         </p>
-        <p className="flex justify-between text-red-600 border-b border-lightGray/60 pb-2">
-          <span>{t("discountAmount")}</span>
-          <span>
-            -E£{discount.toFixed(2)} ({discountPercent}%)
-          </span>
-        </p>
+
+        {discount > 0 && (
+          <p className="flex justify-between text-red-600 border-b border-lightGray/60 pb-2">
+            <span>{t("discountAmount")}</span>
+            <span>
+              -E£{discount?.toFixed(2)} ({discountPercent}%)
+            </span>
+          </p>
+        )}
+
         <p className="flex justify-between font-semibold text-lg">
           <span>{t("total")}</span>
-          <span>E£{discountedTotal.toFixed(2)}</span>
+          <span>E£{total?.toFixed(2)}</span>
         </p>
       </div>
 

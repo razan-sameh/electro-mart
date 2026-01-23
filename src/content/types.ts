@@ -65,8 +65,8 @@ export type typProductAttribute = {
   hexCode?: string;
 };
 export type typProductOffer = {
-  discount_percent?: number;
-  discount_amount?: number;
+  discountPercent?: number;
+  discountAmount?: number;
   title?: string;
   startDate?: string;
   endDate?: string;
@@ -158,14 +158,15 @@ export type typPhone = {
 // Cart
 export type typCartItem = {
   id: number;
-  documentId: number;
   product: typProduct;
+  variant: typProductVariant;
   quantity: number;
-  selectedColor: typColor;
+  unitPrice: number;
+  totalPrice: number;
 };
 
 export type typCart = {
-  id: string;
+  id: number;
   items: typCartItem[];
 };
 

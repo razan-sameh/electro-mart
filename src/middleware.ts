@@ -1,11 +1,28 @@
-import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
- 
-export default createMiddleware(routing);
- 
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
+
+const intlMiddleware = createMiddleware(routing);
+
+export function middleware(req: NextRequest) {
+  // شغّل next-intl middleware الأول
+  const res = intlMiddleware(req);
+
+  const sessionId = req.cookies.get("session_id");
+
+  if (!sessionId) {
+    res.cookies.set("session_id", crypto.randomUUID(), {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+  }
+
+  return res;
+}
+
 export const config = {
-  // Match all pathnames except for
-  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
-  // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
 };

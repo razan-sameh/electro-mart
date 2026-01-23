@@ -1,18 +1,19 @@
 // File: adapters/BrandAdapter.ts
 import { typBrand, typCartItem } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiCartItem } from "./interfaces/types";
+import { CartItemDB } from "./interfaces/types";
 import { ColorAdapter } from "./ColorAdapter";
 import { ProductAdapter } from "./ProductAdapter";
+import { VariantAdapter } from "./VariantAdapter";
 
-export class CartItemsAdapter extends BaseAdapter<StrapiCartItem, typCartItem> {
+export class CartItemsAdapter extends BaseAdapter<CartItemDB, typCartItem> {
   private static instance: CartItemsAdapter;
-  private colorAdapter: ColorAdapter;
+  private variantAdapter: VariantAdapter;
   private productAdapter: ProductAdapter;
 
   private constructor() {
     super();
-    this.colorAdapter = ColorAdapter.getInstance();
+    this.variantAdapter = VariantAdapter.getInstance();
     this.productAdapter = ProductAdapter.getInstance();
   }
 
@@ -23,13 +24,14 @@ export class CartItemsAdapter extends BaseAdapter<StrapiCartItem, typCartItem> {
     return CartItemsAdapter.instance;
   }
 
-  adapt(source: StrapiCartItem): typCartItem {
+  adapt(source: CartItemDB): typCartItem {
     return {
       id: source.id,
-      documentId: source.documentId,
-      quantity: source.Quantity,
+      quantity: source.quantity,
+      totalPrice: source.total_price,
+      unitPrice: source.unit_price,
       product: this.productAdapter.adapt(source.product),
-      selectedColor: this.colorAdapter.adapt(source.product_color),
+      variant: this.variantAdapter.adapt(source.variant),
     };
   }
 }

@@ -1,7 +1,7 @@
 import { typProduct } from "@/content/types";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
 import { useRouter } from "@/i18n/navigation";
+import { useCart } from "@/lib/hooks/useCart";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { FaHeart } from "react-icons/fa";
@@ -19,31 +19,34 @@ export default function ProductActions({
   state,
 }: Props) {
   const t = useTranslations("ProductDetails");
-  const { cartItems: cart, addItem, updateQuantity } = useUnifiedCart();
+  const { cart, addItem, updateItem } = useCart();
   const router = useRouter();
   const {
     wishlistItems: wishlist,
     addItem: addToWishlist,
     removeItem: removeFromWishlist,
   } = useUnifiedWishlist();
-  console.log({product});
-  
+
   const isInWishlist = wishlist.some(
-    (i) => i.product.id === product.id && i.variantId === selectedVariant?.id
+    (i) =>
+      i.product.id === product.id &&
+      i.product.variants.some((v: any) => v.id === selectedVariant?.id),
   );
+
   const handleAddToCart = async () => {
     if (!selectedVariant) return;
 
-    const existingItem = cart.find((i) => i.variantId === selectedVariant.id);
+    const existingItem = cart?.items?.find(
+      (i) => i.variant.id === selectedVariant.id,
+    );
 
     if (existingItem) {
-      await updateQuantity(
-        existingItem,
-        existingItem.quantity + state.quantity
-      );
+      await updateItem({
+        itemId: existingItem.id,
+        quantity: existingItem.quantity + state.quantity,
+      });
     } else {
       await addItem({
-        product,
         variantId: selectedVariant.id,
         quantity: state.quantity,
       });
@@ -75,24 +78,24 @@ export default function ProductActions({
     }
   };
 
-  const handleAddToWishlist = async () => {
-    if (!selectedVariant) return;
+  // const handleAddToWishlist = async () => {
+  //   if (!selectedVariant) return;
 
-    const existingItem = wishlist.find(
-      (i) => i.variantId === selectedVariant.id
-    );
+  //   const existingItem = wishlist.find(
+  //     (i) => i.variantId === selectedVariant.id
+  //   );
 
-    if (existingItem) {
-      await removeFromWishlist(existingItem);
-    } else {
-      await addToWishlist({
-        product,
-        variantId: selectedVariant.id,
-      });
-    }
+  //   if (existingItem) {
+  //     await removeFromWishlist(existingItem);
+  //   } else {
+  //     await addToWishlist({
+  //       product,
+  //       variantId: selectedVariant.id,
+  //     });
+  //   }
 
-    toast.success(t("successAdded", { product: product.name }));
-  };
+  //   toast.success(t("successAdded", { product: product.name }));
+  // };
 
   return (
     <div className="flex gap-4 mt-4">
@@ -111,7 +114,7 @@ export default function ProductActions({
       </button>
 
       <button
-        onClick={handleAddToWishlist}
+        // onClick={handleAddToWishlist}
         className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
       >
         {isInWishlist ? (

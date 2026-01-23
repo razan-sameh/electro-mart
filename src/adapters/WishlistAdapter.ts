@@ -1,7 +1,7 @@
 // File: adapters/BrandAdapter.ts
 import { typCart, typWishlist } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiCart, StrapiWishlist } from "./interfaces/types";
+import { CartDB, StrapiWishlist } from "./interfaces/types";
 import { CartItemsAdapter } from "./CartItemsAdapter";
 import { WishlistItemsAdapter } from "./WishlistItemsAdapter";
 

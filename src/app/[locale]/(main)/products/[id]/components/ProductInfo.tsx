@@ -56,8 +56,8 @@ export default function ProductInfo({ product }: Props) {
     const offer = selectedVariant.offer;
     const price = selectedVariant.price;
 
-    if (offer && offer.discount_percent) {
-      return price - (price * offer.discount_percent) / 100;
+    if (offer && offer.discountPercent) {
+      return price - (price * offer.discountPercent) / 100;
     }
     return price;
   }, [selectedVariant]);

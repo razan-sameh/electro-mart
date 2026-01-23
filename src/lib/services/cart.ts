@@ -26,42 +26,45 @@ export async function fetchCart(locale: string) {
   const res = await fetch(`/api/cart?locale=${locale}`);
   if (!res.ok) throw new Error("Failed to fetch cart");
   const data = await res.json();
+  
   if (!data.data) {
-    return { id: "empty", items: [] };
+    return { id: 0, items: [] };
   }
+  console.log({data});
+  
   const cartData = data.data;
 
   const result = cartAdapter.adapt(cartData);
+  console.log({result});
+  
   return result;
 }
 
 // Add item to cart
 export async function addCartItem(
-  product: typProduct,
-  quantity: number,
-  selectedColor: typColor
+  variantId: number, quantity: number
 ) {
   const res = await fetch("/api/cart/items", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({
-      productId: product.id,
+      variantId: variantId,
       quantity: quantity,
-      productColorId: selectedColor.documentId,
     }),
   });
   if (!res.ok) {
     const text = await res.text();
-    console.error("Strapi error:", text);
+    console.error("Add to cart error:", text);
     throw new Error(text);
   }
   if (!res.ok) throw new Error("Failed to add to cart");
-  const data = await res.json();
+  // const data = await res.json();
+// console.log({data});
 
-  const addedItem = cartItemsAdapter.adapt(data.data);
+  // const addedItem = cartItemsAdapter.adapt(data.data);
 
-  return addedItem;
+  // return addedItem;
 }
 
 // Update cart item quantity
@@ -73,11 +76,11 @@ export async function updateCartItem(itemId: number, quantity: number) {
   });
 
   if (!res.ok) throw new Error("Failed to update cart");
-  const data = await res.json();
+  // const data = await res.json();
 
-  const updatedItem = cartItemsAdapter.adapt(data.data);
+  // const updatedItem = cartItemsAdapter.adapt(data.data);
 
-  return updatedItem;
+  // return updatedItem;
 }
 
 // Remove cart item

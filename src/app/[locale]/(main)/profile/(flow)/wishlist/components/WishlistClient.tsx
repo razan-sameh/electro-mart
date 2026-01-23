@@ -1,7 +1,7 @@
 "use client";
 
 import { FiShoppingBag } from "react-icons/fi";
-import ProductCard from "./ProductCard";
+import ProductCard from "./WishListCard";
 import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useTranslations } from "next-intl";
