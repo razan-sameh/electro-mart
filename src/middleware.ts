@@ -1,14 +1,14 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
 import { NextRequest } from "next/server";
-import { supabaseServer } from "./app/api/supabaseServer";
+import { createServer } from "./app/api/supabaseServer";
 
 const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const res = intlMiddleware(req);
 
-  const supabase = await supabaseServer();
+  const supabase = await createServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();

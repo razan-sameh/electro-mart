@@ -1,11 +1,10 @@
-import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
-import { supabaseServer } from "../../supabaseServer";
+import { createServer } from "../../supabaseServer";
 
 export async function POST(req: Request) {
   try {
     const { identifier, password } = await req.json();
-    const supabase = await supabaseServer();
+    const supabase = await createServer();
 
     let { data, error } = await supabase.auth.signInWithPassword({
       email: identifier,
@@ -20,26 +19,20 @@ export async function POST(req: Request) {
     }
 
     const cookieStore = await cookies();
-    if (data?.session?.access_token) {
-      cookieStore.set("jwtToken", data.session.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60,
-      });
-    }
 
     // Merge guest cart to user cart after successful login
     if (data.user) {
       const sessionId = cookieStore.get("session_id")?.value;
-      
+
       if (sessionId) {
-        const { error: mergeError } = await supabase.rpc("merge_guest_cart_to_user", {
-          p_session_id: sessionId,
-          p_user_id: data.user.id,
-        });
-        
+        const { error: mergeError } = await supabase.rpc(
+          "merge_guest_cart_to_user",
+          {
+            p_session_id: sessionId,
+            p_user_id: data.user.id,
+          },
+        );
+
         if (mergeError) {
           console.error("Failed to merge cart:", mergeError);
           // Don't fail the login, just log the error

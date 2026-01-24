@@ -10,6 +10,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { loginSchema, typLoginData } from "./schemas";
 import { FcGoogle } from "react-icons/fc";
 import { useLogin } from "@/lib/hooks/useAuth";
+import { createServer } from "@/app/api/supabaseServer";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -50,9 +51,8 @@ export default function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    const strapiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
-    window.location.href = `${strapiUrl}/connect/google`;
+    const redirectParam = encodeURIComponent(redirect);
+    window.location.href = `/api/auth/google?redirect=${redirectParam}`;
   };
 
   return (

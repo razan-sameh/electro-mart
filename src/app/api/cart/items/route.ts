@@ -1,10 +1,10 @@
 // app/api/cart/items/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { supabaseServer } from "../../supabaseServer";
+import { createServer } from "../../supabaseServer";
 
 export async function POST(req: NextRequest) {
-  const supabase = await supabaseServer();
+  const supabase = await createServer();
   const { variantId, quantity } = await req.json();
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("session_id")?.value;

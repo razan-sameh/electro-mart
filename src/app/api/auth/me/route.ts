@@ -1,10 +1,9 @@
 // app/api/auth/me/route.ts
-import { cookies } from "next/headers";
-import { supabaseServer } from "../../supabaseServer";
+import { createServer } from "../../supabaseServer";
 
 export async function GET() {
   try {
-    const supabase = await supabaseServer();
+    const supabase = await createServer();
       const {
         data: { user },
       } = await supabase.auth.getUser();

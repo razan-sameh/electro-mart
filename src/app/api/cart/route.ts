@@ -1,10 +1,10 @@
 // app/api/cart/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { supabaseServer } from "../supabaseServer";
+import { createServer } from "../supabaseServer";
 
 export async function GET(req: NextRequest) {
-  const supabase = await supabaseServer();
+  const supabase = await createServer();
   const locale = req.nextUrl.searchParams.get("locale");
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("session_id")?.value;
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 export async function DELETE() {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("session_id")?.value;
-  const supabase = await supabaseServer();
+  const supabase = await createServer();
 
   const { error } = await supabase.rpc("clear_cart", {
     p_session_id: sessionId,

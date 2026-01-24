@@ -1,22 +1,26 @@
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_API!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
-
-export const supabaseServer = async () => {
+export async function createServer() {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("jwtToken")?.value;
-
-  const options: any = {};
-
-  if (accessToken) {
-    options.global = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_API;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  return createServerClient(supabaseUrl!, supabaseKey!, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-    };
-  }
-
-  return createClient(supabaseUrl, supabaseKey, options);
-};
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // The `setAll` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing
+          // user sessions.
+        }
+      },
+    },
+  });
+}

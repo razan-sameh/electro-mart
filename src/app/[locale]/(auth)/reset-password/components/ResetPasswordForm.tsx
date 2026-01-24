@@ -1,57 +1,40 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoLockClosedOutline } from "react-icons/io5";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import InputField from "@/components/reusable/InputField";
 import { resetPasswordSchema, typResetPasswordData } from "./schemas";
-import { useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
   const form = useForm<typResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: {
-      password: "",
-      passwordConfirmation: "",
-    },
   });
 
   const onSubmit = async (data: typResetPasswordData) => {
-    if (!code) {
-      setError("Invalid reset link");
-      return;
-    }
-
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch("/api/auth/reset-password", {
+      const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code,
           password: data.password,
-          passwordConfirmation: data.passwordConfirmation,
+          code,
         }),
       });
 
-      const result = await response.json();
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error);
 
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to reset password");
-      }
-
-      // Redirect to login page after successful reset
       router.push("/login?reset=success");
     } catch (err: any) {
       setError(err.message);
@@ -60,12 +43,13 @@ export default function ResetPasswordForm() {
     }
   };
 
-  if (!code) {
+  if (error) {
     return (
       <div className="max-w-md mx-auto p-6">
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
           <p className="text-red-700 text-center">
-            Invalid or missing reset code. Please request a new password reset link.
+            Invalid or missing reset token. Please request a new password reset
+            link.
           </p>
         </div>
       </div>
@@ -98,9 +82,7 @@ export default function ResetPasswordForm() {
           type="password"
         />
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <button
           type="submit"
