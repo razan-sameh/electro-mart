@@ -119,7 +119,6 @@ export type RatingBreakdown = {
 // User (Auth)
 export type typUser = {
   id: number;
-  documentId: string;
   username: string;
   email: string;
   token?: string; // for JWT

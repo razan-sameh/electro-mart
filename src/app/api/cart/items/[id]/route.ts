@@ -1,12 +1,13 @@
 // app/api/cart/items/[id]/route.ts
-import supabase from "@/lib/supabase";
+import { supabaseServer } from "@/app/api/supabaseServer";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const { quantity } = await req.json();
+  const supabase = await supabaseServer();
 
   const { data, error } = await supabase.rpc("update_cart_item", {
     p_item_id: Number(params.id),
@@ -22,8 +23,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
+  const supabase = await supabaseServer();
   const { error } = await supabase.rpc("remove_cart_item", {
     p_item_id: Number(params.id),
   });

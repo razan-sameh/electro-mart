@@ -75,11 +75,10 @@ export interface StrapiOrderItem {
   subtotal: number;
 }
 
-export interface StrapiUser {
+export interface UserDB {
   id: number;
-  documentId: string;
   email: string;
-  username: string;
+  user_metadata: {display_name?: string};
   phone?: StrapiPhone;
 }
 
@@ -94,7 +93,7 @@ export interface StrapiOrder {
   subtotal: number;
   discount_total: number;
   createdAt: string;
-  user: StrapiUser;
+  user: UserDB;
 }
 
 export interface StrapiColor {
@@ -146,7 +145,7 @@ export type StrapiReview = {
   product: ProductDB;
   createdAt: string;
   updatedAt: string;
-  user: StrapiUser;
+  user: UserDB;
 };
 
 export type StrapiBuyNow = {

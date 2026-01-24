@@ -7,7 +7,6 @@ import {
   updateCartItem,
   removeCartItem,
   clearCart,
-  mergeCart,
 } from "@/lib/services/cart";
 import type { typCart, typCartItem } from "@/content/types";
 import { useLocale } from "next-intl";
@@ -26,43 +25,6 @@ export function useCart() {
     },
     retry: 1,
     staleTime: Infinity,
-  });
-
-  // 🔄 Merge local → server
-  const mergeMutation = useMutation({
-    mutationFn: (items: typCartItem[]) => mergeCart(items),
-
-    onMutate: async (items) => {
-      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
-      const previousCart = queryClient.getQueryData<typCart>(CART_QUERY_KEY);
-
-      const newItems = [...(previousCart?.items || [])];
-
-      items.forEach((item) => {
-        const existing = newItems.find((i) => i.variant?.id === item.variant?.id);
-        if (existing) existing.quantity += item.quantity;
-        else newItems.push(item as any);
-      });
-
-      queryClient.setQueryData<typCart>(CART_QUERY_KEY, {
-        ...(previousCart || { id: 0, items: [] }),
-        items: newItems,
-      });
-
-      return { previousCart };
-    },
-
-    onError: (_error, _variables, rollback) => {
-      if (rollback?.previousCart) {
-        queryClient.setQueryData(CART_QUERY_KEY, rollback.previousCart);
-      }
-    },
-
-    onSuccess: (data) => {
-      // Update cache with server response
-      queryClient.setQueryData(CART_QUERY_KEY, data);
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
-    },
   });
 
   // ➕ Add item
@@ -227,8 +189,6 @@ export function useCart() {
     isFetching: cartQuery.isFetching,
     isError: cartQuery.isError,
     refetch: cartQuery.refetch,
-
-    mergeMutation: mergeMutation.mutateAsync,
     addItem: addMutation.mutateAsync,
     updateItem: updateMutation.mutateAsync,
     removeItem: removeMutation.mutateAsync,

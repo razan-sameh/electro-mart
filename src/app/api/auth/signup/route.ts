@@ -1,57 +1,55 @@
-import { serverApiClient } from "@/app/api/serverApiClient";
 import { cookies } from "next/headers";
+import { supabaseServer } from "../../supabaseServer";
 
 export async function POST(req: Request) {
   try {
     const { username, email, password } = await req.json();
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("session_id")?.value;
 
-    let data: { jwt?: string; user?: any } = {};
-    try {
-      // Try to register user
-      data = await serverApiClient("/auth/local/register", {
-        method: "POST",
-        body: JSON.stringify({ email, password, username }),
-      });
-      
-      
-    } catch (err: any) {
-      console.warn("Registration error:", err.message);
-      // Return error instead of continuing
-      return Response.json({
-        success: false,
-        error: err.message || "Registration failed",
-      }, { status: 400 });
+    const supabase = await supabaseServer();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: username,
+          session_id: sessionId,
+        },
+      },
+    });
+
+    if (error) {
+      return new Response(
+        JSON.stringify({ success: false, error: error.message }),
+        { status: 400 },
+      );
     }
 
-    // Set JWT if exists
-    if (data.jwt) {
-      const cookieStore = await cookies();
-      cookieStore.set("jwtToken", data.jwt, {
+    // Save token in cookie
+    if (data?.session?.access_token) {
+      cookieStore.set("jwtToken", data.session.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         path: "/",
         maxAge: 7 * 24 * 60 * 60,
       });
-    } else {
-      console.error("⚠️ No JWT returned - email confirmation likely required");
     }
 
-    // ✅ Always respond with success
-    return Response.json({
-      success: true,
-      message: data.jwt 
-        ? "Registration successful!" 
-        : "Registration successful! Please check your email to confirm your account.",
-      user: data.user,
-      emailConfirmationPending: !data.jwt,
-    });
-
+    // Return the same session object
+    return new Response(
+      JSON.stringify({
+        success: true,
+        user: data.user,
+        session: data.session,
+      }),
+      { status: 200 },
+    );
   } catch (err: any) {
-    console.error("Signup error:", err.message);
-    return Response.json({
-      success: false,
-      error: "Error creating user. Please try again.",
-    }, { status: 500 });
+    return new Response(
+      JSON.stringify({ success: false, error: err.message }),
+      { status: 500 },
+    );
   }
 }

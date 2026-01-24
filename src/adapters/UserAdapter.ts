@@ -1,10 +1,10 @@
 // File: adapters/BrandAdapter.ts
 import { typUser } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiUser } from "./interfaces/types";
+import { UserDB } from "./interfaces/types";
 import { PhoneAdapter } from "./PhoneAdapter";
 
-export class UserAdapter extends BaseAdapter<StrapiUser, typUser> {
+export class UserAdapter extends BaseAdapter<UserDB, typUser> {
   private static instance: UserAdapter;
   private phoneAdapter: PhoneAdapter;
 
@@ -20,11 +20,10 @@ export class UserAdapter extends BaseAdapter<StrapiUser, typUser> {
     return UserAdapter.instance;
   }
 
-  adapt(source: StrapiUser): typUser {
+  adapt(source: UserDB): typUser {
     return {
       id: source.id,
-      documentId: source.documentId,
-      username: this.handleNullUndefined(source.username, ""),
+      username: this.handleNullUndefined(source.user_metadata?.display_name, ""),
       email: this.handleNullUndefined(source.email, ""),
       phone: source.phone ? this.phoneAdapter.adapt(source.phone) : undefined,
     };

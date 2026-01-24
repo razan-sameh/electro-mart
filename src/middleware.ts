@@ -1,16 +1,22 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { supabaseServer } from "./app/api/supabaseServer";
 
 const intlMiddleware = createMiddleware(routing);
 
-export function middleware(req: NextRequest) {
-  // شغّل next-intl middleware الأول
+export async function middleware(req: NextRequest) {
   const res = intlMiddleware(req);
 
-  const sessionId = req.cookies.get("session_id");
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!sessionId) {
+  // Only set session_id if user is NOT authenticated
+  const sessionId = req.cookies.get("session_id")?.value;
+
+  if (!user && !sessionId) {
     res.cookies.set("session_id", crypto.randomUUID(), {
       httpOnly: true,
       sameSite: "lax",
@@ -18,6 +24,11 @@ export function middleware(req: NextRequest) {
       path: "/",
       maxAge: 60 * 60 * 24 * 30, // 30 days
     });
+  }
+
+  // If user IS authenticated, remove session_id
+  if (user && sessionId) {
+    res.cookies.delete("session_id");
   }
 
   return res;

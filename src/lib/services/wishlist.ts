@@ -8,13 +8,13 @@ const wishlistItemsAdapter = WishlistItemsAdapter.getInstance();
 
 // Fetch wishlist
 export async function fetchWishlist(locale: string) {
-  const res = await fetch(`/api/wishlist?locale=${locale}`);
-  if (!res.ok) throw new Error("Failed to fetch wishlist");
+  // const res = await fetch(`/api/wishlist?locale=${locale}`);
+  // if (!res.ok) throw new Error("Failed to fetch wishlist");
 
-  const data = await res.json();
-  if (!data.data) return { id: "empty", items: [] };
+  // const data = await res.json();
+  // if (!data.data) return { id: "empty", items: [] };
 
-  return wishlistAdapter.adapt(data.data);
+  // return wishlistAdapter.adapt(data.data);
 }
 
 // Merge local wishlist to server
