@@ -19,21 +19,6 @@ export interface StrapiImageFormat {
   height: number;
 }
 
-export interface StrapiSpecificationType {
-  id: number;
-  documentId: string;
-  name: string;
-  specification_values?: StrapiSpecificationValue[]; // Add this if your API uses CategoryName
-  categories?: CategoryDB[];
-}
-
-export interface StrapiSpecificationValue {
-  id: number;
-  documentId: string;
-  value: string;
-  specification_type?: StrapiSpecificationType; // Add this if your API uses CategoryName
-  products?: ProductDB[];
-}
 
 export interface StrapiSpecialOffer {
   id: number;
@@ -151,6 +136,7 @@ export interface ProductImageDB {
   position?: number;
 }
 export interface ProductSpecDB {
+  id: number;
   key: string;
   value: string;
   is_filterable: boolean;

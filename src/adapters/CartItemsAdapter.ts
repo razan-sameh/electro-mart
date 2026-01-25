@@ -1,8 +1,7 @@
 // File: adapters/BrandAdapter.ts
-import { typBrand, typCartItem } from "@/content/types";
+import { typCartItem } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
 import { CartItemDB } from "./interfaces/types";
-import { ColorAdapter } from "./ColorAdapter";
 import { ProductAdapter } from "./ProductAdapter";
 import { VariantAdapter } from "./VariantAdapter";
 
