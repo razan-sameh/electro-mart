@@ -94,7 +94,7 @@ export default function ProductInfo({ product }: Props) {
     <div className="flex flex-col gap-6">
       <ProductHeader
         product={product}
-        selectedVariant={selectedVariant}
+        selectedVariant={selectedVariant!}
         formattedDiscountedPrice={formattedDiscountedPrice}
       />
 
