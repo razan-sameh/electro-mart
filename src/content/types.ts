@@ -98,6 +98,8 @@ export type typProduct = {
   reviews?: typReview[];
   displayPrice: number;
   originalPrice: number;
+  defaultVariantId: number;
+  defaultVariantAttributes:typProductAttribute[];
 };
 
 export type typReview = {

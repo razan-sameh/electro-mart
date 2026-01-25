@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { typProduct } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { FaStar } from "react-icons/fa";
@@ -7,10 +8,28 @@ type ProductCardProps = {
   item: typProduct;
 };
 
-export default function ProductCard({ item }: ProductCardProps) {  
+export default function ProductCard({ item }: ProductCardProps) {
+  // Color attribute from defaultVariantAttributes
+  const colorAttribute = useMemo(
+    () =>
+      item.defaultVariantAttributes?.find(
+        (a) => a.attribute.toLowerCase() === "color"
+      ),
+    [item.defaultVariantAttributes]
+  );
+
+  // Other attributes
+  const otherAttributes = useMemo(
+    () =>
+      item.defaultVariantAttributes?.filter(
+        (a) => a.attribute.toLowerCase() !== "color"
+      ) ?? [],
+    [item.defaultVariantAttributes]
+  );
+
   return (
     <Link
-      href={`/products/${item.id}`}
+      href={`/products/${item.id}?variant=${item.defaultVariantId}`}
       className="bg-lightGray/20 rounded-lg shadow hover:shadow-lg transition text-start w-full cursor-pointer"
     >
       {/* Discount badge */}
@@ -35,6 +54,29 @@ export default function ProductCard({ item }: ProductCardProps) {
           {/* Price */}
           <ProductPrice item={item} />
         </div>
+
+        {/* Attributes */}
+        {item.defaultVariantAttributes?.length > 0 && (
+          <div className="my-2 text-sm text-gray-500">
+            {/* Color */}
+            {colorAttribute && (
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: colorAttribute.hexCode }}
+                />
+                <span>{colorAttribute.value}</span>
+              </div>
+            )}
+
+            {/* Other attributes */}
+            {otherAttributes.map((attr, index) => (
+              <p key={index}>
+                {attr.attribute}: {attr.value}
+              </p>
+            ))}
+          </div>
+        )}
 
         {/* Rating */}
         <div className="flex items-center justify-end text-sm text-gray-600">

@@ -188,6 +188,7 @@ export interface ProductDB {
   images: ProductImageDB[];
   specs: ProductSpecDB[];
   variants: ProductVariantDB[];
+  default_variant_id:number;
   offer: ProductOfferDB | null;
   display_price: number;
   original_price: number;
@@ -195,6 +196,7 @@ export interface ProductDB {
   min_price: number;
   averageRating: number;
   totalReviews: number;
+  default_variant_attributes:ProductAttributeDB[];
 }
 export type CartItemDB = {
   id: number;

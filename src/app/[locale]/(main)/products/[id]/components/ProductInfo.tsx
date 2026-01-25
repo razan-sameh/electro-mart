@@ -1,18 +1,21 @@
 "use client";
 
 import { typProduct, typProductVariant } from "@/content/types";
-import { useReducer, useMemo, useCallback } from "react";
+import { useReducer, useMemo, useCallback, useEffect } from "react";
 import { cartItemReducer } from "./cartItemReducer";
 import ProductHeader from "./ProductHeader";
 import ProductAttributes from "./ProductAttributes";
 import QuantitySelector from "./QuantitySelector";
 import ProductActions from "./ProductActions";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
+    const searchParams = useSearchParams();
+  const variantIdFromUrl = searchParams.get("variant");
   // Extract all attribute types (Color, Storage, RAM, etc)
   const attributesMap = useMemo(() => {
     const map: Record<string, Set<string>> = {};
@@ -40,7 +43,26 @@ export default function ProductInfo({ product }: Props) {
     quantity: 1,
     selectedAttributes: defaultSelectedAttributes,
   });
+ // **هنا نعمل useEffect عشان نحدد selection من URL**
+  useEffect(() => {
+    if (!variantIdFromUrl) return;
 
+    const selectedVariant = product.variants.find(
+      (v) => v.id === Number(variantIdFromUrl)
+    );
+
+    if (!selectedVariant) return;
+
+    const selectedAttributes: Record<string, string> = {};
+    selectedVariant.attributes.forEach((attr) => {
+      selectedAttributes[attr.attribute] = attr.value;
+    });
+
+    dispatch({
+      type: "SELECT_ATTRIBUTE",
+      payload: selectedAttributes,
+    });
+  }, [variantIdFromUrl, product.variants]);
   // Find matching variant based on selected attributes
   const selectedVariant = useMemo(() => {
     return product.variants.find((v) =>

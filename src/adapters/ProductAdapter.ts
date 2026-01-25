@@ -6,6 +6,7 @@ import { CategoryAdapter } from "./CategoryAdapter";
 import { SpecialOfferAdapter } from "./SpecialOfferAdapter";
 import {  SpecificationAdapter } from "./SpecificationAdapter";
 import { VariantAdapter } from "./VariantAdapter";
+import { AttributesAdapter } from "./AttributesAdapter";
 
 export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
   private static instance: ProductAdapter;
@@ -14,6 +15,7 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
   private specialOfferAdapter: SpecialOfferAdapter;
   private specificationAdapter: SpecificationAdapter;
   private variantAdapter: VariantAdapter;
+  private attributesAdapter: AttributesAdapter;
 
   private constructor() {
     super();
@@ -22,6 +24,7 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
     this.specialOfferAdapter = SpecialOfferAdapter.getInstance();
     this.specificationAdapter = SpecificationAdapter.getInstance();
     this.variantAdapter = VariantAdapter.getInstance();
+    this.attributesAdapter = AttributesAdapter.getInstance();
   }
 
   public static getInstance(): ProductAdapter {
@@ -35,6 +38,7 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
     return {
       id: source.id,
       slug: source.slug,
+      defaultVariantId: source.default_variant_id,
       name: this.handleNullUndefined(source.title, ""),
       description: this.handleNullUndefined(source.description, ""),
       displayPrice: this.handleNullUndefined(source.display_price, 0),
@@ -51,6 +55,7 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
       specialOffers: this.specialOfferAdapter.adapt(source.offer || {}),
       specs: this.specificationAdapter.adaptMany(source.specs || []),
       variants: this.variantAdapter.adaptMany(source.variants || []),
+      defaultVariantAttributes: this.attributesAdapter.adaptMany(source.default_variant_attributes || []),
     };
   }
 }

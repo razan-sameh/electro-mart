@@ -51,6 +51,7 @@ export async function fetchProducts(
   if (!data || !data.data || data.data.length === 0) {
     return { data: [], meta: data?.meta ?? {} };
   }
+console.log({data});
 
   return {
     data: data.data.map((product: any) => productAdapter.adapt(product)),
@@ -84,7 +85,7 @@ export const fetchSimilarProducts = async (
 ) => {
   const { data, error } = await supabase.rpc("get_similar_products", {
     current_product_id: productId,
-    categoryid: categoryId,
+    category_id_param: categoryId,
     locale: locale,
     limit_count: limit,
   });
