@@ -118,7 +118,8 @@
     "brand": "Brand",
     "color": "Color",
     "empty": "Your cart is empty",
-    "guestNotice": "You’re shopping as a guest — log in to sync your cart."
+    "guestNotice": "You’re shopping as a guest — log in to sync your cart.",
+    "continueShopping": "Continue Shopping"
   },
   "Checkout": {
     "deliveryDetails": "Delivery Details",
@@ -182,6 +183,7 @@
     "clickAway": "is just a click away!",
     "viewAll": "View all",
     "successAdded": "{product} successfully added",
+    "successRemoved": "{product} successfully removed",
     "reviewsHaeder": "User ratings and reviews"
   },
   "Review": {

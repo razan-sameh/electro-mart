@@ -13,21 +13,15 @@ interface Props {
 
 export default function CartItem({ item }: Props) {
   const { updateItem, removeItem } = useCart();
-  const [loadingItemId, setLoadingItemId] = useState<number | null>(null);
   const t = useTranslations("Cart");
-  const subtotal = item?.variant?.price * item?.quantity
+  const subtotal = item?.variant?.price * item?.quantity;
   const handleUpdateQuantity = async (newQuantity: number) => {
     if (newQuantity < 1) return;
 
-    try {
-      setLoadingItemId(item.id);
-      await updateItem({
-        itemId: item.id,
-        quantity: newQuantity,
-      });
-    } finally {
-      setLoadingItemId(null);
-    }
+    await updateItem({
+      itemId: item.id,
+      quantity: newQuantity,
+    });
   };
 
   const imageUrl = item.product.imagesUrl?.[0]?.url ?? "/placeholder.png";
@@ -86,7 +80,7 @@ export default function CartItem({ item }: Props) {
 
           {/* Price */}
           <div className="flex gap-2 items-center mb-2 flex-wrap mt-3 ">
-            {item?.variant?.offer?.title != '' && (
+            {item?.variant?.offer?.title != "" && (
               <span className="text-gray-400 line-through">
                 E£ {subtotal?.toFixed(2)}
               </span>
@@ -98,39 +92,29 @@ export default function CartItem({ item }: Props) {
 
           {/* Quantity Controls */}
           <div className="flex items-center gap-3 mt-5 border border-lightGray rounded-xl w-fit px-2 py-1 h-[42px] min-w-[120px] justify-center">
-            {loadingItemId === item.id ? (
-              <div className="flex items-center justify-center w-full h-full">
-                <div className="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={() =>
-                    handleUpdateQuantity(Math.max(item.quantity - 1, 1))
-                  }
-                  disabled={item.quantity === 1}
-                  className={`w-8 h-8 flex items-center justify-center text-lg rounded transition-colors
+            <button
+              onClick={() =>
+                handleUpdateQuantity(Math.max(item.quantity - 1, 1))
+              }
+              disabled={item.quantity === 1}
+              className={`w-8 h-8 flex items-center justify-center text-lg rounded transition-colors
                     ${
                       item.quantity === 1
                         ? "text-gray-400 cursor-not-allowed"
                         : "hover:text-primary"
                     }`}
-                >
-                  –
-                </button>
+            >
+              –
+            </button>
 
-                <span className="min-w-[24px] text-center">
-                  {item.quantity}
-                </span>
+            <span className="min-w-[24px] text-center">{item.quantity}</span>
 
-                <button
-                  onClick={() => handleUpdateQuantity(item.quantity + 1)}
-                  className="w-8 h-8 flex items-center justify-center text-lg hover:text-primary"
-                >
-                  +
-                </button>
-              </>
-            )}
+            <button
+              onClick={() => handleUpdateQuantity(item.quantity + 1)}
+              className="w-8 h-8 flex items-center justify-center text-lg hover:text-primary"
+            >
+              +
+            </button>
           </div>
         </div>
       </div>

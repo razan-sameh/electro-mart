@@ -1,11 +1,10 @@
 // File: adapters/BrandAdapter.ts
-import { typCart, typWishlist } from "@/content/types";
+import { typWishlist } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { CartDB, StrapiWishlist } from "./interfaces/types";
-import { CartItemsAdapter } from "./CartItemsAdapter";
+import { WishlistDB } from "./interfaces/types";
 import { WishlistItemsAdapter } from "./WishlistItemsAdapter";
 
-export class WishlistAdapter extends BaseAdapter<StrapiWishlist, typWishlist> {
+export class WishlistAdapter extends BaseAdapter<WishlistDB, typWishlist> {
   private static instance: WishlistAdapter;
   private wishlistItemsAdapter: WishlistItemsAdapter;
 
@@ -21,10 +20,10 @@ export class WishlistAdapter extends BaseAdapter<StrapiWishlist, typWishlist> {
     return WishlistAdapter.instance;
   }
 
-  adapt(source: StrapiWishlist): typWishlist {
+  adapt(source: WishlistDB): typWishlist {
     return {
-      id: source.documentId,
-      items: this.wishlistItemsAdapter.adaptMany(source.wishlist_items || []),
+      id: source.id,
+      items: this.wishlistItemsAdapter.adaptMany(source.items || []),
     };
   }
 }

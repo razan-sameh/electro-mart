@@ -171,13 +171,15 @@ export type typCart = {
 
 export type typWishlistItem = {
   id: number;
-  documentId: string;
   product: typProduct;
-  selectedColor: typColor;
+  variant: typProductVariant;
+  originalPrice: number;
+  displayPrice: number;
+  appliedOffer?: typProductOffer;
 };
 
 export type typWishlist = {
-  id: string;
+  id: number;
   items: typWishlistItem[];
 };
 
@@ -237,4 +239,3 @@ export type typSidebarFilters = {
   attributes: typProductAttribute[];
   price_range: PriceRange;
 };
-

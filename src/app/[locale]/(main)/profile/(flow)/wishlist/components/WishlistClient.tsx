@@ -1,17 +1,18 @@
 "use client";
 
 import { FiShoppingBag } from "react-icons/fi";
-import ProductCard from "./WishListCard";
-import { useUnifiedWishlist } from "@/hooks/useUnifiedWishlist";
+import WishListCard from "./WishListCard";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useWishlist } from "@/lib/hooks/useWishlist";
 
 export default function WishlistClient() {
   const t = useTranslations("Wishlist");
-  const { wishlistItems, isLoading, removeItem } = useUnifiedWishlist();
+  const { wishlist, isFetching, removeItem } = useWishlist();
+  const hasItems = wishlist?.items?.length! > 0;
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner />
@@ -26,19 +27,15 @@ export default function WishlistClient() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">
             {t("title")}{" "}
-            <span className="text-gray-400">({wishlistItems.length})</span>
+            <span className="text-gray-400">({wishlist?.items?.length})</span>
           </h1>
         </div>
 
         {/* Wishlist Grid */}
-        {wishlistItems.length > 0 ? (
+        {wishlist && hasItems ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {wishlistItems.map((item) => (
-              <ProductCard
-                key={item.documentId}
-                item={item}
-                onRemove={removeItem}
-              />
+            {wishlist?.items?.map((item) => (
+              <WishListCard key={item.id} item={item} onRemove={removeItem} />
             ))}
           </div>
         ) : (

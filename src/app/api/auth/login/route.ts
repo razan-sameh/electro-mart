@@ -20,12 +20,13 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies();
 
-    // Merge guest cart to user cart after successful login
+    // Merge guest cart & wishlist to user after successful login
     if (data.user) {
       const sessionId = cookieStore.get("session_id")?.value;
 
       if (sessionId) {
-        const { error: mergeError } = await supabase.rpc(
+        // Merge cart
+        const { error: mergeCartError } = await supabase.rpc(
           "merge_guest_cart_to_user",
           {
             p_session_id: sessionId,
@@ -33,13 +34,25 @@ export async function POST(req: Request) {
           },
         );
 
-        if (mergeError) {
-          console.error("Failed to merge cart:", mergeError);
-          // Don't fail the login, just log the error
-        } else {
-          // Clear session cookie after successful merge
-          cookieStore.delete("session_id");
+        if (mergeCartError) {
+          console.error("Failed to merge cart:", mergeCartError);
         }
+
+        // Merge wishlist
+        const { error: mergeWishlistError } = await supabase.rpc(
+          "merge_guest_wishlist_to_user",
+          {
+            p_session_id: sessionId,
+            p_user_id: data.user.id,
+          },
+        );
+
+        if (mergeWishlistError) {
+          console.error("Failed to merge wishlist:", mergeWishlistError);
+        }
+
+        // Clear session cookie after successful merge
+        cookieStore.delete("session_id");
       }
     }
 

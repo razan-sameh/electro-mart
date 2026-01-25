@@ -1,94 +1,36 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { typWishlist, typProduct, typColor } from "@/content/types";
-import { useAuth } from "./useAuth";
+import type { typWishlist } from "@/content/types";
 import { useLocale } from "next-intl";
-import { useWishlistStore } from "@/stores/wishlistStore";
 import {
   fetchWishlist,
-  mergeWishlist,
   addWishlistItem,
   removeWishlistItem,
   clearWishlist,
-} from "../services/wishlist";
+} from "@/lib/services/wishlist";
 
 export const WISHLIST_QUERY_KEY = ["wishlist"];
 
-type MergeWishlistInput = {
-  product: typProduct;
-  selectedColor: typColor;
-};
-
 export function useWishlist() {
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
   const locale = useLocale();
 
-  // 🧾 Fetch wishlist
   const wishlistQuery = useQuery<typWishlist>({
     queryKey: WISHLIST_QUERY_KEY,
     queryFn: async () => {
       const data: typWishlist = await fetchWishlist(locale);
-      return data ?? { id: "empty", items: [] };
+      return data;
     },
-    enabled: !!isAuthenticated,
-    retry: 1, // 👈 Avoid infinite retry loops
-  });
-
-  // 🔄 Merge local → server
-  const mergeMutation = useMutation({
-    mutationFn: ({ product, selectedColor }: MergeWishlistInput) =>
-      mergeWishlist(
-        [{ id: -1, documentId: "wishlist", product, selectedColor }],
-        locale
-      ),
-
-    onMutate: ({ product, selectedColor }) => {
-      const prevWishlist = { items: [...useWishlistStore.getState().items] };
-
-      const existing = prevWishlist.items.find(
-        (i) =>
-          String(i.product.documentId) === String(product.documentId) &&
-          i.selectedColor?.documentId === selectedColor?.documentId
-      );
-
-      let newItems;
-      if (existing) {
-        newItems = prevWishlist.items; // already exists, no change
-      } else {
-        newItems = [
-          ...prevWishlist.items,
-          {
-            id: -1,
-            documentId: product.documentId,
-            product,
-            selectedColor,
-          },
-        ];
-      }
-
-      useWishlistStore.setState({ items: newItems });
-      return prevWishlist as typWishlist;
-    },
-
-    onError: (_error, _variables, rollback) => {
-      if (rollback) useWishlistStore.setState({ items: rollback.items });
-      console.error("❌ Failed to merge guest wishlist.");
-    },
-
-    onSuccess: (data) => {
-      useWishlistStore.getState().clearWishlist();
-      queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, data);
-    },
+    retry: 1,
+    staleTime: Infinity,
   });
 
   // ➕ Add item
   const addMutation = useMutation({
-    mutationFn: ({ product, selectedColor }: MergeWishlistInput) =>
-      addWishlistItem(product, selectedColor),
+    mutationFn: (variantId: number) => addWishlistItem(variantId),
 
-    onMutate: async ({ product, selectedColor }) => {
+    onMutate: async (variantId) => {
       await queryClient.cancelQueries({ queryKey: WISHLIST_QUERY_KEY });
       const previousWishlist =
         queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
@@ -96,16 +38,19 @@ export function useWishlist() {
       queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
         if (!old) return old;
 
+        // prevent duplicates
+        const exists = old.items.some((item) => item.variant?.id === variantId);
+        if (exists) return old;
+
         return {
           ...old,
           items: [
             ...old.items,
             {
               id: Date.now(),
-              documentId: product.documentId,
-              product,
-              selectedColor,
-            },
+              variant: { id: variantId } as any,
+              product: {} as any,
+            } as any,
           ],
         };
       });
@@ -113,34 +58,16 @@ export function useWishlist() {
       return { previousWishlist };
     },
 
-    onSuccess: (data) => {
-      if (!data) return;
-      queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
-        if (!old) return { id: "temp", items: [data] };
-
-        const existingIndex = old.items.findIndex(
-          (item) =>
-            String(item.product.documentId) === data.product.documentId &&
-            item.selectedColor?.documentId === data.selectedColor?.documentId
-        );
-
-        if (existingIndex !== -1) {
-          const newItems = [...old.items];
-          newItems[existingIndex] = data;
-          return { ...old, items: newItems };
-        }
-
-        return { ...old, items: [...old.items, data] };
-      });
-    },
-
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(
-          WISHLIST_QUERY_KEY,
-          context.previousWishlist
-        );
+        queryClient.setQueryData(WISHLIST_QUERY_KEY, context.previousWishlist);
       }
+    },
+
+    onSuccess: (data) => {
+      // Update cache with server response
+      queryClient.setQueryData(WISHLIST_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
     },
   });
 
@@ -153,28 +80,34 @@ export function useWishlist() {
       const previousWishlist =
         queryClient.getQueryData<typWishlist>(WISHLIST_QUERY_KEY);
 
-      queryClient.setQueryData<typWishlist>(WISHLIST_QUERY_KEY, (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          items: old.items.filter((item) => item.id !== itemId),
-        };
-      });
+      queryClient.setQueryData(
+        WISHLIST_QUERY_KEY,
+        (old: typWishlist | undefined) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            items: old.items.filter((i) => i.id !== itemId),
+          };
+        },
+      );
 
       return { previousWishlist };
     },
 
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(
-          WISHLIST_QUERY_KEY,
-          context.previousWishlist
-        );
+        queryClient.setQueryData(WISHLIST_QUERY_KEY, context.previousWishlist);
       }
     },
+
+    // onSuccess: (data) => {
+    //   queryClient.setQueryData(WISHLIST_QUERY_KEY, data);
+    //   queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
+    // },
   });
 
-  // 🧹 Clear all
+  // 🧹 Clear wishlist
   const clearMutation = useMutation({
     mutationFn: clearWishlist,
 
@@ -193,28 +126,24 @@ export function useWishlist() {
 
     onError: (err, variables, context) => {
       if (context?.previousWishlist) {
-        queryClient.setQueryData<typWishlist>(
-          WISHLIST_QUERY_KEY,
-          context.previousWishlist
-        );
+        queryClient.setQueryData(WISHLIST_QUERY_KEY, context.previousWishlist);
       }
+    },
+
+    onSuccess: (data) => {
+      queryClient.setQueryData(WISHLIST_QUERY_KEY, data);
+      queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
     },
   });
 
   return {
     wishlist: wishlistQuery.data,
     isLoading: wishlistQuery.isLoading,
+    isFetching: wishlistQuery.isFetching,
     isError: wishlistQuery.isError,
     refetch: wishlistQuery.refetch,
-    isFetching: wishlistQuery.isFetching,
-
-    mergeMutation: mergeMutation.mutateAsync,
     addItem: addMutation.mutateAsync,
     removeItem: removeMutation.mutateAsync,
     clearWishlist: clearMutation.mutateAsync,
-
-    isAdding: addMutation.isPending,
-    isRemoving: removeMutation.isPending,
-    isClearing: clearMutation.isPending,
   };
 }

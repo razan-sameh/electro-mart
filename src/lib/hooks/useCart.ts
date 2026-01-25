@@ -51,7 +51,7 @@ export function useCart() {
             items: old.items.map((i) =>
               i.variant?.id === variantId
                 ? { ...i, quantity: i.quantity + quantity }
-                : i
+                : i,
             ),
           };
         }
@@ -103,7 +103,13 @@ export function useCart() {
         return {
           ...old,
           items: old.items.map((item) =>
-            item.id === itemId ? { ...item, quantity } : item
+            item.id === itemId
+              ? {
+                  ...item,
+                  quantity,
+                  totalPrice: item.unitPrice * quantity,
+                }
+              : item,
           ),
         };
       });
@@ -119,15 +125,15 @@ export function useCart() {
 
     onSuccess: (data) => {
       queryClient.setQueryData(CART_QUERY_KEY, data);
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+      // queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 
   // 🗑️ Remove item
   const removeMutation = useMutation({
-    mutationFn: (variantId: number) => removeCartItem(variantId),
+    mutationFn: (itemId: number) => removeCartItem(itemId),
 
-    onMutate: async (variantId) => {
+    onMutate: async (itemId) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<typCart>(CART_QUERY_KEY);
 
@@ -136,7 +142,7 @@ export function useCart() {
 
         return {
           ...old,
-          items: old.items.filter((item) => item.variant?.id !== variantId),
+          items: old.items.filter((item) => item?.id !== itemId),
         };
       });
 
@@ -149,10 +155,10 @@ export function useCart() {
       }
     },
 
-    onSuccess: (data) => {
-      queryClient.setQueryData(CART_QUERY_KEY, data);
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
-    },
+    // onSuccess: (data) => {
+    //   queryClient.setQueryData(CART_QUERY_KEY, data);
+    //   queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+    // },
   });
 
   // 🧹 Clear cart

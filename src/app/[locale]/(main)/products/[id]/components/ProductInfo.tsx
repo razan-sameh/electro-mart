@@ -88,7 +88,7 @@ export default function ProductInfo({ product }: Props) {
       <ProductActions
         product={product}
         state={state}
-        selectedVariant={selectedVariant}
+        selectedVariant={selectedVariant!}
       />
     </div>
   );

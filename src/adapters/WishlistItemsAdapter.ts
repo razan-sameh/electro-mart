@@ -1,19 +1,25 @@
 // File: adapters/BrandAdapter.ts
-import { typBrand, typCartItem, typWishlistItem } from "@/content/types";
+import { typWishlistItem } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { CartItemDB, StrapiWishlistItem } from "./interfaces/types";
-import { ColorAdapter } from "./ColorAdapter";
+import { WishlistItemDB } from "./interfaces/types";
 import { ProductAdapter } from "./ProductAdapter";
+import { VariantAdapter } from "./VariantAdapter";
+import { SpecialOfferAdapter } from "./SpecialOfferAdapter";
 
-export class WishlistItemsAdapter extends BaseAdapter<StrapiWishlistItem, typWishlistItem> {
+export class WishlistItemsAdapter extends BaseAdapter<
+  WishlistItemDB,
+  typWishlistItem
+> {
   private static instance: WishlistItemsAdapter;
-  private colorAdapter: ColorAdapter;
   private productAdapter: ProductAdapter;
+  private variantAdapter: VariantAdapter;
+  private specialOfferAdapter: SpecialOfferAdapter;
 
   private constructor() {
     super();
-    this.colorAdapter = ColorAdapter.getInstance();
+    this.variantAdapter = VariantAdapter.getInstance();
     this.productAdapter = ProductAdapter.getInstance();
+    this.specialOfferAdapter = SpecialOfferAdapter.getInstance();
   }
 
   public static getInstance(): WishlistItemsAdapter {
@@ -23,12 +29,14 @@ export class WishlistItemsAdapter extends BaseAdapter<StrapiWishlistItem, typWis
     return WishlistItemsAdapter.instance;
   }
 
-  adapt(source: StrapiWishlistItem): typWishlistItem {
+  adapt(source: WishlistItemDB): typWishlistItem {
     return {
       id: source.id,
-      documentId: source.documentId,
       product: this.productAdapter.adapt(source.product),
-      selectedColor: this.colorAdapter.adapt(source.product_color),
+      variant: this.variantAdapter.adapt(source.variant),
+      originalPrice: source.original_price,
+      displayPrice: source.display_price,
+      appliedOffer: this.specialOfferAdapter.adapt(source.applied_offer || {}),
     };
   }
 }

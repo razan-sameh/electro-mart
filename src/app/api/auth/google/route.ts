@@ -13,10 +13,12 @@ export async function GET(req: Request) {
       redirectTo: `${origin}/callback?redirect=${redirect}`,
     },
   });
+console.log({data});
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
-  }
+  }  
+
 
   // ⬅️ Supabase بيرجع URL نعمله redirect
   return NextResponse.redirect(data.url);

@@ -30,11 +30,6 @@ export async function addCartItem(variantId: number, quantity: number) {
       quantity: quantity,
     }),
   });
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("Add to cart error:", text);
-    throw new Error(text);
-  }
   if (!res.ok) throw new Error("Failed to add to cart");
 }
 

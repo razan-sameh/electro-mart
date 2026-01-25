@@ -1,47 +1,63 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useMemo, useCallback } from "react";
 import { typWishlistItem } from "@/content/types";
 import { Link } from "@/i18n/navigation";
 import { FaStar } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
-import ProductPrice from "@/components/reusable/ProductPrice";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/lib/hooks/useCart";
+import React from "react";
 
 type productCardProps = {
   item: typWishlistItem;
-  onRemove: (item: typWishlistItem) => void;
+  onRemove: (itemId: number) => void;
 };
 
-export default function WishListCard({ item, onRemove }: productCardProps) {
+function WishListCard({ item, onRemove }: productCardProps) {
   const t = useTranslations("Wishlist");
   const { cart, addItem } = useCart();
   const [added, setAdded] = useState(false);
 
-  const isInCart = cart?.items.some(
-    (cartItem) =>
-      cartItem.product.id === item.product.id &&
-      cartItem.selectedColor.id === item.selectedColor.id
+  const colorAttributes = useMemo(
+    () =>
+      item.variant.attributes?.filter(
+        (a) => a.attribute.toLowerCase() === "color"
+      ) ?? [],
+    [item.variant.attributes]
   );
 
-  const handleRemove = () => onRemove(item);
+  const otherAttributes = useMemo(
+    () =>
+      item.variant.attributes?.filter(
+        (a) => a.attribute.toLowerCase() !== "color"
+      ) ?? [],
+    [item.variant.attributes]
+  );
 
-  const handleAddToCart = async () => {
+  const isInCart = useMemo(() => {
+    return cart?.items.some(
+      (cartItem) => cartItem.variant.id === item.variant.id
+    );
+  }, [cart?.items, item.variant.id]);
+
+  const handleRemove = () => onRemove(item.id);
+
+  const handleAddToCart = useCallback(async () => {
     if (isInCart || added) return;
     setAdded(true);
 
     try {
       await addItem({
-        product: item.product,
+        variantId: item.variant.id,
         quantity: 1,
-        selectedColor: item.selectedColor,
       });
     } catch (err) {
       console.error("Failed to add to cart", err);
       setAdded(false);
     }
-  };
+  }, [isInCart, added, addItem, item.variant.id]);
 
   return (
     <div className="relative bg-background rounded-lg shadow hover:shadow-lg transition text-start w-full">
@@ -54,36 +70,67 @@ export default function WishListCard({ item, onRemove }: productCardProps) {
         <IoMdClose className="w-4 h-4 text-content" />
       </button>
 
-      <Link href={`/products/${item.product.documentId}`} className="block">
+      <Link href={`/products/${item?.product?.id}`} className="block">
         <div className="relative">
-          {item.product.specialOffers?.[0] && (
+          {item?.product?.specialOffers?.title && (
             <span className="absolute top-2 left-0 bg-secondary text-white text-xs px-2 py-1 rounded-e-sm">
-              {item.product.specialOffers[0].title}
+              {item?.product?.specialOffers?.title}
             </span>
           )}
           <img
-            src={item.product.imagesUrl[0]}
-            alt={item.product.name}
+            src={item?.product?.imagesUrl?.[0]?.url}
+            alt={item?.product?.name}
             className="w-full h-48 object-contain mb-3 p-4"
           />
         </div>
 
         <div className="p-4 pt-0">
           <h3 className="text-sm font-medium mb-2 line-clamp-2">
-            {item.product.name}
+            {item?.product?.name}
           </h3>
-          <div className="flex items-center">
-            <div
-              className={`w-5 h-5 rounded-full border-2 cursor-pointer me-2`}
-              style={{ backgroundColor: item.selectedColor.hexCode }}
-            />
-            <p>{item.selectedColor.name}</p>
+
+          {/* Color */}
+          {colorAttributes.length > 0 && (
+            <div className="flex items-center">
+              {colorAttributes.map((colorAttr) => (
+                <div key={colorAttr.id} className="flex items-center">
+                  <div
+                    className="w-5 h-5 rounded-full border-2 cursor-pointer me-2"
+                    style={{ backgroundColor: colorAttr.hexCode }}
+                  />
+                  <p>{colorAttr.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Other attributes */}
+          {otherAttributes.length > 0 && (
+            <div className="my-2 text-sm text-gray-500">
+              {otherAttributes.map((attr) => (
+                <p key={attr.id}>
+                  {attr.attribute}: {attr.value}
+                </p>
+              ))}
+            </div>
+          )}
+
+          <div className="flex gap-2 items-center mb-2 flex-wrap mt-3 ">
+            {item?.appliedOffer?.title != "" && (
+              <span className="text-gray-400 line-through">
+                E£ {item?.originalPrice?.toFixed(2)}
+              </span>
+            )}
+            <span className="text-lg font-bold text-secondary">
+              E£ {item?.displayPrice?.toFixed(2)}
+            </span>
           </div>
-          <div className="flex justify-between items-center mt-3">
-            <ProductPrice item={item.product} />
+
+          <div className="flex justify-end items-center mt-3">
             <div className="flex items-center text-sm text-gray-600">
               <FaStar className="w-4 h-4 fill-yellow-400 mr-1" />
-              {item.product.averageRating.toFixed(2)} ({item.product.totalReviews})
+              {item?.product?.averageRating?.toFixed(2)} (
+              {item?.product?.totalReviews})
             </div>
           </div>
         </div>
@@ -108,3 +155,5 @@ export default function WishListCard({ item, onRemove }: productCardProps) {
     </div>
   );
 }
+
+export default React.memo(WishListCard);

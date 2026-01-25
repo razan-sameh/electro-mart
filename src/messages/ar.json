@@ -118,7 +118,8 @@
     "brand": "ماركة",
     "color": "اللون",
     "empty": "سلتك فارغة",
-    "guestNotice": "أنت تتسوق كزائر — سجّل الدخول لمزامنة سلتك."
+    "guestNotice": "أنت تتسوق كزائر — سجّل الدخول لمزامنة سلتك.",
+    "continueShopping": "تابع التسوق"
   },
   "Checkout": {
     "deliveryDetails": "تفاصيل التوصيل",
@@ -182,6 +183,7 @@
     "clickAway": "على بُعد نقرة واحدة فقط!",
     "viewAll": "عرض الكل",
     "successAdded": "تمت إضافة {product} بنجاح",
+    "successRemoved": "تمت حذف {product} بنجاح",
     "reviewsHaeder": "تقييمات ومراجعات المستخدمين"
   },
   "Review": {

@@ -75,12 +75,6 @@ export interface StrapiOrderItem {
   subtotal: number;
 }
 
-export interface UserDB {
-  id: number;
-  email: string;
-  user_metadata: {display_name?: string};
-  phone?: StrapiPhone;
-}
 
 export interface StrapiOrder {
   id: number;
@@ -120,23 +114,6 @@ export interface StrapiAddress {
   phone: StrapiPhone;
 }
 
-// export interface ProductDB {
-//   product_id: number;
-//   title: string;
-//   description: string;
-//   images?: ProductImageDB[];
-//   Price: number;
-//   StockQuantity: number;
-//   brand: BrandDB;
-//   category: CategoryDB;
-//   special_offers?: StrapiSpecialOffer[];
-//   product_colors?: StrapiColor[];
-//   specification_values?: StrapiSpecificationValue[];
-//   averageRating: number;
-//   totalReviews: number;
-//   reviews?: StrapiReview[];
-// }
-
 export type StrapiReview = {
   documentId: string;
   id: number;
@@ -157,36 +134,16 @@ export type StrapiBuyNow = {
   expiresAt: string;
 };
 
-export type StrapiWishlistItem = {
-  documentId: string;
-  id: number;
-  product: ProductDB;
-  product_color: StrapiColor;
-};
 
-export type StrapiWishlist = {
-  documentId: string;
-  id: number;
-  wishlist_items: StrapiWishlistItem[];
-};
-
-export interface StrapiResponse<T> {
-  data: T[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
-
-export interface StrapiSingleResponse<T> {
-  data: T;
-  meta: {};
-}
 ////////////////////////////////////////////
+
+export interface UserDB {
+  id: number;
+  email: string;
+  user_metadata: {display_name?: string};
+  phone?: StrapiPhone;
+}
+
 
 export interface ProductImageDB {
   url: string;
@@ -264,4 +221,18 @@ export type CartItemDB = {
 export type CartDB = {
   id: number;
   items: CartItemDB[];
+};
+
+export type WishlistItemDB = {
+  id: number;
+  product: ProductDB;
+  variant: ProductVariantDB;
+  original_price:number;
+  display_price:number;
+  applied_offer:ProductOfferDB
+};
+
+export type WishlistDB = {
+  id: number;
+  items: WishlistItemDB[];
 };
