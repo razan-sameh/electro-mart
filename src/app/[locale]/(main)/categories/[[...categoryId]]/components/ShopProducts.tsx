@@ -30,7 +30,6 @@ export default function ShopProducts({ categoryId }: ShopProductsProps) {
   const searchParams = useSearchParams();
   const filtersKeyString = JSON.stringify(getFiltersFromUrl(searchParams));
   const searchQuery = searchParams.get("q") || undefined;
-  console.log({products});
   
   useEffect(() => {    
     setPaginate(1);

@@ -40,7 +40,7 @@ export async function fetchOrders(
 }
 
 // Fetch a single order by ID
-export async function fetchOrderById(locale: string, id: string) {
+export async function fetchOrderById(locale: string, id: number) {
   const res = await fetch(`/api/orders/${id}?locale=${locale}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -49,9 +49,10 @@ export async function fetchOrderById(locale: string, id: string) {
 
   if (!res.ok) throw new Error("Failed to fetch order");
 
-  const data = await res.json();
-  if (!data.data) {
+  const data = await res.json();  
+  if (!data) {
     notFound();
   }
-  return orderAdapter.adapt(data.data);
+
+  return orderAdapter.adapt(data);
 }

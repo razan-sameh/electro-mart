@@ -10,7 +10,6 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { loginSchema, typLoginData } from "./schemas";
 import { FcGoogle } from "react-icons/fc";
 import { useLogin } from "@/lib/hooks/useAuth";
-import { createServer } from "@/app/api/supabaseServer";
 
 export default function LoginForm() {
   const router = useRouter();

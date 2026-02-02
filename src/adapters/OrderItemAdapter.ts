@@ -1,22 +1,19 @@
 // File: adapters/OrderItemAdapter.ts
 import { typOrderItem } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiOrderItem } from "./interfaces/types";
+import { orderItemDB } from "./interfaces/types";
+import { VariantAdapter } from "./VariantAdapter";
 import { ProductAdapter } from "./ProductAdapter";
-import { ColorAdapter } from "./ColorAdapter";
 
-export class OrderItemAdapter extends BaseAdapter<
-  StrapiOrderItem,
-  typOrderItem
-> {
+export class OrderItemAdapter extends BaseAdapter<orderItemDB, typOrderItem> {
   private static instance: OrderItemAdapter;
+  private variantAdapter: VariantAdapter;
   private productAdapter: ProductAdapter;
-  private colorAdapter: ColorAdapter;
 
   private constructor() {
     super();
+    this.variantAdapter = VariantAdapter.getInstance();
     this.productAdapter = ProductAdapter.getInstance();
-    this.colorAdapter = ColorAdapter.getInstance();
   }
 
   public static getInstance(): OrderItemAdapter {
@@ -26,17 +23,17 @@ export class OrderItemAdapter extends BaseAdapter<
     return OrderItemAdapter.instance;
   }
 
-  adapt(source: StrapiOrderItem): typOrderItem {
+  adapt(source: orderItemDB): typOrderItem {
     return {
       id: source.id,
-      documentId: source.documentId,
-      quantity: source.Quantity,
-      UnitPrice: source.UnitPrice,
-      discountValue: source.discount_value,
+      quantity: source.quantity,
+      unitPrice: source.unit_price,
+      discountAmount: source.discount_amount,
+      variant: this.variantAdapter.adapt(source.variant),
       product: this.productAdapter.adapt(source.product),
-      selectedColor: this.colorAdapter.adapt(source.selected_color),
-      total: source.total,
-      subtotal: source.subtotal,
+      total: source.total_price,
+      subtotal: source.subtotal_price,
+      status: source.status,
     };
   }
 }

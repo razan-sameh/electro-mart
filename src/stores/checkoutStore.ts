@@ -1,5 +1,4 @@
 // stores/checkoutStore.ts
-import { typShippingAddress } from "@/content/types";
 import { create } from "zustand";
 
 interface PaymentMethod {
@@ -7,66 +6,59 @@ interface PaymentMethod {
   clientSecret: string;
 }
 
-interface CardInfo {
-  brand?: string;
-  last4?: string;
-  exp_month?: number;
-  exp_year?: number;
-}
-
-interface PaymentResult {
-  success: boolean;
-  message?: string;
-}
-
 interface CheckoutState {
   step: number;
-  shippingAddress: typShippingAddress | null;
   clientSecret: string | null;
   paymentMethod: PaymentMethod | null;
-  paymentResult: PaymentResult | null;
-  cardInfo: CardInfo | null;
-  loadingCardInfo: boolean;
-
-  // actions
+  orderId: number | null;
+  setOrderId: (id: number | null) => void;
   setStep: (step: number) => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  setShippingAddress: (address: typShippingAddress) => void;
   setClientSecret: (secret: string | null) => void;
   setPaymentMethod: (pm: PaymentMethod | null) => void;
-  setPaymentResult: (res: PaymentResult | null) => void;
-  setCardInfo: (info: CardInfo | null) => void;
-  setLoadingCardInfo: (loading: boolean) => void;
   resetCheckout: () => void;
 }
 
+const ORDER_ID_KEY = "checkout_order_id";
+const CHECKOUT_STEP_KEY = "checkout_step";
+
 export const useCheckoutStore = create<CheckoutState>((set) => ({
-  step: 0,
-  shippingAddress: null,
+  step:
+    typeof window !== "undefined"
+      ? Number(localStorage.getItem(CHECKOUT_STEP_KEY)) || 0
+      : 0,
   clientSecret: null,
   paymentMethod: null,
-  paymentResult: null,
-  cardInfo: null,
-  loadingCardInfo: false,
+  orderId:
+    typeof window !== "undefined"
+      ? Number(localStorage.getItem(ORDER_ID_KEY)) || null
+      : null,
 
-  setStep: (step) => set({ step }),
-  nextStep: () => set((s) => ({ step: Math.min(2, s.step + 1) })),
-  prevStep: () => set((s) => ({ step: Math.max(0, s.step - 1) })),
-  setShippingAddress: (address) => set({ shippingAddress: address }),
+  setOrderId: (id) => {
+    if (typeof window !== "undefined") {
+      if (id === null) localStorage.removeItem(ORDER_ID_KEY);
+      else localStorage.setItem(ORDER_ID_KEY, String(id));
+    }
+    set({ orderId: id });
+  },
   setClientSecret: (secret) => set({ clientSecret: secret }),
   setPaymentMethod: (pm) => set({ paymentMethod: pm }),
-  setPaymentResult: (res) => set({ paymentResult: res }),
-  setCardInfo: (info) => set({ cardInfo: info }),
-  setLoadingCardInfo: (loading) => set({ loadingCardInfo: loading }),
-  resetCheckout: () =>
+  setStep: (step) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(CHECKOUT_STEP_KEY, String(step));
+    }
+    set({ step });
+  },
+
+  resetCheckout: () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(ORDER_ID_KEY);
+      localStorage.removeItem(CHECKOUT_STEP_KEY);
+    }
     set({
       step: 0,
-      shippingAddress: null,
+      orderId: null,
       clientSecret: null,
       paymentMethod: null,
-      paymentResult: null,
-      cardInfo: null,
-      loadingCardInfo: false,
-    }),
+    });
+  },
 }));

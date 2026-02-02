@@ -1,5 +1,4 @@
-import { enmStrapiPaymentStatus } from "@/adapters/interfaces/enms";
-import { enmDiscountType, enmOrderStatus } from "./enums";
+import { enmDiscountType } from "./enums";
 
 // Category
 export type typCategory = {
@@ -9,26 +8,13 @@ export type typCategory = {
   imageUrl?: string;
 };
 
-export type typSpecificationType = {
-  id: string;
-  name: string;
-  specificationValues?: typSpecificationValues[];
-  categories?: typCategory[];
-};
-
-export type typSpecificationValues = {
-  id: string;
-  name: string;
-  specificationType?: typSpecificationType;
-  products?: typProduct[];
-};
-
 export type typBrand = {
   id: number;
   name: string;
   imageUrl?: string;
   products?: typProduct[];
 };
+
 export type typSpecialOffer = {
   id: string;
   title: string;
@@ -51,6 +37,7 @@ export type typProductImage = {
   is_main: boolean;
   position?: number;
 };
+
 export type typProductSpec = {
   id: number;
   key: string;
@@ -64,6 +51,7 @@ export type typProductAttribute = {
   value: string;
   hexCode?: string;
 };
+
 export type typProductOffer = {
   discountPercent?: number;
   discountAmount?: number;
@@ -99,7 +87,7 @@ export type typProduct = {
   displayPrice: number;
   originalPrice: number;
   defaultVariantId: number;
-  defaultVariantAttributes:typProductAttribute[];
+  defaultVariantAttributes: typProductAttribute[];
 };
 
 export type typReview = {
@@ -118,33 +106,18 @@ export type RatingBreakdown = {
   percentage: number;
 };
 
-// User (Auth)
 export type typUser = {
   id: number;
   username: string;
   email: string;
-  token?: string; // for JWT
-  phone?: typPhone;
-  address?: typShippingAddress[];
-  paymentMethods?: typPaymentMethod[];
-};
-export type typPaymentMethod = {
-  id: number;
-  documentId: string;
-  brand: string;
-  last4: string;
-  token: string; // for JWT
-  expMonth: number;
-  expYear: number;
+  phone?: string;
+  address?: {};
 };
 
 export type typShippingAddress = {
-  documentId?: string;
-  id?: number;
   streetAddress: string;
   postalCode: string;
   city: string;
-  phone: typPhone;
   country: string;
 };
 
@@ -163,7 +136,7 @@ export type typCartItem = {
   variant: typProductVariant;
   quantity: number;
   unitPrice: number;
-  totalPrice: number;
+  total: number;
 };
 
 export type typCart = {
@@ -187,36 +160,45 @@ export type typWishlist = {
 
 export type typOrderItem = {
   id: number;
-  documentId: string;
   product: typProduct;
+  variant: typProductVariant;
   quantity: number;
-  UnitPrice: number;
-  selectedColor: typColor;
-  discountValue: number;
+  unitPrice: number;
+  discountAmount: number;
   total: number;
   subtotal: number;
+  status: string;
 };
 
 export type typPayment = {
   id: number;
-  documentId: string;
   totalPayment: number;
-  paymentStatus: enmStrapiPaymentStatus;
-  paymentMethod: typPaymentMethod;
+  paymentStatus: string;
+  paymentMethod: string;
+  paymentIntentId: string | null;
+  createdAt: string;
+  amount: number;
+  currency: string;
+  status: string;
+  transactionId: string | null;
+  cardBrand: string;
+  cardLast4: string;
+  cardExpMonth: string;
+  cardExpYear: string;
 };
 
 export type typOrder = {
   id: number;
-  documentId: string;
-  orderItems: typOrderItem[];
+  orderNumber: string;
   date: string;
   total: number;
   subtotal: number;
-  discountTotal: number;
-  orderStatus: enmOrderStatus;
+  discountAmount: number | null;
+  orderStatus: string;
   ShippingAddress: typShippingAddress;
+  phone: string;
+  items: typOrderItem[];
   payment: typPayment;
-  user: typUser;
 };
 
 export type typProductFilters = {

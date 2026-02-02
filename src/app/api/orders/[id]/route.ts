@@ -1,39 +1,25 @@
-import { serverApiClient } from "@/app/api/serverApiClient";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { createServer } from "../../supabaseServer";
 
 // GET /api/orders/:id - Get a single order by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: number,locale:string }> }
 ) {
   try {
-    const { id } = await params; // ✅ await params
+    const { id ,locale } = await params; // ✅ await params
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
+  const supabase = await createServer();
 
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const { data, error } = await supabase.rpc("get_order_by_id", {
+    p_order_id: id,
+    p_locale: locale
+  });
 
-    if (!id) {
-      return Response.json({ error: "Order ID is required" }, { status: 400 });
-    }
-
-    const { searchParams } = new URL(req.url);
-    const locale = searchParams.get("locale") || "en";
-
-    const data = await serverApiClient(
-      `/orders/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      {},
-      locale
-    );
+  if (error) {
+    console.error("RPC ERROR:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
     return Response.json(data);
   } catch (error: any) {

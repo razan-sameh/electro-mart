@@ -24,8 +24,8 @@ export default function OrderItemCard({ item }: Props) {
         <p className="text-sm text-content">
           {t("quantityXPrice", {
             quantity: item.quantity,
-            unitPrice: item.UnitPrice,
-            subtotal: item.subtotal
+            unitPrice: item.unitPrice,
+            subtotal: item.subtotal,
           })}
         </p>
 

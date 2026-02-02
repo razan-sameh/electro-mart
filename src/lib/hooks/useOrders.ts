@@ -18,7 +18,7 @@ export function useOrders(page = 1, pageSize = 10, status?: enmOrderStatus) {
 export function usePrefetchOrder() {
   const queryClient = useQueryClient();
 
-  const prefetch = (orderId: string, locale: string) => {
+  const prefetch = (orderId: number, locale: string) => {
     queryClient.prefetchQuery({
       queryKey: ["order", orderId, locale],
       queryFn: () => fetchOrderById(locale, orderId),
@@ -29,28 +29,32 @@ export function usePrefetchOrder() {
   return prefetch;
 }
 
-export function useOrder(orderId: string) {
+export function useOrderById(orderId: number) {
   const locale = useLocale();
   const queryClient = useQueryClient();
-
   return useQuery({
     queryKey: ["order", orderId, locale],
-    queryFn: async () => {
-      // Try to get from cached orders first
-      const cachedOrders = queryClient.getQueryData<any>([
-        "orders",
-        locale,
-        1,
-        10,
-      ]);
-      const cachedOrder: typOrder = cachedOrders?.orders?.find(
-        (o: any) => o.id === orderId
-      );
-      if (cachedOrder) return cachedOrder;
-
-      // Otherwise fetch from API
-      return await fetchOrderById(locale, orderId);
-    },
+    queryFn: () => fetchOrderById(locale, orderId),
     retry: 1, // 👈 Avoid infinite retry loops
   });
+  // return useQuery({
+  //   queryKey: ["order", orderId, locale],
+  //   queryFn: async () => {
+  //     // Try to get from cached orders first
+  //     const cachedOrders = queryClient.getQueryData<any>([
+  //       "orders",
+  //       locale,
+  //       1,
+  //       10,
+  //     ]);
+  //     const cachedOrder: typOrder = cachedOrders?.orders?.find(
+  //       (o: any) => o.id === orderId,
+  //     );
+  //     if (cachedOrder) return cachedOrder;
+
+  //     // Otherwise fetch from API
+  //     return await fetchOrderById(locale, orderId);
+  //   },
+  //   retry: 1, // 👈 Avoid infinite retry loops
+  // });
 }

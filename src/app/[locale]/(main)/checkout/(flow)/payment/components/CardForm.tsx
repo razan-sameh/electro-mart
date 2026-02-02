@@ -1,24 +1,31 @@
 "use client";
 import React, { useState } from "react";
-import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import {
+  useStripe,
+  useElements,
+  PaymentElement,
+} from "@stripe/react-stripe-js";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typCartItem } from "@/content/types";
 import { useTranslations } from "next-intl";
+import { useCheckoutStore } from "@/stores/checkoutStore";
 
 export function CardForm({
   clientSecret,
   onSaved,
   items,
+  amount,
 }: {
   clientSecret: string;
   onSaved: (pm: any) => void;
   items: typCartItem[];
+  amount: number;
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const t = useTranslations("Checkout");
-
+  const { orderId } = useCheckoutStore();
   const handleSaveCard = async () => {
     if (!stripe || !elements) return;
 
@@ -34,7 +41,27 @@ export function CardForm({
       if (result.error) {
         console.error(result.error.message);
       } else if (result.setupIntent?.payment_method) {
-        onSaved({ id: result.setupIntent.payment_method, clientSecret });
+        // 1) Save payment method to DB
+        const res = await fetch("/api/checkout/save-payment-method", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: orderId,
+            paymentMethodId: result.setupIntent.payment_method,
+            amount: amount,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          onSaved({
+            id: result.setupIntent.payment_method,
+            clientSecret,
+          });
+        } else {
+          console.error(data.error);
+        }
       }
     } catch (err: any) {
       console.error(err.message || t("somethingWentWrong"));

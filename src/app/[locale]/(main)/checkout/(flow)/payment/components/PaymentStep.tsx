@@ -5,17 +5,16 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardForm } from "./CardForm";
 import { useCheckoutStore } from "@/stores/checkoutStore";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
 import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import Loader from "@/components/ui/Loader";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
+import { useCart } from "@/lib/hooks/useCart";
 
-const stripePromise = loadStripe(
-  "pk_test_51SMBVSPaP6reRDRxVdU06TkBuK5OlJIuFzqRzxQ7YRWZpJrmdryXZpWgel5Q6nBnM3xpRCXGNBzL8qj4EhJ9uvWe00oDBet9nQ"
-);
+const strip_pk = process.env.NEXT_PUBLIC_STRIPE_PK;
+const stripePromise = loadStripe(strip_pk!);
 
 export default function PaymentStep() {
   const t = useTranslations("Checkout");
@@ -25,31 +24,32 @@ export default function PaymentStep() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { cartItems } = useUnifiedCart();
+  const { cart } = useCart();
   const { data: buyNowItems } = useBuyNow();
-  const { shippingAddress, setPaymentMethod, setClientSecret, clientSecret } =
+  const { orderId, setPaymentMethod, setClientSecret, clientSecret } =
     useCheckoutStore();
 
   const isBuyNow = searchParams.get("isBuyNow") === "1";
-  const itemsToCheckout = isBuyNow ? buyNowItems! : cartItems;
+  const itemsToCheckout = isBuyNow ? buyNowItems! : cart?.items!;
+  const total = cart?.items?.reduce((sum, item) => {
+    const price = Number(item?.total ?? 0);
+    return sum + (isNaN(price) ? 0 : price);
+  }, 0);
 
   useEffect(() => {
-    const createSetupIntent = async () => {
-      if (!shippingAddress)
-        return isBuyNow
-          ? router.push("/checkout/shipping?isBuyNow=1")
-          : router.push("/checkout/shipping");
-      const res = await fetch("/api/create-setup-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({}), // optionally send any info if needed
-      });
-      const data = await res.json();
-      if (data?.clientSecret) setClientSecret(data.clientSecret);
-    };
-    createSetupIntent();
-  }, [shippingAddress, router]);
+    if (!orderId) return; // orderId لازم موجود
+    if (!cart?.items?.length) return; // cart لازم يكون فيه items
+    if (total! <= 0) return; // total لازم يكون أكبر من 0
+
+    fetch("/api/checkout/create-setup-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, amount: total }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret))
+      .catch(console.error);
+  }, [orderId, cart?.items]);
 
   if (!clientSecret) {
     return <Loader text={t("preparingPayment")} />;
@@ -82,6 +82,7 @@ export default function PaymentStep() {
           clientSecret={clientSecret}
           onSaved={handleSaved}
           items={itemsToCheckout}
+          amount={total!}
         />
       </Elements>
 

@@ -27,7 +27,7 @@ export class CartItemsAdapter extends BaseAdapter<CartItemDB, typCartItem> {
     return {
       id: source.id,
       quantity: source.quantity,
-      totalPrice: source.total_price,
+      total: source.total_price,
       unitPrice: source.unit_price,
       product: this.productAdapter.adapt(source.product),
       variant: this.variantAdapter.adapt(source.variant),

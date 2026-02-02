@@ -1,19 +1,13 @@
 // File: adapters/OrderItemAdapter.ts
 import { typShippingAddress } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiAddress } from "./interfaces/types";
-import { PhoneAdapter } from "./PhoneAdapter";
+import { AddressDB } from "./interfaces/types";
 
-export class AddressAdapter extends BaseAdapter<
-  StrapiAddress,
-  typShippingAddress
-> {
+export class AddressAdapter extends BaseAdapter<AddressDB, typShippingAddress> {
   private static instance: AddressAdapter;
-  private phoneAdapter: PhoneAdapter;
 
   private constructor() {
     super();
-    this.phoneAdapter = PhoneAdapter.getInstance();
   }
 
   public static getInstance(): AddressAdapter {
@@ -23,11 +17,8 @@ export class AddressAdapter extends BaseAdapter<
     return AddressAdapter.instance;
   }
 
-  adapt(source: StrapiAddress): typShippingAddress {
+  adapt(source: AddressDB): typShippingAddress {
     return {
-      id: source.id,
-      documentId: source.documentId,
-      phone: this.phoneAdapter.adapt(source.phone),
       city: source.city,
       country: source.country,
       postalCode: source.postalCode,

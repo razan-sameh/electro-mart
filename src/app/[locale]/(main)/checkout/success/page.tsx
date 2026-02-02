@@ -2,7 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useLayoutEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useOrder } from "@/lib/hooks/useOrders";
+import { useOrderById } from "@/lib/hooks/useOrders";
 import { formatDateTime } from "@/content/utils";
 import { useLocale } from "next-intl";
 import { useCheckoutStore } from "@/stores/checkoutStore";
@@ -14,7 +14,7 @@ export default function SuccessPage() {
   const router = useRouter();
   const orderId = params.get("orderId");
   const isBuyNow = params.get("isBuyNow") === "1";
-  const { data: order, isLoading, error } = useOrder(orderId!);
+  const { data: order, isLoading, error } = useOrderById(orderId!);
   const locale = useLocale();
   const { resetCheckout } = useCheckoutStore();
   const { clearCart } = useCart();

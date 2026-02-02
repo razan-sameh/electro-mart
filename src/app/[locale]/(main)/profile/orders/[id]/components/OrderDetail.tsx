@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useOrder } from "@/lib/hooks/useOrders";
+import { useOrderById } from "@/lib/hooks/useOrders";
 import OrderHeader from "./OrderHeader";
 import ShipmentSection from "./ShipmentSection";
 import OrderItemsSection from "./OrderItemsSection";
@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 
 export default function OrderDetail({ orderId }: { orderId: string }) {
   const t = useTranslations("OrderDetail");
-  const { data: order, isLoading, isError } = useOrder(orderId);
+  const { data: order, isLoading, isError } = useOrderById(orderId);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <div>{t("errorLoading")}</div>;

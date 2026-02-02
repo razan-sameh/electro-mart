@@ -107,7 +107,7 @@ export function useCart() {
               ? {
                   ...item,
                   quantity,
-                  totalPrice: item.unitPrice * quantity,
+                  total: item.unitPrice * quantity,
                 }
               : item,
           ),

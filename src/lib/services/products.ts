@@ -51,7 +51,6 @@ export async function fetchProducts(
   if (!data || !data.data || data.data.length === 0) {
     return { data: [], meta: data?.meta ?? {} };
   }
-console.log({data});
 
   return {
     data: data.data.map((product: any) => productAdapter.adapt(product)),

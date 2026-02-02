@@ -1,36 +1,3 @@
-import { enmStrapiPaymentStatus, enmStrapiOrderStatus } from "./enms";
-
-export interface StrapiImage {
-  id: number;
-  documentId: string;
-  url: string;
-  alternativeText?: string;
-  formats?: {
-    thumbnail?: StrapiImageFormat;
-    small?: StrapiImageFormat;
-    medium?: StrapiImageFormat;
-    large?: StrapiImageFormat;
-  };
-}
-
-export interface StrapiImageFormat {
-  url: string;
-  width: number;
-  height: number;
-}
-
-
-export interface StrapiSpecialOffer {
-  id: number;
-  documentId: string;
-  title: string;
-  discount_type: string;
-  discount_value: number;
-  start_date?: string;
-  end_date?: string;
-  products?: ProductDB[];
-}
-
 export type StrapiPaymentMethod = {
   id: number;
   documentId: string;
@@ -40,40 +7,6 @@ export type StrapiPaymentMethod = {
   exp_month: number;
   exp_year: number;
 };
-export interface StrapiPayment {
-  id: number;
-  documentId: string;
-  Amount: number;
-  payment_status: enmStrapiPaymentStatus;
-  payment_method: StrapiPaymentMethod;
-}
-
-export interface StrapiOrderItem {
-  id: number;
-  documentId: string;
-  Quantity: number;
-  UnitPrice: number;
-  product: ProductDB;
-  discount_value: number;
-  selected_color: StrapiColor;
-  total: number;
-  subtotal: number;
-}
-
-
-export interface StrapiOrder {
-  id: number;
-  documentId: string;
-  order_status: enmStrapiOrderStatus;
-  order_items: StrapiOrderItem[];
-  payment: StrapiPayment;
-  address: StrapiAddress;
-  Total: number;
-  subtotal: number;
-  discount_total: number;
-  createdAt: string;
-  user: UserDB;
-}
 
 export interface StrapiColor {
   documentId: string;
@@ -87,16 +20,6 @@ export interface StrapiPhone {
   dailcode: string;
   number: string;
   countryCode: string;
-}
-
-export interface StrapiAddress {
-  documentId: string;
-  id: number;
-  streetAddress: string;
-  postalCode: string;
-  city: string;
-  country: string;
-  phone: StrapiPhone;
 }
 
 export type StrapiReview = {
@@ -119,16 +42,14 @@ export type StrapiBuyNow = {
   expiresAt: string;
 };
 
-
 ////////////////////////////////////////////
 
 export interface UserDB {
   id: number;
   email: string;
-  user_metadata: {display_name?: string};
+  user_metadata: { display_name?: string };
   phone?: StrapiPhone;
 }
-
 
 export interface ProductImageDB {
   url: string;
@@ -188,7 +109,7 @@ export interface ProductDB {
   images: ProductImageDB[];
   specs: ProductSpecDB[];
   variants: ProductVariantDB[];
-  default_variant_id:number;
+  default_variant_id: number;
   offer: ProductOfferDB | null;
   display_price: number;
   original_price: number;
@@ -196,15 +117,15 @@ export interface ProductDB {
   min_price: number;
   averageRating: number;
   totalReviews: number;
-  default_variant_attributes:ProductAttributeDB[];
+  default_variant_attributes: ProductAttributeDB[];
 }
 export type CartItemDB = {
   id: number;
   product: ProductDB;
   variant: ProductVariantDB;
   quantity: number;
-  total_price:number
-  unit_price:number
+  total_price: number;
+  unit_price: number;
 };
 export type CartDB = {
   id: number;
@@ -215,12 +136,64 @@ export type WishlistItemDB = {
   id: number;
   product: ProductDB;
   variant: ProductVariantDB;
-  original_price:number;
-  display_price:number;
-  applied_offer:ProductOfferDB
+  original_price: number;
+  display_price: number;
+  applied_offer: ProductOfferDB;
 };
 
 export type WishlistDB = {
   id: number;
   items: WishlistItemDB[];
 };
+
+export interface orderItemDB {
+  id: number;
+  created_at: string;
+  order: orderDB;
+  quantity: number;
+  product: ProductDB;
+  variant: ProductVariantDB;
+  unit_price: number;
+  discount_amount: number;
+  subtotal_price: number;
+  total_price: number;
+  status: string;
+}
+
+export interface orderDB {
+  id: number;
+  order_number: string;
+  user: UserDB;
+  created_at: string;
+  status: string;
+  shipping_address: AddressDB;
+  phone: string;
+  discount_amount: number | null;
+  total_amount: number;
+  subtotal_amount: number;
+  items: orderItemDB[];
+  payment: paymentDB;
+}
+
+export interface paymentDB {
+  id: number;
+  created_at: string;
+  order: orderDB;
+  amount: number;
+  currency: string;
+  status: string;
+  payment_method: string;
+  payment_intent_id: string;
+  transaction_id: string;
+  card_brand: string;
+  card_last4: string;
+  card_exp_month: string;
+  card_exp_year: string;
+}
+
+export interface AddressDB {
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}

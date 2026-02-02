@@ -31,10 +31,7 @@ export default function CartSummary({
   );
 
   // السعر بعد الخصم (جاهز من backend)
-  const total = items?.reduce(
-    (sum, item) => sum + item?.totalPrice,
-    0
-  );
+  const total = items?.reduce((sum, item) => sum + item?.total, 0);
 
   const discount = subtotal - total;
   const discountPercent =
