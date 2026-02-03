@@ -8,15 +8,14 @@ import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useCart } from "@/lib/hooks/useCart";
 import { FiShoppingBag } from "react-icons/fi";
-import { useCreateOrder } from "@/lib/hooks/useCheckout";
-import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useCreateOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
 
 function Cart() {
   const { cart, isLoading } = useCart();
   const router = useRouter();
   const t = useTranslations("Cart");
-  const { mutateAsync: createOrder , isPending } = useCreateOrder();
-  const { setOrderId, orderId } = useCheckoutStore();
+  const { mutateAsync: createOrder, isPending } = useCreateOrder();
+  const { data: orderId, isLoading: isDraftOrderIdLoading } = useDraftOrderId();
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -44,12 +43,10 @@ function Cart() {
     const data = await res.json();
     if (!data.user) router.push("/login?redirect=/checkout/shipping");
     else {
-      const newOrderId = await createOrder({
+      await createOrder({
         items: cart.items,
         orderId: orderId ?? null,
       });
-
-      setOrderId(newOrderId);
       router.push("/checkout/shipping");
     }
   };
@@ -66,7 +63,11 @@ function Cart() {
 
           {/* 💳 Order Summary */}
           <div className="w-full lg:w-[392px] flex-shrink-0">
-            <CartSummary items={cart?.items} onButtonClick={handleCheckout} loading={isPending}/>
+            <CartSummary
+              items={cart?.items}
+              onButtonClick={handleCheckout}
+              loading={isPending}
+            />
             {/* {isGuest && (
               <p className="text-sm text-gray-400 mt-4">{t("guestNotice")}</p>
             )} */}

@@ -31,7 +31,6 @@ export function usePrefetchOrder() {
 
 export function useOrderById(orderId: number) {
   const locale = useLocale();
-  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ["order", orderId, locale],
     queryFn: () => fetchOrderById(locale, orderId),

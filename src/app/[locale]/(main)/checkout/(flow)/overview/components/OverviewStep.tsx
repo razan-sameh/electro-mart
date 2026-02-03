@@ -11,17 +11,19 @@ import { useTranslations } from "next-intl";
 import { useOrderById } from "@/lib/hooks/useOrders";
 import { typOrderItem } from "@/content/types";
 import CartItemCard from "@/components/reusable/CartItemCard";
-import { useConfirmOrder } from "@/lib/hooks/useCheckout";
+import { useConfirmOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
 
 export default function OverviewStep() {
   const t = useTranslations("Checkout");
   const router = useRouter();
-  const { orderId } = useCheckoutStore();
+  // const { orderId } = useCheckoutStore();
+  const { data: orderId, isLoading: isDraftOrderIdLoading } = useDraftOrderId();
   const { data: order, isPending } = useOrderById(orderId!);
   const [loading, setLoading] = useState(false);
   const [retryLoading, setRetryLoading] = useState(false);
   const [status, setStatus] = useState<"success" | "failed" | null>(null);
-  const { mutateAsync: confirmOrder , isPending:isConfirmPending } = useConfirmOrder();
+  const { mutateAsync: confirmOrder, isPending: isConfirmPending } =
+    useConfirmOrder();
 
   if (isPending || !order) {
     return (
@@ -40,7 +42,7 @@ export default function OverviewStep() {
       return;
     }
 
-    isRetry ? setRetryLoading(true) : setLoading(true);
+    // isRetry ? setRetryLoading(true) : setLoading(true);
 
     try {
       const data = await confirmOrder(orderId!);
@@ -53,7 +55,7 @@ export default function OverviewStep() {
     } catch {
       setStatus("failed");
     } finally {
-      isRetry ? setRetryLoading(false) : setLoading(false);
+      // isRetry ? setRetryLoading(false) : setLoading(false);
     }
   };
 
@@ -88,7 +90,7 @@ export default function OverviewStep() {
             items={items}
             buttonText={t("SubmitAndPay")}
             onButtonClick={() => handleConfirmOrder(false)}
-            loading={loading}
+            loading={isConfirmPending}
           />
         </div>
       </div>
@@ -97,7 +99,7 @@ export default function OverviewStep() {
       <PaymentResultModal
         status={status === "failed" ? "failed" : null}
         shippingAddress={order.ShippingAddress}
-        retryLoading={retryLoading}
+        retryLoading={isConfirmPending}
         onRetry={() => handleConfirmOrder(true)}
         onGoHome={() => router.push("/")}
       />

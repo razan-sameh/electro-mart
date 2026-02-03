@@ -7,22 +7,17 @@ import { FaMapMarkerAlt, FaFlag, FaCity, FaMailBulk } from "react-icons/fa";
 import InputField from "@/components/reusable/InputField";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typAddressFormData, AddressSchema } from "./schema";
-import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { useCart } from "@/lib/hooks/useCart";
-import { useUpdateShipping } from "@/lib/hooks/useCheckout";
+import { useDraftOrderId, useUpdateShipping } from "@/lib/hooks/useCheckout";
 
 export default function AddressForm() {
   const t = useTranslations("Checkout");
-  const router = useRouter();
   const searchParams = useSearchParams();
-
   const { cart } = useCart();
-  const { setOrderId, orderId: draftOrderId } = useCheckoutStore();
+  const { data: draftOrderId, isLoading : isDraftOrderIdLoading } = useDraftOrderId();
   const { mutateAsync: UpdateShipping, isPending } = useUpdateShipping();
-
   const isBuyNow = searchParams.get("isBuyNow") === "1";
   const itemsToCheckout = cart?.items ?? [];
 
@@ -51,7 +46,7 @@ export default function AddressForm() {
   const onSubmit: SubmitHandler<typAddressFormData> = async (data) => {
     const { city, country, postalCode, streetAddress, phone } = data;
 
-    const newOrderId = await UpdateShipping({
+    await UpdateShipping({
       items: itemsToCheckout,
       shippingAddress: {
         country,
@@ -62,9 +57,6 @@ export default function AddressForm() {
       phone: `${phone.dialCode}${phone.number}`,
       orderId: draftOrderId,
     });
-
-    setOrderId(newOrderId);
-    router.push("/checkout/payment");
   };
 
   // Fix: handleSubmit returns a function

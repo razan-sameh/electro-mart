@@ -21,20 +21,21 @@ export async function updateShipping(
     throw new Error("Failed to create draft order");
   }
 
-  const { orderId } = await res.json();
-  return orderId;
+  const { orderIdDB } = await res.json();
+  
+  return orderIdDB;
 }
 
 export async function createOrder(
   items: typCartItem[],
-  draftOrderId?: number | null,
-) {
+  draftOrderId?: number,
+) {  
   const res = await fetch("/api/checkout/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       items,
-      orderId: draftOrderId ?? null,
+      draftOrderId: draftOrderId,
     }),
   });
 
@@ -43,6 +44,7 @@ export async function createOrder(
   }
 
   const { orderId } = await res.json();
+  
   return orderId;
 }
 
@@ -65,6 +67,12 @@ export async function confirmOrder(orderId: number) {
 
 export async function getCheckoutStep(orderId: number) {
   const res = await fetch(`/api/checkout?orderId=${orderId}`);
-  const data = await res.json();
+  const data = await res.json();  
   return data.step;
+}
+
+export async function getDraftOrderId() {
+  const res = await fetch(`/api/checkout/draft-order`);
+  const data = await res.json();
+  return data.orderId;
 }

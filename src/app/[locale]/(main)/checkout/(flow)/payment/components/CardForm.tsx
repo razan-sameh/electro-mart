@@ -9,6 +9,8 @@ import CartSummary from "@/components/reusable/CartSummary";
 import { typCartItem } from "@/content/types";
 import { useTranslations } from "next-intl";
 import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useDraftOrderId } from "@/lib/hooks/useCheckout";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function CardForm({
   clientSecret,
@@ -25,7 +27,10 @@ export function CardForm({
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const t = useTranslations("Checkout");
-  const { orderId } = useCheckoutStore();
+  // const { orderId } = useCheckoutStore();
+  const { data: orderId, isLoading: isDraftOrderIdLoading } = useDraftOrderId();
+  const queryClient = useQueryClient();
+
   const handleSaveCard = async () => {
     if (!stripe || !elements) return;
 
@@ -58,6 +63,10 @@ export function CardForm({
           onSaved({
             id: result.setupIntent.payment_method,
             clientSecret,
+          });
+          // ✅ Invalidate checkoutStep for the new order
+          queryClient.invalidateQueries({
+            queryKey: ["checkoutStep", orderId],
           });
         } else {
           console.error(data.error);

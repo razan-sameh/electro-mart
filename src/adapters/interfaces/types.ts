@@ -184,7 +184,6 @@ export interface paymentDB {
   status: string;
   payment_method: string;
   payment_intent_id: string;
-  transaction_id: string;
   card_brand: string;
   card_last4: string;
   card_exp_month: string;

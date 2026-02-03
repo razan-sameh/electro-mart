@@ -3,8 +3,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import CheckoutLayout from "./components/CheckoutLayout";
-import { useCheckoutStore } from "@/stores/checkoutStore";
-import { useCheckoutStep } from "@/lib/hooks/useCheckout";
+import { useCheckoutStep, useDraftOrderId } from "@/lib/hooks/useCheckout";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const STEP_ROUTES = [
@@ -19,13 +18,13 @@ export default function CheckoutRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { orderId } = useCheckoutStore();
   const router = useRouter();
   const pathname = usePathname();
+  const { data: orderId, isFetching : isDraftOrderIdLoading } = useDraftOrderId();
   const { data: backendStep, isLoading } = useCheckoutStep(orderId!);
 
-  useEffect(() => {    
-    if (!orderId) {
+  useEffect(() => {        
+    if (!isDraftOrderIdLoading && !orderId) {      
       router.replace("/cart");
       return;
     }
@@ -40,7 +39,7 @@ export default function CheckoutRootLayout({
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && isDraftOrderIdLoading ? (
         <div className="flex justify-center items-center min-h-[300px]">
           <LoadingSpinner />
         </div>

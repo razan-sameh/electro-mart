@@ -7,21 +7,23 @@ export async function POST(req: Request) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { items, orderId } = await req.json();
+  const { items, draftOrderId } = await req.json();
   const formattedItems = items.map((item: typCartItem) => ({
     variant_id: item.variant.id,
     quantity: item.quantity,
   }));
 
-  const { data, error } = await supabase.rpc("create_or_update_order_draft", {
-    p_user_id: user?.id ?? null,
-    p_phone: null,
-    p_shipping_address: null,
-    p_items: formattedItems,
-    p_order_id: orderId,
-  });
+  const { data: orderId, error } = await supabase.rpc(
+    "create_or_update_order_draft",
+    {
+      p_user_id: user?.id ?? null,
+      p_phone: null,
+      p_shipping_address: null,
+      p_items: formattedItems,
+      p_order_id: draftOrderId ?? null,
+    },
+  );
 
   if (error) throw error;
-
-  return NextResponse.json({ orderId: data.orderId });
+  return NextResponse.json({ orderId });
 }

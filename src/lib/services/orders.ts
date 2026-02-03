@@ -50,6 +50,7 @@ export async function fetchOrderById(locale: string, id: number) {
   if (!res.ok) throw new Error("Failed to fetch order");
 
   const data = await res.json();  
+  
   if (!data) {
     notFound();
   }

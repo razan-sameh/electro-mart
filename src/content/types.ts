@@ -180,7 +180,6 @@ export type typPayment = {
   amount: number;
   currency: string;
   status: string;
-  transactionId: string | null;
   cardBrand: string;
   cardLast4: string;
   cardExpMonth: string;

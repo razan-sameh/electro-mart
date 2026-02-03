@@ -8,16 +8,18 @@ import { useLocale } from "next-intl";
 import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useCart } from "@/lib/hooks/useCart";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SuccessPage() {
   const params = useSearchParams();
   const router = useRouter();
-  const orderId = params.get("orderId");
+  const orderId = Number(params.get("orderId"));
   const isBuyNow = params.get("isBuyNow") === "1";
   const { data: order, isLoading, error } = useOrderById(orderId!);
   const locale = useLocale();
   const { resetCheckout } = useCheckoutStore();
   const { clearCart } = useCart();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -33,6 +35,10 @@ export default function SuccessPage() {
   useLayoutEffect(() => {
     async function clear() {
       if (!isBuyNow) await clearCart();
+      // ✅ Update draftOrderId cache
+      queryClient.setQueryData<number | null>(["draftOrderId"], null);
+      // ✅ Invalidate checkoutStep for the new order
+      queryClient.invalidateQueries({ queryKey: ["checkoutStep", order?.id] });
       resetCheckout();
     }
     clear();
@@ -87,7 +93,7 @@ export default function SuccessPage() {
 
           <div className="flex justify-between">
             <span className="text-gray-500">Order number</span>
-            <span className="font-medium">{orderId}</span>
+            <span className="font-medium">{order.orderNumber}</span>
           </div>
 
           <div className="flex justify-between">
@@ -97,7 +103,7 @@ export default function SuccessPage() {
 
           <div className="flex justify-between">
             <span className="text-gray-500">Total items</span>
-            <span className="font-medium">{order.orderItems?.length ?? 0}</span>
+            <span className="font-medium">{order.items.length ?? 0}</span>
           </div>
         </div>
 

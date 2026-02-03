@@ -32,7 +32,6 @@ export class PaymentAdapter extends BaseAdapter<paymentDB, typPayment> {
       currency: source.currency,
       paymentIntentId: source.payment_intent_id,
       status: source.status,
-      transactionId: source.transaction_id || null,
     };
   }
 }

@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       quantity: item.quantity,
     }));
 
-    const { data, error } = await supabase.rpc("create_or_update_order_draft", {
+    const { data:orderIdDB, error } = await supabase.rpc("create_or_update_order_draft", {
       p_user_id: user?.id ?? null,
       p_phone: phone,
       p_shipping_address: shippingAddress,
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ orderId: data.orderId });
+  return NextResponse.json({ orderIdDB });
   } catch (err: any) {
     console.error("API CRASH:", err);
     return NextResponse.json(

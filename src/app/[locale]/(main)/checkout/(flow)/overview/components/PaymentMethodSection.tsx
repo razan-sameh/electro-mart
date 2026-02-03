@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslations } from "next-intl";
-import { useCheckoutStore } from "@/stores/checkoutStore";
 import { typPayment } from "@/content/types";
 
 export default function PaymentMethodSection({payment}:{payment:typPayment}) {

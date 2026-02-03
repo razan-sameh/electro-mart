@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
 import { useCart } from "@/lib/hooks/useCart";
+import { useDraftOrderId } from "@/lib/hooks/useCheckout";
 
 const strip_pk = process.env.NEXT_PUBLIC_STRIPE_PK;
 const stripePromise = loadStripe(strip_pk!);
@@ -26,8 +27,9 @@ export default function PaymentStep() {
 
   const { cart } = useCart();
   const { data: buyNowItems } = useBuyNow();
-  const { orderId, setPaymentMethod, setClientSecret, clientSecret } =
+  const { setPaymentMethod, setClientSecret, clientSecret } =
     useCheckoutStore();
+  const { data: orderId, isLoading : isDraftOrderIdLoading } = useDraftOrderId();
 
   const isBuyNow = searchParams.get("isBuyNow") === "1";
   const itemsToCheckout = isBuyNow ? buyNowItems! : cart?.items!;
