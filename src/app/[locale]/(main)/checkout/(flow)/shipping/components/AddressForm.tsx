@@ -11,12 +11,15 @@ import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/lib/hooks/useCart";
 import { useDraftOrderId, useUpdateShipping } from "@/lib/hooks/useCheckout";
+import { useOrderById } from "@/lib/hooks/useOrders";
+import { useEffect } from "react";
 
 export default function AddressForm() {
   const t = useTranslations("Checkout");
   const searchParams = useSearchParams();
   const { cart } = useCart();
-  const { data: draftOrderId, isLoading : isDraftOrderIdLoading } = useDraftOrderId();
+  const { data: draftOrderId } = useDraftOrderId();
+  const { data: order } = useOrderById(draftOrderId);
   const { mutateAsync: UpdateShipping, isPending } = useUpdateShipping();
   const isBuyNow = searchParams.get("isBuyNow") === "1";
   const itemsToCheckout = cart?.items ?? [];
@@ -26,6 +29,7 @@ export default function AddressForm() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<typAddressFormData>({
     resolver: zodResolver(AddressSchema),
@@ -37,6 +41,17 @@ export default function AddressForm() {
       streetAddress: "",
     },
   });
+  useEffect(() => {
+    if (order) {
+      reset({
+        phone: order.phone || {},
+        country: order.ShippingAddress?.country || "",
+        city: order.ShippingAddress?.city || "",
+        postalCode: order.ShippingAddress?.postalCode || "",
+        streetAddress: order.ShippingAddress?.streetAddress || "",
+      });
+    }
+  }, [reset, draftOrderId, order]);
 
   const phoneValue = watch("phone");
   const phoneString = phoneValue
@@ -54,13 +69,18 @@ export default function AddressForm() {
         postalCode,
         streetAddress,
       },
-      phone: `${phone.dialCode}${phone.number}`,
+      phone: {
+        countryCode: phone.countryCode,
+        dialCode: `+${phone.dialCode}`,
+        number: phone.number,
+      },
       orderId: draftOrderId,
     });
   };
 
   // Fix: handleSubmit returns a function
   const handleFormSubmit = handleSubmit(onSubmit);
+  if (!draftOrderId) return <div>Loading...</div>;
 
   return (
     <div className="grid lg:grid-cols-[2fr_1fr] gap-6 mt-6">

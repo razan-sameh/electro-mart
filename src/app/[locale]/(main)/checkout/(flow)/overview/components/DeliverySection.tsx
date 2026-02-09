@@ -1,12 +1,12 @@
 import React from "react";
 import { FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTranslations } from "next-intl";
-import { typShippingAddress } from "@/content/types";
+import { typPhone, typShippingAddress } from "@/content/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 interface DeliverySectionProps {
-  shippingAddress: typShippingAddress;
-  phone:string
+  shippingAddress: typShippingAddress | null;
+  phone:typPhone | null
 }
 export default function DeliverySection({
   shippingAddress,
@@ -49,7 +49,7 @@ export default function DeliverySection({
             <strong>{t("Phone")}:</strong>
           </div>
           <p>
-            {phone}
+            {phone?.dialCode}{" "}{phone?.number}
           </p>
         </div>
       </div>

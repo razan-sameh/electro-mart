@@ -29,31 +29,12 @@ export function usePrefetchOrder() {
   return prefetch;
 }
 
-export function useOrderById(orderId: number) {
+export function useOrderById(orderId: number) {  
   const locale = useLocale();
   return useQuery({
     queryKey: ["order", orderId, locale],
     queryFn: () => fetchOrderById(locale, orderId),
-    retry: 1, // 👈 Avoid infinite retry loops
+    retry: 1,
+    enabled: !!orderId, 
   });
-  // return useQuery({
-  //   queryKey: ["order", orderId, locale],
-  //   queryFn: async () => {
-  //     // Try to get from cached orders first
-  //     const cachedOrders = queryClient.getQueryData<any>([
-  //       "orders",
-  //       locale,
-  //       1,
-  //       10,
-  //     ]);
-  //     const cachedOrder: typOrder = cachedOrders?.orders?.find(
-  //       (o: any) => o.id === orderId,
-  //     );
-  //     if (cachedOrder) return cachedOrder;
-
-  //     // Otherwise fetch from API
-  //     return await fetchOrderById(locale, orderId);
-  //   },
-  //   retry: 1, // 👈 Avoid infinite retry loops
-  // });
 }

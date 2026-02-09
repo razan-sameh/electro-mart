@@ -5,18 +5,21 @@ import { orderDB } from "./interfaces/types";
 import { OrderItemAdapter } from "./OrderItemAdapter";
 import { PaymentAdapter } from "./PaymentAdapter";
 import { AddressAdapter } from "./AddressAdapter";
+import { PhoneAdapter } from "./PhoneAdapter";
 
 export class OrderAdapter extends BaseAdapter<orderDB, typOrder> {
   private static instance: OrderAdapter;
   private orderItemAdapter: OrderItemAdapter;
   private paymentAdapter: PaymentAdapter;
   private addressAdapter: AddressAdapter;
+  private phoneAdapter: PhoneAdapter;
 
   private constructor() {
     super();
     this.orderItemAdapter = OrderItemAdapter.getInstance();
     this.paymentAdapter = PaymentAdapter.getInstance();
     this.addressAdapter = AddressAdapter.getInstance();
+    this.phoneAdapter = PhoneAdapter.getInstance();
   }
 
   public static getInstance(): OrderAdapter {
@@ -26,7 +29,7 @@ export class OrderAdapter extends BaseAdapter<orderDB, typOrder> {
     return OrderAdapter.instance;
   }
 
-  adapt(source: orderDB): typOrder {    
+  adapt(source: orderDB): typOrder {
     return {
       id: source.id,
       total: source.total_amount,
@@ -35,9 +38,15 @@ export class OrderAdapter extends BaseAdapter<orderDB, typOrder> {
       orderStatus: source.status,
       date: source.created_at,
       orderNumber: source.order_number,
-      phone: source.phone,
-      ShippingAddress: this.addressAdapter.adapt(source.shipping_address),
-      payment: this.paymentAdapter.adapt(source.payment),
+      phone: source.phone
+        ? this.phoneAdapter.adapt(source.phone)
+        : null,
+      ShippingAddress: source.shipping_address
+        ? this.addressAdapter.adapt(source.shipping_address)
+        : null, // ✅ allow null
+      payment: source.payment
+        ? this.paymentAdapter.adapt(source.payment)
+        : null, // ✅ allow null
       items: this.orderItemAdapter.adaptMany(source.items),
     };
   }

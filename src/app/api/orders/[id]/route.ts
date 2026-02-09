@@ -4,7 +4,7 @@ import { createServer } from "../../supabaseServer";
 // GET /api/orders/:id - Get a single order by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: number,locale:string }> }
+  { params }: { params: Promise<{ id: string,locale:string }> }
 ) {
   try {
     const { id ,locale } = await params; // ✅ await params
@@ -12,7 +12,7 @@ export async function GET(
   const supabase = await createServer();
 
   const { data, error } = await supabase.rpc("get_order_by_id", {
-    p_order_id: id,
+    p_order_id: Number(id),
     p_locale: locale
   });
 

@@ -1,4 +1,4 @@
-import { typCartItem, typShippingAddress } from "@/content/types";
+import { typCartItem, typPhone, typShippingAddress } from "@/content/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   confirmOrder,
@@ -7,9 +7,11 @@ import {
   getDraftOrderId,
   updateShipping,
 } from "../services/checkOut";
+import { useRouter } from "@/i18n/navigation";
 
 export function useUpdateShipping() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({
@@ -20,17 +22,19 @@ export function useUpdateShipping() {
     }: {
       items: typCartItem[];
       shippingAddress: typShippingAddress;
-      phone: string;
+      phone: typPhone;
       orderId?: number | null;
     }) => updateShipping(items, shippingAddress, phone, orderId),
-    onSuccess: (orderIdDB) => {      
+    onSuccess: (orderIdDB) => {
       queryClient.invalidateQueries({ queryKey: ["checkoutStep", orderIdDB] });
+      router.push("/checkout/payment");
     },
   });
 }
 
 export function useCreateOrder() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({
@@ -40,12 +44,17 @@ export function useCreateOrder() {
       items: typCartItem[];
       orderId?: number;
     }) => createOrder(items, orderId),
-    onSuccess: (newOrderId) => {
-      // ✅ Update draftOrderId cache
+    onSuccess: async (newOrderId) => {
+      // 1️⃣ Update draftOrderId cache
       queryClient.setQueryData<number | null>(["draftOrderId"], newOrderId);
 
-      // ✅ Invalidate checkoutStep for the new order
-      queryClient.invalidateQueries({ queryKey: ["checkoutStep", newOrderId] });
+      // 2️⃣ Fetch checkoutStep immediately, even if not mounted yet
+      await queryClient.fetchQuery({
+        queryKey: ["checkoutStep", newOrderId],
+        queryFn: () => getCheckoutStep(newOrderId),
+        staleTime: Infinity,
+      });
+      router.push("/checkout/shipping");
     },
   });
 }

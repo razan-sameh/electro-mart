@@ -122,8 +122,6 @@ export type typShippingAddress = {
 };
 
 export type typPhone = {
-  id?: number;
-  documentId?: string;
   dialCode: string;
   number: string;
   countryCode: string;
@@ -194,11 +192,12 @@ export type typOrder = {
   subtotal: number;
   discountAmount: number | null;
   orderStatus: string;
-  ShippingAddress: typShippingAddress;
-  phone: string;
+  ShippingAddress: typShippingAddress | null; // ✅ can be null
+  phone: typPhone | null;
   items: typOrderItem[];
-  payment: typPayment;
+  payment: typPayment | null;
 };
+
 
 export type typProductFilters = {
   categoryId?: number;

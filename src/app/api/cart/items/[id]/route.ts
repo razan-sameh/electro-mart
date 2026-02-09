@@ -4,13 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: number }> },
 ) {
   const { quantity } = await req.json();
   const supabase = await createServer();
-
+  const { id } = await params;
   const { data, error } = await supabase.rpc("update_cart_item", {
-    p_item_id: Number(params.id),
+    p_item_id: id,
     p_quantity: quantity,
   });
 

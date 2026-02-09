@@ -47,7 +47,6 @@ function Cart() {
         items: cart.items,
         orderId: orderId ?? null,
       });
-      router.push("/checkout/shipping");
     }
   };
 

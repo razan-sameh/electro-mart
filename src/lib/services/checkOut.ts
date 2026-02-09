@@ -1,9 +1,9 @@
-import { typCartItem, typShippingAddress } from "@/content/types";
+import { typCartItem, typPhone, typShippingAddress } from "@/content/types";
 
 export async function updateShipping(
   items: typCartItem[],
   data: typShippingAddress,
-  phone: string,
+  phone: typPhone,
   draftOrderId?: number | null,
 ) {
   const res = await fetch("/api/checkout/shipping", {
@@ -67,7 +67,7 @@ export async function confirmOrder(orderId: number) {
 
 export async function getCheckoutStep(orderId: number) {
   const res = await fetch(`/api/checkout?orderId=${orderId}`);
-  const data = await res.json();  
+  const data = await res.json();    
   return data.step;
 }
 

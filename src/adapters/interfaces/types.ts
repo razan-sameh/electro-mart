@@ -166,13 +166,13 @@ export interface orderDB {
   user: UserDB;
   created_at: string;
   status: string;
-  shipping_address: AddressDB;
-  phone: string;
+  shipping_address: AddressDB | null; // ✅ can be null
+  phone: PhoneDB | null;
   discount_amount: number | null;
   total_amount: number;
   subtotal_amount: number;
   items: orderItemDB[];
-  payment: paymentDB;
+  payment: paymentDB | null; // ✅ can be null
 }
 
 export interface paymentDB {
@@ -195,4 +195,9 @@ export interface AddressDB {
   postalCode: string;
   city: string;
   country: string;
+}
+export interface PhoneDB {
+  dialCode: string;
+  number: string;
+  countryCode: string;
 }

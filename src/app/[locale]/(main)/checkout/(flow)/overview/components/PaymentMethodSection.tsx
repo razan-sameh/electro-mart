@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import { typPayment } from "@/content/types";
 
-export default function PaymentMethodSection({payment}:{payment:typPayment}) {
+export default function PaymentMethodSection({payment}:{payment:typPayment | null}) {
   const t = useTranslations("Checkout");
 
   return (
@@ -12,14 +12,14 @@ export default function PaymentMethodSection({payment}:{payment:typPayment}) {
       </h2>
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl p-5 flex justify-between items-center">
         <div>
-          <p className="font-bold text-lg uppercase">{payment.cardBrand}</p>
+          <p className="font-bold text-lg uppercase">{payment?.cardBrand}</p>
           <p className="text-sm mt-2">
-            **** **** **** {payment.cardLast4}
+            **** **** **** {payment?.cardLast4}
           </p>
           {/* <p className="text-xs mt-1">{shippingAddress?.streetAddress}</p> */}
         </div>
         <p className="text-sm">
-          {payment.cardExpMonth}/{payment.cardExpYear}
+          {payment?.cardExpMonth}/{payment?.cardExpYear}
         </p>
       </div>
     </section>
