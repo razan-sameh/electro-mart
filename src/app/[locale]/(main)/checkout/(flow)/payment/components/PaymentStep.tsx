@@ -5,7 +5,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardForm } from "./CardForm";
 import { useCheckoutStore } from "@/stores/checkoutStore";
-import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import Loader from "@/components/ui/Loader";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -26,21 +25,32 @@ export default function PaymentStep() {
   const searchParams = useSearchParams();
 
   const { cart } = useCart();
-  const { data: buyNowItems } = useBuyNow();
   const { setPaymentMethod, setClientSecret, clientSecret } =
     useCheckoutStore();
-  const { data: orderId, isLoading : isDraftOrderIdLoading } = useDraftOrderId();
+  const { data: orderId,} = useDraftOrderId();
 
   const isBuyNow = searchParams.get("isBuyNow") === "1";
-  const itemsToCheckout = isBuyNow ? buyNowItems! : cart?.items!;
-  const total = cart?.items?.reduce((sum, item) => {
-    const price = Number(item?.total ?? 0);
+  const productId = searchParams.get("productId");
+  const variantId = searchParams.get("variantId");
+  const quantity = searchParams.get("quantity");
+  const itemsToCheckout =
+    isBuyNow && productId && variantId && quantity
+      ? (cart?.items ?? [])
+          .filter(
+            (item) =>
+              item.product.id === Number(productId) &&
+              item.variant.id === Number(variantId),
+          )
+          .map((item) => ({ ...item, quantity: Number(quantity) }))
+      : (cart?.items ?? []);
+  const total = itemsToCheckout?.reduce((sum, item) => {
+    const price = item.unitPrice * item.quantity;
     return sum + (isNaN(price) ? 0 : price);
   }, 0);
 
   useEffect(() => {
     if (!orderId) return; // orderId لازم موجود
-    if (!cart?.items?.length) return; // cart لازم يكون فيه items
+    if (!itemsToCheckout?.length) return; // itemsToCheckout لازم يكون فيه عناصر
     if (total! <= 0) return; // total لازم يكون أكبر من 0
 
     fetch("/api/checkout/create-setup-intent", {
@@ -51,7 +61,7 @@ export default function PaymentStep() {
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret))
       .catch(console.error);
-  }, [orderId, cart?.items]);
+  }, [orderId, itemsToCheckout]);
 
   if (!clientSecret) {
     return <Loader text={t("preparingPayment")} />;
@@ -61,7 +71,9 @@ export default function PaymentStep() {
   const handleSaved = (pm: any) => {
     setPaymentMethod(pm);
     isBuyNow
-      ? router.push("/checkout/overview?isBuyNow=1")
+      ? router.push(
+          `/checkout/overview?isBuyNow=1&productId=${itemsToCheckout[0].product.id}&variantId=${itemsToCheckout[0].variant.id}&quantity=${itemsToCheckout[0].quantity}`,
+        )
       : router.push("/checkout/overview");
   };
 

@@ -1,6 +1,11 @@
-import { typProduct, typProductVariant } from "@/content/types";
+import {
+  typCartItem,
+  typProduct,
+  typProductVariant,
+} from "@/content/types";
 import { useRouter } from "@/i18n/navigation";
 import { useCart } from "@/lib/hooks/useCart";
+import { useCreateOrder } from "@/lib/hooks/useCheckout";
 import { useWishlist } from "@/lib/hooks/useWishlist";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
@@ -26,6 +31,7 @@ export default function ProductActions({
     addItem: addToWishlist,
     removeItem: removeFromWishlist,
   } = useWishlist();
+  const { mutateAsync: createOrder } = useCreateOrder();
 
   const isInWishlist = !!wishlist?.items?.some(
     (i) => i.variant.id === selectedVariant?.id,
@@ -55,25 +61,34 @@ export default function ProductActions({
 
   const handleBuyNow = async () => {
     if (!selectedVariant) return;
+    const existingItem = cart?.items?.find(
+      (i) => i.variant.id === selectedVariant.id,
+    );
 
-    const body = {
-      productId: product.id,
-      variantId: selectedVariant.id,
-    };
-
-    const res = await fetch("/api/buy-now", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.success) {
-      router.push("/checkout/shipping?isBuyNow=1");
+    if (existingItem) {
+      await updateItem({
+        itemId: existingItem.id,
+        quantity: existingItem.quantity + state.quantity,
+      });
     } else {
-      console.error(data.error || "Something went wrong");
+      await addItem({
+        variantId: selectedVariant.id,
+        quantity: state.quantity,
+      });
     }
+    const item: typCartItem = {
+      variant: selectedVariant,
+      quantity: state.quantity,
+      id: 0, // Temporary ID, will be ignored in order creation
+      product: product,
+      total: selectedVariant.price * state.quantity,
+      unitPrice: selectedVariant.price,
+    };
+    await createOrder({
+      items: [item],
+      orderId: undefined,
+    });
+    router.push(`/checkout/shipping?isBuyNow=1&productId=${product.id}&variantId=${selectedVariant.id}&quantity=${state.quantity}`);
   };
 
   const handleAddToWishlist = async () => {

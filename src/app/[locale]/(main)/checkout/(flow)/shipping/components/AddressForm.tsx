@@ -7,12 +7,12 @@ import { FaMapMarkerAlt, FaFlag, FaCity, FaMailBulk } from "react-icons/fa";
 import InputField from "@/components/reusable/InputField";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typAddressFormData, AddressSchema } from "./schema";
-import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/lib/hooks/useCart";
 import { useDraftOrderId, useUpdateShipping } from "@/lib/hooks/useCheckout";
 import { useOrderById } from "@/lib/hooks/useOrders";
 import { useEffect } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 export default function AddressForm() {
   const t = useTranslations("Checkout");
@@ -22,7 +22,20 @@ export default function AddressForm() {
   const { data: order } = useOrderById(draftOrderId);
   const { mutateAsync: UpdateShipping, isPending } = useUpdateShipping();
   const isBuyNow = searchParams.get("isBuyNow") === "1";
-  const itemsToCheckout = cart?.items ?? [];
+  const productId = searchParams.get("productId");
+  const variantId = searchParams.get("variantId");
+  const quantity = searchParams.get("quantity");
+  const itemsToCheckout =
+    isBuyNow && productId && variantId && quantity
+      ? (cart?.items ?? [])
+          .filter(
+            (item) =>
+              item.product.id === Number(productId) &&
+              item.variant.id === Number(variantId),
+          )
+          .map((item) => ({ ...item, quantity: Number(quantity) }))
+      : (cart?.items ?? []);
+  const router = useRouter();
 
   const {
     register,
@@ -61,7 +74,7 @@ export default function AddressForm() {
   const onSubmit: SubmitHandler<typAddressFormData> = async (data) => {
     const { city, country, postalCode, streetAddress, phone } = data;
 
-    await UpdateShipping({
+    UpdateShipping({
       items: itemsToCheckout,
       shippingAddress: {
         country,
@@ -75,6 +88,14 @@ export default function AddressForm() {
         number: phone.number,
       },
       orderId: draftOrderId,
+    }).then(() => {
+      if (isBuyNow) {
+        router.push(
+          `/checkout/payment?isBuyNow=1&productId=${itemsToCheckout[0].product.id}&variantId=${itemsToCheckout[0].variant.id}&quantity=${itemsToCheckout[0].quantity}`,
+        );
+      } else {
+        router.push("/checkout/payment");
+      }
     });
   };
 
@@ -142,6 +163,7 @@ export default function AddressForm() {
           buttonText={t("continueButton")}
           onButtonClick={handleFormSubmit}
           loading={isPending}
+          quantity={isBuyNow ? Number(quantity) : undefined}
         />
       </div>
     </div>

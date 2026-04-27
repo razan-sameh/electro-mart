@@ -11,6 +11,7 @@ interface Props {
   showButton?: boolean;
   showInfoList?: boolean;
   loading?: boolean;
+  quantity?: number;
 }
 
 export default function CartSummary({
@@ -20,19 +21,20 @@ export default function CartSummary({
   showButton = true,
   showInfoList = true,
   loading = false,
+  quantity,
 }: Props) {
   const t = useTranslations("CartSummary");
 
   // السعر قبل الخصم
   const subtotal = items?.reduce(
-    (sum, item) =>
-      sum + item?.variant?.price * item?.quantity,
-    0
+    (sum, item) => sum + item?.variant?.price * (quantity || item?.quantity),
+    0,
   );
 
-  // السعر بعد الخصم (جاهز من backend)
-  const total = items?.reduce((sum, item) => sum + item?.total, 0);
-
+  const total = items?.reduce(
+    (sum, item) => sum + item.unitPrice * (quantity || item.quantity),
+    0,
+  );
   const discount = subtotal - total;
   const discountPercent =
     subtotal > 0 ? ((discount / subtotal) * 100).toFixed(0) : "0";

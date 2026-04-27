@@ -7,11 +7,9 @@ import {
   getDraftOrderId,
   updateShipping,
 } from "../services/checkOut";
-import { useRouter } from "@/i18n/navigation";
 
 export function useUpdateShipping() {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: ({
@@ -27,15 +25,12 @@ export function useUpdateShipping() {
     }) => updateShipping(items, shippingAddress, phone, orderId),
     onSuccess: (orderIdDB) => {
       queryClient.invalidateQueries({ queryKey: ["checkoutStep", orderIdDB] });
-      router.push("/checkout/payment");
     },
   });
 }
 
 export function useCreateOrder() {
   const queryClient = useQueryClient();
-  const router = useRouter();
-
   return useMutation({
     mutationFn: ({
       items,
@@ -54,7 +49,6 @@ export function useCreateOrder() {
         queryFn: () => getCheckoutStep(newOrderId),
         staleTime: Infinity,
       });
-      router.push("/checkout/shipping");
     },
   });
 }

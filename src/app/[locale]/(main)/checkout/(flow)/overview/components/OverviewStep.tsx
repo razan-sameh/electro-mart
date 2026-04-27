@@ -12,18 +12,34 @@ import { useOrderById } from "@/lib/hooks/useOrders";
 import { typOrderItem } from "@/content/types";
 import CartItemCard from "@/components/reusable/CartItemCard";
 import { useConfirmOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
+import { useSearchParams } from "next/navigation";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function OverviewStep() {
   const t = useTranslations("Checkout");
   const router = useRouter();
   // const { orderId } = useCheckoutStore();
-  const { data: orderId, isLoading: isDraftOrderIdLoading } = useDraftOrderId();
+  const { data: orderId } = useDraftOrderId();
   const { data: order, isPending } = useOrderById(orderId!);
-  const [loading, setLoading] = useState(false);
-  const [retryLoading, setRetryLoading] = useState(false);
   const [status, setStatus] = useState<"success" | "failed" | null>(null);
   const { mutateAsync: confirmOrder, isPending: isConfirmPending } =
     useConfirmOrder();
+  const searchParams = useSearchParams();
+  const isBuyNow = searchParams.get("isBuyNow") === "1";
+  const productId = searchParams.get("productId");
+  const variantId = searchParams.get("variantId");
+  const quantity = searchParams.get("quantity");
+  const { cart } = useCart();
+  const itemsToCheckout =
+    isBuyNow && productId && variantId && quantity
+      ? (cart?.items ?? [])
+          .filter(
+            (item) =>
+              item.product.id === Number(productId) &&
+              item.variant.id === Number(variantId),
+          )
+          .map((item) => ({ ...item, quantity: Number(quantity) }))
+      : (cart?.items ?? []);
 
   if (isPending || !order) {
     return (
@@ -48,14 +64,16 @@ export default function OverviewStep() {
       const data = await confirmOrder(orderId!);
 
       if (data.success) {
-        router.replace(`/checkout/success?orderId=${order.id}`);
+        if (isBuyNow) {
+          router.replace(
+            `/checkout/success?isBuyNow=1&productId=${itemsToCheckout[0].product.id}&variantId=${itemsToCheckout[0].variant.id}&quantity=${itemsToCheckout[0].quantity}&orderId=${order.id}`,
+          );
+        } else router.replace(`/checkout/success?orderId=${order.id}`);
       } else {
         setStatus("failed");
       }
     } catch {
       setStatus("failed");
-    } finally {
-      // isRetry ? setRetryLoading(false) : setLoading(false);
     }
   };
 
@@ -91,6 +109,7 @@ export default function OverviewStep() {
             buttonText={t("SubmitAndPay")}
             onButtonClick={() => handleConfirmOrder(false)}
             loading={isConfirmPending}
+            quantity={isBuyNow ? Number(quantity) : undefined}
           />
         </div>
       </div>

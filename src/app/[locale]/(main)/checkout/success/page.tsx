@@ -14,12 +14,16 @@ export default function SuccessPage() {
   const params = useSearchParams();
   const router = useRouter();
   const orderId = Number(params.get("orderId"));
-  const isBuyNow = params.get("isBuyNow") === "1";
   const { data: order, isLoading, error } = useOrderById(orderId!);
   const locale = useLocale();
   const { resetCheckout } = useCheckoutStore();
-  const { clearCart } = useCart();
+  const { clearCart, removeItem, updateItem } = useCart();
   const queryClient = useQueryClient();
+  const isBuyNow = params.get("isBuyNow") === "1";
+  const productId = params.get("productId");
+  const variantId = params.get("variantId");
+  const quantity = params.get("quantity");
+  const { cart } = useCart();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -34,10 +38,28 @@ export default function SuccessPage() {
 
   useLayoutEffect(() => {
     async function clear() {
-      if (!isBuyNow) await clearCart();
-      // ✅ Update draftOrderId cache
+      if (isBuyNow) {
+        const cartItem = cart?.items.find(
+          (item) =>
+            item.product.id === Number(productId) &&
+            item.variant.id === Number(variantId),
+        );
+
+        if (cartItem) {
+          const originalQty = cartItem.quantity - Number(quantity);
+
+          if (originalQty <= 0) {
+            // Item wasn't in cart before Buy Now — remove it entirely
+            await removeItem(cartItem.id);
+          } else {
+            // Item was already in cart — restore original quantity
+            await updateItem({ itemId: cartItem.id, quantity: originalQty });
+          }
+        }
+      } else {
+        await clearCart();
+      }
       queryClient.setQueryData<number | null>(["draftOrderId"], null);
-      // ✅ Invalidate checkoutStep for the new order
       queryClient.invalidateQueries({ queryKey: ["checkoutStep", order?.id] });
       resetCheckout();
     }

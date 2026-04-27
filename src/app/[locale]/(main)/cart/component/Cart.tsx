@@ -15,7 +15,7 @@ function Cart() {
   const router = useRouter();
   const t = useTranslations("Cart");
   const { mutateAsync: createOrder, isPending } = useCreateOrder();
-  const { data: orderId, isLoading: isDraftOrderIdLoading } = useDraftOrderId();
+  const { data: orderId } = useDraftOrderId();
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -43,9 +43,11 @@ function Cart() {
     const data = await res.json();
     if (!data.user) router.push("/login?redirect=/checkout/shipping");
     else {
-      await createOrder({
+      createOrder({
         items: cart.items,
         orderId: orderId ?? null,
+      }).then(() => {
+        router.push("/checkout/shipping");
       });
     }
   };
