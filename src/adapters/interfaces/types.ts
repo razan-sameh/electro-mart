@@ -45,10 +45,10 @@ export type StrapiBuyNow = {
 ////////////////////////////////////////////
 
 export interface UserDB {
-  id: number;
+  id: string;
   email: string;
   user_metadata: { display_name?: string };
-  phone?: StrapiPhone;
+  phone?: string;
 }
 
 export interface ProductImageDB {
@@ -145,49 +145,40 @@ export type WishlistDB = {
   id: number;
   items: WishlistItemDB[];
 };
-
 export interface orderItemDB {
   id: number;
-  created_at: string;
-  order: orderDB;
   quantity: number;
-  product: ProductDB;
-  variant: ProductVariantDB;
   unit_price: number;
-  discount_amount: number;
-  subtotal_price: number;
   total_price: number;
   status: string;
+  product_variant_id: number;
+  product_title: string;
+  product_image: string;
+  sku: string;
 }
 
 export interface orderDB {
   id: number;
   order_number: string;
-  user: UserDB;
   created_at: string;
+  updated_at: string;
   status: string;
-  shipping_address: AddressDB | null; // ✅ can be null
+  shipping_address: AddressDB | null;
   phone: PhoneDB | null;
   discount_amount: number | null;
   total_amount: number;
   subtotal_amount: number;
   items: orderItemDB[];
-  payment: paymentDB | null; // ✅ can be null
+  payment: paymentDB | null;
 }
 
 export interface paymentDB {
-  id: number;
-  created_at: string;
-  order: orderDB;
+  payment_method: string;
+  status: string;
   amount: number;
   currency: string;
-  status: string;
-  payment_method: string;
-  payment_intent_id: string;
   card_brand: string;
   card_last4: string;
-  card_exp_month: string;
-  card_exp_year: string;
 }
 
 export interface AddressDB {
@@ -196,6 +187,7 @@ export interface AddressDB {
   city: string;
   country: string;
 }
+
 export interface PhoneDB {
   dialCode: string;
   number: string;

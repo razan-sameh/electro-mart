@@ -1,100 +1,80 @@
 // app/api/auth/update-user/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { typPhone, typUser } from "@/content/types";
-import { serverApiClient } from "../../serverApiClient";
+import { createServer } from "../../supabaseServer";
 
 export async function PUT(req: NextRequest) {
+  const supabase = await createServer();
+  const body = await req.json();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // --- USERNAME ---
+    if (body.username !== undefined) {
+      const { error: rpcError } = await supabase.rpc("update_user_profile", {
+        p_user_id: user.id,
+        p_display_name: body.username, // 👈 maps form field -> db column
+      });
+      if (rpcError) throw new Error(rpcError.message);
     }
 
-    const newData = await req.json();
+    // --- PHONE ---
+    if (body.phone !== undefined) {
+      const { dialCode, number, countryCode } = body.phone;
+      const fullPhone = `${dialCode}${number}`;
 
-    // 1️⃣ Get current user info
-    const user: typUser = await serverApiClient("/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      const { error: rpcError } = await supabase.rpc("update_user_profile", {
+        p_user_id: user.id,
+        p_phone: fullPhone,
+        p_phone_dial_code: dialCode,
+        p_phone_number: number,
+        p_phone_country_code: countryCode || "",
+      });
+      if (rpcError) throw new Error(rpcError.message);
+    }
 
-    // 2️⃣ Update or create phone
-    let phoneId: string | null = null;
+    // --- EMAIL ---
+    if (body.email !== undefined) {
+      // ✅ Block if same as current email
+      if (body.email === user.email) {
+        return NextResponse.json(
+          { error: "This is already your current email." },
+          { status: 400 },
+        );
+      }
 
-    if (newData.phone) {
-      const { dailcode, number, countryCode } = newData.phone;
+      const { error } = await supabase.auth.updateUser({ email: body.email });
 
-      const existingPhoneRes = (await serverApiClient(
-        `/phones?filters[user][id][$eq]=${user.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      if (error) {
+        // ✅ Map Supabase error messages to friendly ones
+        const msg = error.message.toLowerCase();
+        if (
+          msg.includes("already registered") ||
+          msg.includes("already been registered")
+        ) {
+          return NextResponse.json(
+            { error: "This email is already used by another account." },
+            { status: 409 },
+          );
         }
-      )) as { data: typPhone[]; meta?: any }; // ✅ explicit type
-
-      const existingPhone = existingPhoneRes.data;
-
-      if (existingPhone && existingPhone.length > 0) {
-        phoneId = existingPhone[0].documentId!;
-
-        await serverApiClient(`/phones/${phoneId}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            data: {
-              dailcode,
-              number,
-              countryCode,
-              user: user.id,
-            },
-          }),
-        });
-      } else {
-        (await serverApiClient(`/phones`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            data: {
-              dailcode,
-              number,
-              countryCode,
-              user: user.id,
-            },
-          }),
-        })) as { data: { id: number } };
+        if (msg.includes("invalid")) {
+          return NextResponse.json(
+            { error: "Please enter a valid email address." },
+            { status: 400 },
+          );
+        }
+        throw new Error(error.message);
       }
     }
-
-    // 3️⃣ Update user basic info (username, email)
-    const payload: Record<string, any> = {};
-    if (newData.username) payload.username = newData.username;
-    if (newData.email) payload.email = newData.email;
-
-    if (Object.keys(payload).length > 0) {
-      const updatedUser = await serverApiClient(`/users/${user.id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      return NextResponse.json({ updatedUser, phoneId }, { status: 200 });
-    } else {
-      return NextResponse.json(
-        { message: "No changes", phoneId },
-        { status: 200 }
-      );
-    }
-  } catch (err) {
-    console.error("❌ Update error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "Updated successfully" });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
   }
 }

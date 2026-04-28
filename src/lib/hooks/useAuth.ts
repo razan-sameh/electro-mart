@@ -4,7 +4,8 @@ import { fetchMe, loginApi, logout, signupApi } from "../services/auth";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { CART_QUERY_KEY } from "./useCart";
 import { WISHLIST_QUERY_KEY } from "./useWishlist";
-
+import { UserAdapter } from "@/adapters/UserAdapter";
+const userAdapter = UserAdapter.getInstance();
 export function useAuth() {
   const {
     data: user,
@@ -34,9 +35,9 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginApi,
     onSuccess: async (data) => {
-      // Set user data directly in cache
       if (data.success && data.user) {
-        queryClient.setQueryData(["auth", "me"], data.user);
+        // ✅ adapt before setting cache
+        queryClient.setQueryData(["auth", "me"], userAdapter.adapt(data.user));
         await queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
         await queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
       }
@@ -50,8 +51,8 @@ export function useSignup() {
     mutationFn: signupApi,
     onSuccess: async (data) => {
       if (data.success && data.user) {
-        // 1. Set user data in cache
-        queryClient.setQueryData(["auth", "me"], data.user);
+        // ✅ adapt before setting cache
+        queryClient.setQueryData(["auth", "me"], userAdapter.adapt(data.user));
         await queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
         await queryClient.invalidateQueries({ queryKey: WISHLIST_QUERY_KEY });
       }

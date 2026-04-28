@@ -217,7 +217,10 @@
     "password": "Password",
     "updatingSuccess": "{field} updated successfully!",
     "updatingError": "Something went wrong",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "emailChangeTitle": "Check your new email",
+    "emailChangeDesc": "We sent a confirmation link to {email}. Click it to complete the email change.",
+    "gotIt": "Got it"
   },
   "ProfileSidebar": {
     "hi": "Hi, {name}",
@@ -239,14 +242,21 @@
   "Orders": {
     "tabs": {
       "all": "All Time",
-      "current": "Current",
-      "delivered": "Delivered"
+      "pending": "Pending",
+      "placed": "Placed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
     },
     "noOrders": "You have not placed any orders yet",
     "orderNumber": "Order number",
     "date": "Date",
     "total": "Total",
     "statusProcessing": "Being processed",
+    "statusCancelled": "Cancelled",
+    "statusDelivered": "Delivered",
+    "statusPlaced": "Placed",
+    "statusShipped": "Shipped",
     "delivered": "Delivered",
     "TableHeader": {
       "orderNumber": "Order number",

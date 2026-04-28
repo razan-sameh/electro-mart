@@ -5,17 +5,22 @@ export const enum enmDiscountType {
 
 // Enum for tab types
 export enum enmOrderTab {
-  ALL = 'all',
-  CURRENT = 'current',
-  DELIVERED = 'delivered',
+  ALL       = "all",
+  PLACED    = "placed",
+  PENDING   = "pending",
+  SHIPPED   = "shipped",
+  DELIVERED = "delivered",
+  CANCELLED = "cancelled",
 }
 
 // Enum for order status
 export enum enmOrderStatus {
-  PENDING = "Pending",
-  SHIPPED = "Shipped",
-  DELIVERED = "Delivered",
-  CANCELLED = "Cancelled",
+  DRAFT     = "draft",
+  PLACED    = "placed",      // ← add this
+  PENDING   = "pending",
+  SHIPPED   = "shipped",
+  DELIVERED = "delivered",
+  CANCELLED = "cancelled",
 }
 
 export enum enmPaymentStatus {

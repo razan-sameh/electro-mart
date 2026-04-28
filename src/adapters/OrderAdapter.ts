@@ -1,4 +1,3 @@
-// File: adapters/OrderAdapter.ts
 import { typOrder } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
 import { orderDB } from "./interfaces/types";
@@ -32,21 +31,21 @@ export class OrderAdapter extends BaseAdapter<orderDB, typOrder> {
   adapt(source: orderDB): typOrder {
     return {
       id: source.id,
+      orderNumber: source.order_number,
+      date: source.created_at,
       total: source.total_amount,
       subtotal: source.subtotal_amount,
-      discountAmount: source.discount_amount || null,
+      discountAmount: source.discount_amount ?? null,
       orderStatus: source.status,
-      date: source.created_at,
-      orderNumber: source.order_number,
+      shippingAddress: source.shipping_address
+        ? this.addressAdapter.adapt(source.shipping_address)
+        : null,
       phone: source.phone
         ? this.phoneAdapter.adapt(source.phone)
         : null,
-      ShippingAddress: source.shipping_address
-        ? this.addressAdapter.adapt(source.shipping_address)
-        : null, // ✅ allow null
       payment: source.payment
         ? this.paymentAdapter.adapt(source.payment)
-        : null, // ✅ allow null
+        : null,
       items: this.orderItemAdapter.adaptMany(source.items),
     };
   }

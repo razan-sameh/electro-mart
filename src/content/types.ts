@@ -107,11 +107,10 @@ export type RatingBreakdown = {
 };
 
 export type typUser = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   phone?: string;
-  address?: {};
 };
 
 export type typShippingAddress = {
@@ -158,30 +157,23 @@ export type typWishlist = {
 
 export type typOrderItem = {
   id: number;
-  product: typProduct;
-  variant: typProductVariant;
+  productTitle: string;
+  productImage: string;
+  sku: string;
   quantity: number;
   unitPrice: number;
-  discountAmount: number;
   total: number;
-  subtotal: number;
   status: string;
+  productVariantId: number;
 };
 
 export type typPayment = {
-  id: number;
-  totalPayment: number;
-  paymentStatus: string;
   paymentMethod: string;
-  paymentIntentId: string | null;
-  createdAt: string;
+  paymentStatus: string;
   amount: number;
   currency: string;
-  status: string;
   cardBrand: string;
   cardLast4: string;
-  cardExpMonth: string;
-  cardExpYear: string;
 };
 
 export type typOrder = {
@@ -192,7 +184,7 @@ export type typOrder = {
   subtotal: number;
   discountAmount: number | null;
   orderStatus: string;
-  ShippingAddress: typShippingAddress | null; // ✅ can be null
+  shippingAddress: typShippingAddress | null;
   phone: typPhone | null;
   items: typOrderItem[];
   payment: typPayment | null;

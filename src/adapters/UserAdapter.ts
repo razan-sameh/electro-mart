@@ -2,7 +2,6 @@
 import { typUser } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
 import { UserDB } from "./interfaces/types";
-import { PhoneAdapter } from "./PhoneAdapter";
 
 export class UserAdapter extends BaseAdapter<UserDB, typUser> {
   private static instance: UserAdapter;
@@ -23,6 +22,7 @@ export class UserAdapter extends BaseAdapter<UserDB, typUser> {
       id: source.id,
       username: this.handleNullUndefined(source.user_metadata?.display_name, ""),
       email: this.handleNullUndefined(source.email, ""),
+      phone: this.handleNullUndefined(source.phone, ""),
     };
   }
 }

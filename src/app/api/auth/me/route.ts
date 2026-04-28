@@ -7,7 +7,6 @@ export async function GET() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
     return Response.json({ user });
   } catch (error) {
     console.error("Failed to fetch user:", error);

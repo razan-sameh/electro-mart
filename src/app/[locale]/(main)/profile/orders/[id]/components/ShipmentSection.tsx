@@ -3,11 +3,12 @@
 import React from "react";
 import { FaTruck } from "react-icons/fa";
 import { useTranslations } from "next-intl";
+import { typOrder } from "@/content/types";
 
-export default function ShipmentSection({ order }: { order: any }) {
+export default function ShipmentSection({ order }: { order: typOrder }) {
   const t = useTranslations("OrderDetail.ShipmentSection");
-  const shipping = order?.ShippingAddress;
-  const user = order?.user;
+
+  const shipping = order?.shippingAddress;
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -15,18 +16,16 @@ export default function ShipmentSection({ order }: { order: any }) {
         <h2 className="font-semibold text-content flex items-center gap-2">
           <FaTruck /> {t("shipment")}
         </h2>
-        <p className="text-sm text-content">{user?.username}</p>
+
         <p className="text-sm text-content">
-          {t("email")}: {user?.email}
+          {t("deliveryAddress")}: {shipping?.streetAddress},{" "}
+          {shipping?.city}, {shipping?.country}
         </p>
-        <p className="text-sm text-content">
-          {t("deliveryAddress")}: {shipping?.streetAddress}, {shipping?.city},{" "}
-          {shipping?.country}
-        </p>
+
         <p className="text-sm text-content">
           {t("phone")}:{" "}
-          {shipping?.phone
-            ? `+${shipping.phone.dialCode} ${shipping.phone.number}`
+          {order?.phone
+            ? `${order.phone.dialCode} ${order.phone.number}`
             : t("noPhone")}
         </p>
       </div>

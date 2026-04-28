@@ -2,56 +2,63 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
-import { enmPaymentStatus } from "@/content/enums";
+import { typOrder } from "@/content/types";
 
-export default function PaymentSummary({ order }: { order: any }) {
+export default function PaymentSummary({ order }: { order: typOrder }) {
   const t = useTranslations("OrderDetail.PaymentSummary");
   const payment = order?.payment;
-  const getStatusTextColor = (status: enmPaymentStatus) => {
+
+  const getStatusTextColor = (status?: string) => {
     switch (status) {
-      case enmPaymentStatus.FAILED:
+      case "FAILED":
         return "text-secondary";
-      case enmPaymentStatus.SUCCEEDED:
+      case "SUCCEEDED":
         return "text-success";
-      case enmPaymentStatus.PROCESSING:
+      case "PROCESSING":
         return "text-primary";
       default:
         return "text-content";
     }
   };
-  const getStatusBGColor = (status: enmPaymentStatus) => {
+
+  const getStatusBGColor = (status?: string) => {
     switch (status) {
-      case enmPaymentStatus.FAILED:
+      case "FAILED":
         return "bg-secondary/10";
-      case enmPaymentStatus.SUCCEEDED:
+      case "SUCCEEDED":
         return "bg-success/10";
-      case enmPaymentStatus.PROCESSING:
+      case "PROCESSING":
         return "bg-primary/10";
       default:
         return "bg-content/10";
     }
   };
-  const getStatusLabel = (status: enmPaymentStatus) => {
+
+  const getStatusLabel = (status?: string) => {
     switch (status) {
-      case enmPaymentStatus.FAILED:
+      case "FAILED":
         return status;
-      case enmPaymentStatus.SUCCEEDED:
+      case "SUCCEEDED":
         return t("paid");
-      case enmPaymentStatus.PROCESSING:
+      case "PROCESSING":
         return t("statusProcessing");
       default:
         return status;
     }
   };
+
   return (
     <div className="bg-body rounded-2xl p-4 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
         <h2 className="font-semibold">{t("title")}</h2>
-        <span className={`text-sm ${getStatusTextColor(
-          payment?.paymentStatus
-        )} font-medium ${getStatusBGColor(
-          payment?.paymentStatus
-        )} px-3 py-1 rounded-full self-start sm:self-auto mt-2`}>
+
+        <span
+          className={`text-sm ${getStatusTextColor(
+            payment?.paymentStatus
+          )} font-medium ${getStatusBGColor(
+            payment?.paymentStatus
+          )} px-3 py-1 rounded-full self-start sm:self-auto mt-2`}
+        >
           {getStatusLabel(payment?.paymentStatus)}
         </span>
       </div>
@@ -60,17 +67,20 @@ export default function PaymentSummary({ order }: { order: any }) {
         <div className="flex justify-between items-center">
           <p>{t("paymentMethod")}</p>
           <p>
-            {payment?.paymentMethod.brand} {payment?.paymentMethod.last4}
+            {payment?.cardBrand} {payment?.cardLast4}
           </p>
         </div>
+
         <div className="flex justify-between items-center">
           <p>{t("subtotal")}</p>
           <p>E£ {order?.subtotal}</p>
         </div>
+
         <div className="flex justify-between items-center text-secondary">
           <p>{t("discount")}</p>
-          <p>E£ -{order?.discountTotal}</p>
+          <p>E£ -{order?.discountAmount || 0}</p>
         </div>
+
         <div className="flex justify-between items-center">
           <p>{t("shippingFee")}</p>
           <p>{t("free")}</p>

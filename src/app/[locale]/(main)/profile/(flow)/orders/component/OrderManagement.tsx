@@ -1,3 +1,4 @@
+// OrderManagement.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -14,59 +15,54 @@ import { useTranslations } from "next-intl";
 
 const OrderManagement = () => {
   const t = useTranslations("Orders");
+
   const getStatusColor = (status: enmOrderStatus) => {
     switch (status) {
-      case enmOrderStatus.CANCELLED:
-        return "text-red-600";
-      case enmOrderStatus.DELIVERED:
-        return "text-green-600";
-      case enmOrderStatus.PENDING:
-        return "text-blue-600";
-      case enmOrderStatus.SHIPPED:
-        return "text-orange-600";
-      default:
-        return "text-gray-600";
+      case enmOrderStatus.PLACED:    return "text-blue-600";
+      case enmOrderStatus.PENDING:   return "text-yellow-600";
+      case enmOrderStatus.SHIPPED:   return "text-orange-600";
+      case enmOrderStatus.DELIVERED: return "text-green-600";
+      case enmOrderStatus.CANCELLED: return "text-red-600";
+      default:                       return "text-gray-600";
     }
   };
+
   const getStatusLabel = (status: enmOrderStatus) => {
     switch (status) {
-      case enmOrderStatus.CANCELLED:
-        return status;
-      case enmOrderStatus.DELIVERED:
-        return t("delivered");
-      case enmOrderStatus.PENDING:
-        return t("statusProcessing");
-      case enmOrderStatus.SHIPPED:
-        return status;
-      default:
-        return status;
+      case enmOrderStatus.PLACED:    return t("statusPlaced");
+      case enmOrderStatus.PENDING:   return t("statusProcessing");
+      case enmOrderStatus.SHIPPED:   return t("statusShipped");
+      case enmOrderStatus.DELIVERED: return t("delivered");
+      case enmOrderStatus.CANCELLED: return t("statusCancelled");
+      default:                       return status;
     }
   };
+
   const [activeTab, setActiveTab] = useState<enmOrderTab>(enmOrderTab.ALL);
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const statusMap = {
-    [enmOrderTab.ALL]: undefined,
-    [enmOrderTab.CURRENT]: enmOrderStatus.PENDING,
+  const statusMap: Record<enmOrderTab, enmOrderStatus | undefined> = {
+    [enmOrderTab.ALL]:       undefined,
+    [enmOrderTab.PLACED]:    enmOrderStatus.PLACED,
+    [enmOrderTab.PENDING]:   enmOrderStatus.PENDING,
+    [enmOrderTab.SHIPPED]:   enmOrderStatus.SHIPPED,
     [enmOrderTab.DELIVERED]: enmOrderStatus.DELIVERED,
+    [enmOrderTab.CANCELLED]: enmOrderStatus.CANCELLED,
   };
 
   const { data, isLoading } = useOrders(page, pageSize, statusMap[activeTab]);
-  const allOrders = data?.orders || [];
-  const pagination = data?.meta?.pagination;
-  const counts = data?.meta?.counts;
-
-  const tabCounts = {
-    [enmOrderTab.ALL]: counts?.all,
-    [enmOrderTab.CURRENT]: counts?.pending,
-    [enmOrderTab.DELIVERED]: counts?.delivered,
-  };
+  const allOrders   = data?.orders || [];
+  const pagination  = data?.meta?.pagination;
+  const counts      = data?.meta?.counts;
 
   const tabs = [
-    { key: enmOrderTab.ALL, label: t("tabs.all") },
-    { key: enmOrderTab.CURRENT, label: t("tabs.current") },
-    { key: enmOrderTab.DELIVERED, label: t("tabs.delivered") },
+    { key: enmOrderTab.ALL,       label: t("tabs.all"),       count: counts?.all },
+    { key: enmOrderTab.PLACED,    label: t("tabs.placed"),    count: counts?.placed },
+    { key: enmOrderTab.PENDING,   label: t("tabs.pending"),   count: counts?.pending },
+    { key: enmOrderTab.SHIPPED,   label: t("tabs.shipped"),   count: counts?.shipped },
+    { key: enmOrderTab.DELIVERED, label: t("tabs.delivered"), count: counts?.delivered },
+    { key: enmOrderTab.CANCELLED, label: t("tabs.cancelled"), count: counts?.cancelled },
   ];
 
   const handleTabClick = (tabKey: enmOrderTab) => {
@@ -85,12 +81,12 @@ const OrderManagement = () => {
   return (
     <div className="w-full mx-auto">
       {/* Tabs */}
-      <ul className="flex flex-row gap-4 overflow-y-auto scrollbar-hide shadow-md/5 rounded-md p-2">
+      <ul className="flex flex-row gap-4 overflow-x-auto scrollbar-hide shadow-md/5 rounded-md p-2">
         {tabs.map((tab) => (
           <Tab
             key={tab.key}
             label={tab.label}
-            count={tabCounts[tab.key]}
+            count={tab.count}
             isActive={activeTab === tab.key}
             onClick={() => handleTabClick(tab.key)}
           />
@@ -102,7 +98,11 @@ const OrderManagement = () => {
         {allOrders.length > 0 ? (
           allOrders.map((order: typOrder, index) => (
             <div key={order.id}>
-              <OrderCard order={order} getStatusColor={getStatusColor} getStatusLabel={getStatusLabel}/>
+              <OrderCard
+                order={order}
+                getStatusColor={getStatusColor}
+                getStatusLabel={getStatusLabel}
+              />
               {index !== allOrders.length - 1 && (
                 <div className="border-b border-gray-200 my-4" />
               )}
@@ -121,7 +121,14 @@ const OrderManagement = () => {
           <TableHeader />
           <tbody className="divide-y divide-lightGray">
             {allOrders.length > 0 ? (
-              allOrders.map((order) => <OrderRow key={order.id} order={order} getStatusColor={getStatusColor} getStatusLabel={getStatusLabel}/>)
+              allOrders.map((order) => (
+                <OrderRow
+                  key={order.id}
+                  order={order}
+                  getStatusColor={getStatusColor}
+                  getStatusLabel={getStatusLabel}
+                />
+              ))
             ) : (
               <tr>
                 <td colSpan={5} className="text-center py-8 text-gray-500">

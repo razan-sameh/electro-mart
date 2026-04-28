@@ -1,43 +1,16 @@
 "use client";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
 import CheckoutLayout from "./components/CheckoutLayout";
 import { useCheckoutStep, useDraftOrderId } from "@/lib/hooks/useCheckout";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-
-const STEP_ROUTES = [
-  "/cart",
-  "/checkout/shipping",
-  "/checkout/payment",
-  "/checkout/overview",
-];
 
 export default function CheckoutRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
+
   const { data: orderId, isFetching : isDraftOrderIdLoading } = useDraftOrderId();
   const { data: backendStep, isLoading } = useCheckoutStep(orderId);
-
-  // useEffect(() => {        
-  //   console.log({backendStep});
-    
-  //   if (!isDraftOrderIdLoading && !orderId) {      
-  //     router.replace("/cart");
-  //     return;
-  //   }
-
-  //   if (backendStep !== undefined) {
-  //     const targetRoute = STEP_ROUTES[backendStep];
-  //     if (pathname !== targetRoute) {
-  //       router.replace(targetRoute);
-  //     }
-  //   }
-  // }, [orderId]);
 
   return (
     <>

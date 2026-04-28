@@ -217,7 +217,10 @@
     "password": "كلمة المرور",
     "updatingSuccess": "تم تحديث {field} بنجاح!",
     "updatingError": "حدث خطأ ما",
-    "loading": "جاري التحميل..."
+    "loading": "جاري التحميل...",
+    "emailChangeTitle": "تحقق من بريدك الإلكتروني الجديد",
+    "emailChangeDesc": "لقد أرسلنا رابط تأكيد إلى {email}. انقر عليه لإكمال تغيير البريد الإلكتروني.",
+    "gotIt": "فهمت"
   },
   "ProfileSidebar": {
     "hi": "مرحباً، {name}",
@@ -239,14 +242,21 @@
   "Orders": {
     "tabs": {
       "all": "كل الأوقات",
-      "current": "الحالية",
-      "delivered": "تم التسليم"
+      "pending": "قيد المعالجة",
+      "placed": "تم الطلب",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "تم الإلغاء"
     },
     "noOrders": "لم تقم بأي طلبات بعد",
     "orderNumber": "رقم الطلب",
     "date": "التاريخ",
     "total": "الإجمالي",
     "statusProcessing": "قيد المعالجة",
+    "statusCancelled": "تم الإلغاء",
+    "statusDelivered": "تم التسليم",
+    "statusShipped": "تم الشحن",
+    "statusPlaced": "تم الطلب",
     "delivered": "تم التسليم",
     "TableHeader": {
       "orderNumber": "رقم الطلب",
