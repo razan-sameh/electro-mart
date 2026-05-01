@@ -10,13 +10,16 @@ export async function POST(req: NextRequest) {
   if (!orderId || !paymentMethodId || !amount) {
     return NextResponse.json(
       { error: "Missing orderId, paymentMethodId or amount" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const pm = await stripe.paymentMethods.retrieve(paymentMethodId);
   if (pm.type !== "card" || !pm.card) {
-    return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid payment method" },
+      { status: 400 },
+    );
   }
 
   const { brand, last4, exp_month, exp_year } = pm.card;
@@ -27,7 +30,9 @@ export async function POST(req: NextRequest) {
   });
 
   // 2️⃣ Attach payment method to customer
-  await stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id });
+  await stripe.paymentMethods.attach(paymentMethodId, {
+    customer: customer.id,
+  });
 
   // 3️⃣ Create PaymentIntent
   const paymentIntent = await stripe.paymentIntents.create({
@@ -35,10 +40,19 @@ export async function POST(req: NextRequest) {
     currency: "egp",
     customer: customer.id,
     payment_method: paymentMethodId,
-    off_session: true,
-    confirm: true,
+    confirm: false,
   });
 
+  if (!paymentIntent.id || paymentIntent.status !== "requires_confirmation") {
+    return NextResponse.json(
+      {
+        error: "Failed to create payment intent",
+        stripeStatus: paymentIntent.status,
+      },
+      { status: 500 },
+    );
+  }
+  
   // 4️⃣ Save draft in Supabase
   const supabase = await createServer();
   const { data, error } = await supabase.rpc("create_order_payment_draft", {

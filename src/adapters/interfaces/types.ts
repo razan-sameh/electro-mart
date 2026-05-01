@@ -1,12 +1,4 @@
-export type StrapiPaymentMethod = {
-  id: number;
-  documentId: string;
-  brand: string;
-  last4: string;
-  token: string;
-  exp_month: number;
-  exp_year: number;
-};
+
 
 export interface StrapiColor {
   documentId: string;
@@ -14,13 +6,7 @@ export interface StrapiColor {
   name: string;
   hex_code: string;
 }
-export interface StrapiPhone {
-  documentId: string;
-  id: number;
-  dailcode: string;
-  number: string;
-  countryCode: string;
-}
+
 
 export type StrapiReview = {
   documentId: string;
@@ -192,4 +178,26 @@ export interface PhoneDB {
   dialCode: string;
   number: string;
   countryCode: string;
+}
+
+export interface ReviewImageDB {
+  id: number;
+  image_url: string;
+  position: number;
+}
+
+export interface ReviewDB {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  product_id: number;
+  product_variant_id: number;
+  order_item_id: number;
+  user_id: string;
+  rating: number;
+  comment: string;
+  status: string;
+  helpful_count: number;
+  unhelpful_count: number;
+  images: ReviewImageDB[];
 }

@@ -194,7 +194,13 @@
     "productReview": "مراجعة المنتج",
     "submit": "إرسال",
     "cancel": "إلغاء",
-    "provideDetailedReview": "قدّم مراجعة تفصيلية..."
+    "provideDetailedReview": "قدّم مراجعة تفصيلية...",
+    "cannotReview": "لا يمكنك مراجعة هذا المنتج",
+    "mustPurchaseFirst": "فقط المشتريات التي تم تسليمها يمكن مراجعتها",
+    "selectPurchase": "أي عملية شراء تقوم بمراجعتها؟",
+    "order": "الطلب",
+    "submitting": "جارٍ الإرسال...",
+    "goBack": "العودة"
   },
   "ReviewDetails": {
     "searchPlaceholder": "ابحث في مراجعات العملاء",

@@ -21,6 +21,7 @@ export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
   }
 
   adapt(source: StrapiReview): typReview {
+    console.log("Adapting review:", source);
     return {
       id: source.id,
       documentId: source.documentId,

@@ -9,7 +9,7 @@ import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useOrderById } from "@/lib/hooks/useOrders";
-import { typOrderItem } from "@/content/types";
+import { typCartItem, typOrderItem } from "@/content/types";
 import CartItemCard from "@/components/reusable/CartItemCard";
 import { useConfirmOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
 import { useSearchParams } from "next/navigation";
@@ -83,7 +83,7 @@ export default function OverviewStep() {
         <div className="lg:col-span-2 space-y-10">
           {/* 🚚 Delivery */}
           <DeliverySection
-            shippingAddress={order.ShippingAddress}
+            shippingAddress={order.shippingAddress}
             phone={order.phone}
           />
 
@@ -92,7 +92,7 @@ export default function OverviewStep() {
             <h2 className="font-semibold text-lg mb-4">{t("OrderSummary")}</h2>
 
             <div className="space-y-4">
-              {items.map((item: typOrderItem) => (
+              {itemsToCheckout.map((item: typCartItem) => (
                 <CartItemCard key={item.variant.id} item={item} />
               ))}
             </div>
@@ -105,7 +105,7 @@ export default function OverviewStep() {
         {/* 🧮 Summary */}
         <div>
           <CartSummary
-            items={items}
+            items={itemsToCheckout}
             buttonText={t("SubmitAndPay")}
             onButtonClick={() => handleConfirmOrder(false)}
             loading={isConfirmPending}
@@ -117,7 +117,7 @@ export default function OverviewStep() {
       {/* ❌ Failure */}
       <PaymentResultModal
         status={status === "failed" ? "failed" : null}
-        shippingAddress={order.ShippingAddress}
+        shippingAddress={order.shippingAddress}
         retryLoading={isConfirmPending}
         onRetry={() => handleConfirmOrder(true)}
         onGoHome={() => router.push("/")}

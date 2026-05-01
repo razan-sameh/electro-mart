@@ -194,7 +194,13 @@
     "productReview": "Product Review",
     "submit": "Submit",
     "cancel": "Cancel",
-    "provideDetailedReview": "Provide a detailed review..."
+    "provideDetailedReview": "Provide a detailed review...",
+    "cannotReview": "You cannot review this product",
+    "mustPurchaseFirst": "Only delivered purchases can be reviewed",
+    "selectPurchase": "Which purchase are you reviewing?",
+    "order": "Order",
+    "submitting": "Submitting...",
+    "goBack": "Go Back"
   },
   "ReviewDetails": {
     "searchPlaceholder": "Search customer reviews",

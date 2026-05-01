@@ -12,11 +12,11 @@ import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface ReviewFormProps {
-  productId: string;
+  productId: number;
 }
 
 export default function ReviewForm({ productId }: ReviewFormProps) {
-  const { data: product ,isFetching} = useProductsById(productId);
+  const { data: product, isFetching } = useProductsById(productId);
   const { createReview } = useReviews(productId);
   const router = useRouter();
   const t = useTranslations("Review");
@@ -45,10 +45,12 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
     try {
       createReview({
         productId,
+        productVariantId: product?.variants?.[0]?.id!,
+        orderItemId: 0,
         rating: data.rating,
         comment: data.review,
       });
-      reset(); // clear form
+      reset();
       router.back();
     } catch (error: any) {
       console.error(error);
@@ -59,7 +61,7 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
     reset();
   };
 
-  if (isFetching) return <LoadingSpinner/>;
+  if (isFetching) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-body flex items-center justify-center p-4">
@@ -126,7 +128,7 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
 
             <div className="relative">
               <div className="w-full px-4 py-3 bg-lightGray/20 border border-gray-200 rounded-xl text-gray-700">
-                {product.name}
+                {product?.name}
               </div>
             </div>
           </div>

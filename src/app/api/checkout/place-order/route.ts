@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       .from("order_payments")
       .select("*")
       .eq("order_id", orderId)
-      .eq("status", "requires_payment_method")
+      .eq("status", "incomplete")
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (paymentError || !paymentData) {
       return NextResponse.json(
         { error: "No draft payment found for this order" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -38,22 +38,29 @@ export async function POST(req: NextRequest) {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     if (paymentIntent.status !== "succeeded") {
-      // Optionally confirm or attempt payment here
-      await stripe.paymentIntents.confirm(paymentIntentId);
+      const confirmedIntent = await stripe.paymentIntents.confirm(
+        paymentIntentId,
+        {
+          off_session: true,
+        },
+      );
+      if (confirmedIntent.status !== "succeeded") {
+        return NextResponse.json(
+          { error: "Payment failed", stripeStatus: confirmedIntent.status },
+          { status: 402 },
+        );
+      }
     }
 
     // 3️⃣ Call RPC to mark order placed and payment succeeded
     const { data: orderResult, error: rpcError } = await supabase.rpc(
       "place_order_and_pay",
-      { p_order_id: orderId }
+      { p_order_id: orderId },
     );
 
     if (rpcError) {
       console.error("RPC ERROR:", rpcError);
-      return NextResponse.json(
-        { error: rpcError.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: rpcError.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, order: orderResult });
@@ -61,7 +68,7 @@ export async function POST(req: NextRequest) {
     console.error("Place order error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to place order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
