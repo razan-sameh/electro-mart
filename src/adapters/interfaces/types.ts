@@ -1,12 +1,9 @@
-
-
 export interface StrapiColor {
   documentId: string;
   id: number;
   name: string;
   hex_code: string;
 }
-
 
 export type StrapiReview = {
   documentId: string;
@@ -192,12 +189,10 @@ export interface ReviewDB {
   updated_at: string;
   product_id: number;
   product_variant_id: number;
-  order_item_id: number;
-  user_id: string;
   rating: number;
   comment: string;
   status: string;
-  helpful_count: number;
-  unhelpful_count: number;
-  images: ReviewImageDB[];
+  user_name: string;
+  variant: ProductVariantDB;
+  variant_attributes: ProductAttributeDB[];
 }

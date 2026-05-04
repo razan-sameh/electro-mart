@@ -1,6 +1,5 @@
 "use client";
-import { RatingBreakdown, typReview } from "@/content/types";
-import { getRatingTable } from "@/content/utils";
+import { typReview } from "@/content/types";
 import { useTranslations } from "next-intl";
 import { useReviews } from "@/lib/hooks/useReview";
 import SectionHeader from "@/components/reusable/SectionHeader";
@@ -9,16 +8,13 @@ import ReviewCard from "@/components/reusable/ReviewCard";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface Props {
-  averageRating: number;
   productId: number;
 }
 
-export default function ProductReviews({ averageRating, productId }: Props) {
+export default function ProductReviews({ productId }: Props) {
   const { reviews, isFetching } = useReviews(productId);
-  const breakdown: RatingBreakdown[] = getRatingTable(reviews!);
   const t = useTranslations("ProductDetails");
   if (isFetching) return <LoadingSpinner />;
-
   return (
     <div className="mt-12">
       <SectionHeader
@@ -27,11 +23,7 @@ export default function ProductReviews({ averageRating, productId }: Props) {
         linkHref={`/products/${productId}/reviews`}
       />
       <div className="flex flex-col lg:flex-row gap-12 items-start">
-        <ReviewSummary
-          averageRating={averageRating}
-          breakdown={breakdown}
-          productId={productId}
-        />
+        <ReviewSummary productId={productId} />
 
         {/* Right Reviews */}
         <div className="flex-1 space-y-4">

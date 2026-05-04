@@ -1,6 +1,20 @@
 import { ReviewAdapter } from "@/adapters/ReviewAdapter";
+import supabase from "../supabase";
 
 const reviewAdapter = ReviewAdapter.getInstance();
+
+export async function fetchProductRatingSummary(productId: number) {
+  const { data, error } = await supabase.rpc("get_product_rating_summary", {
+    p_product_id: productId,
+  });
+
+  if (error) {
+    console.error("Error fetching rating summary:", error);
+    return null;
+  }
+
+  return data;
+}
 
 export const fetchReviewsByProductId = async (
   productId: number,
@@ -8,21 +22,18 @@ export const fetchReviewsByProductId = async (
   pageSize: number = 10,
   searchComment?: string,
   ratingFilter?: number,
+  variantId?: number,
 ) => {
-  const params = new URLSearchParams({
-    page: String(page),
-    pageSize: String(pageSize),
+  const { data, error } = await supabase.rpc("get_product_reviews", {
+    p_product_id: productId,
+    p_page: page,
+    p_page_size: pageSize,
+    p_search: searchComment ?? null,
+    p_rating: ratingFilter ?? null,
+    p_variant_id: variantId ?? null,
   });
 
-  if (searchComment) params.append("search", searchComment);
-  if (ratingFilter !== undefined) params.append("rating", String(ratingFilter));
-
-  const res = await fetch(`/api/review/${productId}?${params.toString()}`);
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Failed to fetch reviews");
-  }
+  if (error) throw new Error(error.message || "Failed to fetch reviews");
 
   return {
     data: (data?.data || []).map((r: any) => reviewAdapter.adapt(r)),
@@ -33,7 +44,6 @@ export const fetchReviewsByProductId = async (
 export const createReview = async (payload: {
   productId: number;
   productVariantId: number;
-  orderItemId: number;
   rating: number;
   comment: string;
 }) => {

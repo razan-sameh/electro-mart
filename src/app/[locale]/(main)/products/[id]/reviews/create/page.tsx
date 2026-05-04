@@ -6,13 +6,13 @@ import ReviewForm from "./components/ReviewForm";
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: number }>;
 }) {
   const { id } = await params;
 
   return (
     <Container>
-        <ReviewForm productId={id} />
+      <ReviewForm productId={id} />
     </Container>
   );
 }

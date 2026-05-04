@@ -18,12 +18,11 @@ export async function POST(req: Request) {
     const {
       productId,
       productVariantId,
-      orderItemId,
       rating,
       comment,
     } = body;
 
-    if (!productId || !productVariantId || !orderItemId) {
+    if (!productId || !productVariantId ) {
       return Response.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -33,7 +32,6 @@ export async function POST(req: Request) {
     const { data, error } = await supabase.rpc("create_product_review", {
       p_product_id: productId,
       p_product_variant_id: productVariantId,
-      p_order_item_id: orderItemId,
       p_user_id: user.id,
       p_rating: rating,
       p_comment: comment,

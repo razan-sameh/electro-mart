@@ -2,14 +2,17 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { typReview } from "@/content/types";
-import { createReview, fetchReviewsByProductId } from "../services/review";
+import {
+  createReview,
+  fetchReviewsByProductId,
+  fetchProductRatingSummary,
+} from "../services/review";
 import { v4 as uuidv4 } from "uuid";
 import { useSearchParams } from "next/navigation";
 
 type CreateReviewInput = {
   productId: number;
   productVariantId: number;
-  orderItemId: number;
   rating: number;
   comment: string;
 };
@@ -23,7 +26,9 @@ export function useReviews(productId: number, pageSize: number = 10) {
   const ratingFilter = searchParams.get("rating")
     ? parseInt(searchParams.get("rating")!)
     : undefined;
-
+  const variantId = searchParams.get("variant")
+    ? parseInt(searchParams.get("variant")!)
+    : undefined;
   const queryKey = [
     "reviews",
     productId,
@@ -31,6 +36,7 @@ export function useReviews(productId: number, pageSize: number = 10) {
     pageSize,
     searchComment,
     ratingFilter,
+    variantId,
   ];
 
   // =========================
@@ -45,10 +51,21 @@ export function useReviews(productId: number, pageSize: number = 10) {
         pageSize,
         searchComment,
         ratingFilter,
+        variantId,
       ),
     enabled: !!productId,
     retry: 1,
     staleTime: 10 * 60 * 1000,
+  });
+
+  // =========================
+  // FETCH RATING SUMMARY
+  // =========================
+  const ratingSummaryQuery = useQuery({
+    queryKey: ["rating-summary", productId],
+    queryFn: () => fetchProductRatingSummary(productId),
+    enabled: !!productId,
+    staleTime: 5 * 60 * 1000,
   });
 
   // =========================
@@ -61,7 +78,6 @@ export function useReviews(productId: number, pageSize: number = 10) {
       await queryClient.cancelQueries({ queryKey });
 
       const previousReviews = queryClient.getQueryData<any>(queryKey);
-
       const optimisticId = uuidv4();
 
       const optimisticReview: typReview = {
@@ -75,14 +91,10 @@ export function useReviews(productId: number, pageSize: number = 10) {
 
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old) return old;
-
         return {
           ...old,
           data: [optimisticReview, ...old.data],
-          meta: {
-            ...old.meta,
-            total: (old.meta?.total || 0) + 1,
-          },
+          meta: { ...old.meta, total: (old.meta?.total || 0) + 1 },
         };
       });
 
@@ -96,21 +108,19 @@ export function useReviews(productId: number, pageSize: number = 10) {
 
       queryClient.setQueryData(queryKey, (old: any) => {
         if (!old) return old;
-
         const updated = old.data.map((review: typReview) =>
           review.documentId === optimisticId
             ? { ...review, id: data.id }
             : review,
         );
-
-        return {
-          ...old,
-          data: updated,
-        };
+        return { ...old, data: updated };
       });
 
       queryClient.invalidateQueries({ queryKey: ["product", productId] });
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
+      queryClient.invalidateQueries({
+        queryKey: ["rating-summary", productId],
+      });
     },
 
     onError: (_err, _vars, context) => {
@@ -128,6 +138,8 @@ export function useReviews(productId: number, pageSize: number = 10) {
     error: reviewsQuery.error,
     refetch: reviewsQuery.refetch,
     isFetching: reviewsQuery.isFetching,
+    ratingSummary: ratingSummaryQuery.data,
+    isLoadingSummary: ratingSummaryQuery.isLoading,
 
     createReview: createMutation.mutateAsync,
     isCreating: createMutation.isPending,

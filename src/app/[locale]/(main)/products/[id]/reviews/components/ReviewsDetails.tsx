@@ -3,8 +3,7 @@
 import Pagination from "@/components/reusable/Pagination";
 import ReviewCard from "@/components/reusable/ReviewCard";
 import ReviewSummary from "@/components/reusable/ReviewSummary";
-import { RatingBreakdown, typReview } from "@/content/types";
-import { getRatingTable } from "@/content/utils";
+import { typReview } from "@/content/types";
 import { useProductsById } from "@/lib/hooks/useProducts";
 import { useReviews } from "@/lib/hooks/useReview";
 import React, { useState } from "react";
@@ -13,66 +12,77 @@ import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface ReviewsDetailsProps {
-  productId: string;
+  productId: number;
 }
 
 export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations("ReviewDetails");
-  // Read from URL or use defaults
+
   const pageParam = parseInt(searchParams.get("page") || "1");
   const searchParam = searchParams.get("search") || "";
   const ratingParam = searchParams.get("rating")
     ? parseInt(searchParams.get("rating")!)
     : undefined;
+  const variantParam = searchParams.get("variant")
+    ? parseInt(searchParams.get("variant")!)
+    : undefined;
 
-  // Temporary local state for controlled input/select
   const [searchText, setSearchText] = useState(searchParam);
-  const [selectedRating, setSelectedRating] = useState<number | undefined>(
-    ratingParam
+  const [selectedRating, setSelectedRating] = useState<number | null>(
+    ratingParam ?? null,
+  );
+  const [selectedVariant, setSelectedVariant] = useState<number | null>(
+    variantParam ?? null,
   );
 
   const pageSize = 18;
 
-  const { data: product ,isFetching:isProductFetching } = useProductsById(productId);
-
-  // useReviews reads page, search, rating directly from URL
+  const { data: product, isFetching: isProductFetching } =
+    useProductsById(productId);
   const { reviews, meta, isFetching } = useReviews(productId, pageSize);
 
-  const breakdown: RatingBreakdown[] = getRatingTable(reviews!);
+  if (isProductFetching) return <LoadingSpinner />;
 
-  if (!reviews) return <p>Loading...</p>;
-
-  // Update URL function
   const updateUrl = (
     newPage = pageParam,
     newSearch = searchText,
-    newRating = selectedRating
+    newRating = selectedRating,
+    newVariant = selectedVariant,
   ) => {
     const params = new URLSearchParams();
     if (newPage > 1) params.set("page", newPage.toString());
     if (newSearch) params.set("search", newSearch);
     if (newRating) params.set("rating", newRating.toString());
-
+    if (newVariant) params.set("variant", newVariant.toString());
     router.push(`?${params.toString()}`);
   };
 
-  // Search handler: updates URL only when button clicked or Enter pressed
-  const handleSearch = () => {
-    updateUrl(1, searchText, selectedRating);
-  };
+  const handleSearch = () =>
+    updateUrl(1, searchText, selectedRating, selectedVariant);
 
   const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = parseInt(e.target.value);
+    const rawValue = parseInt(e.target.value);
+    const value = rawValue === 0 ? null : rawValue;
     setSelectedRating(value);
-    updateUrl(1, searchText, value);
+    updateUrl(1, searchText, value, selectedVariant);
   };
 
-  const handlePageChange = (page: number) => {
-    updateUrl(page, searchText, selectedRating);
+  const handleVariantChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const rawValue = parseInt(e.target.value);
+    const value = rawValue === 0 ? null : rawValue;
+    setSelectedVariant(value);
+    updateUrl(1, searchText, selectedRating, value);
   };
-  if (isProductFetching) return <LoadingSpinner/>;
+
+  const handlePageChange = (page: number) =>
+    updateUrl(page, searchText, selectedRating, selectedVariant);
+
+  const getVariantLabel = (variant: any) =>
+    variant.attributes
+      ?.map((a: any) => `${a.attribute}: ${a.value}`)
+      .join(" | ") || variant.sku;
 
   return (
     <div className="min-h-screen">
@@ -80,23 +90,20 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
       <div className="flex flex-col lg:flex-row gap-12 py-8 items-start">
         <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6 w-full">
           <img
-            src={product.imagesUrl[0]}
+            src={product?.imagesUrl[0]?.url}
             alt="Product image"
             className="w-100 h-100 object-contain"
           />
           <div className="flex flex-col gap-2">
-            <p className="text-sm sm:text-base font-semibold">{product.name}</p>
+            <p className="text-sm sm:text-base font-semibold">
+              {product?.name}
+            </p>
             <p className="text-sm sm:text-base font-medium">
-              {product.description}
+              {product?.description}
             </p>
           </div>
         </div>
-
-        <ReviewSummary
-          averageRating={product.averageRating}
-          breakdown={breakdown}
-          productId={productId}
-        />
+        <ReviewSummary productId={productId} />
       </div>
 
       {/* Filters */}
@@ -116,9 +123,10 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
           {t("searchButton")}
         </button>
 
+        {/* Rating Filter */}
         <select
           className="border bg-body border-lightGray px-3 py-2 rounded w-full sm:w-auto"
-          value={selectedRating ?? ""}
+          value={selectedRating ?? 0}
           onChange={handleRatingChange}
         >
           <option value={0}>{t("allStars")}</option>
@@ -128,12 +136,26 @@ export default function ReviewsDetails({ productId }: ReviewsDetailsProps) {
           <option value={2}>2 {t("stars")}</option>
           <option value={1}>1 {t("star")}</option>
         </select>
+
+        {/* Variant Filter */}
+        <select
+          className="border bg-body border-lightGray px-3 py-2 rounded w-full sm:w-auto"
+          value={selectedVariant ?? 0}
+          onChange={handleVariantChange}
+        >
+          <option value={0}>{t("allVariants")}</option>
+          {product?.variants?.map((variant: any) => (
+            <option key={variant.id} value={variant.id}>
+              {getVariantLabel(variant)}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Reviews */}
       <div className="space-y-4 pb-8">
         {isFetching ? (
-          <LoadingSpinner/>
+          <LoadingSpinner />
         ) : reviews.length === 0 ? (
           <p className="text-gray-500">{t("noReviews")}</p>
         ) : (

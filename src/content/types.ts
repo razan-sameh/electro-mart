@@ -95,9 +95,11 @@ export type typReview = {
   documentId: string;
   rating: number;
   comment: string;
-  user: typUser;
+  userName: string;
   createdAt: string;
   updatedAt: string;
+  variant: typProductVariant;
+  variantAttributes: typProductAttribute[];
 };
 
 export type RatingBreakdown = {
@@ -189,7 +191,6 @@ export type typOrder = {
   items: typOrderItem[];
   payment: typPayment | null;
 };
-
 
 export type typProductFilters = {
   categoryId?: number;

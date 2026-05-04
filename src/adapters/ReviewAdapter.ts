@@ -1,16 +1,17 @@
-// File: adapters/BrandAdapter.ts
-import { typBrand, typReview } from "@/content/types";
+import { typReview } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiReview } from "./interfaces/types";
-import { UserAdapter } from "./UserAdapter";
+import { ReviewDB } from "./interfaces/types";
+import { AttributesAdapter } from "./AttributesAdapter";
+import { VariantAdapter } from "./VariantAdapter";
 
-export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
+export class ReviewAdapter extends BaseAdapter<ReviewDB, typReview> {
   private static instance: ReviewAdapter;
-  private userAdapter: UserAdapter;
-
+  private variantAdapter: VariantAdapter;
+  private attributesAdapter: AttributesAdapter;
   private constructor() {
     super();
-    this.userAdapter = UserAdapter.getInstance();
+    this.variantAdapter = VariantAdapter.getInstance();
+    this.attributesAdapter = AttributesAdapter.getInstance();
   }
 
   public static getInstance(): ReviewAdapter {
@@ -20,16 +21,19 @@ export class ReviewAdapter extends BaseAdapter<StrapiReview, typReview> {
     return ReviewAdapter.instance;
   }
 
-  adapt(source: StrapiReview): typReview {
-    console.log("Adapting review:", source);
+  adapt(source: ReviewDB): typReview {
     return {
       id: source.id,
-      documentId: source.documentId,
-      rating: this.handleNullUndefined(source.Rating, 0),
-      comment: this.handleNullUndefined(source.Comment, ""),
-      user: this.userAdapter.adapt(source.user),
-      createdAt: this.handleNullUndefined(source.createdAt, ""),
-      updatedAt: this.handleNullUndefined(source.updatedAt, ""),
+      documentId: String(source.id),
+      rating: this.handleNullUndefined(source.rating, 0),
+      comment: this.handleNullUndefined(source.comment, ""),
+      createdAt: this.handleNullUndefined(source.created_at, ""),
+      updatedAt: this.handleNullUndefined(source.updated_at, ""),
+      userName: this.handleNullUndefined(source.user_name, "Anonymous"),
+      variant: this.variantAdapter.adapt(source.variant),
+      variantAttributes: this.attributesAdapter.adaptMany(
+        source.variant_attributes || [],
+      ),
     };
   }
 }
