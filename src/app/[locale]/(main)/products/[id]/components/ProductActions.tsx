@@ -1,8 +1,4 @@
-import {
-  typCartItem,
-  typProduct,
-  typProductVariant,
-} from "@/content/types";
+import { typCartItem, typProduct, typProductVariant } from "@/content/types";
 import { useRouter } from "@/i18n/navigation";
 import { useCart } from "@/lib/hooks/useCart";
 import { useCreateOrder } from "@/lib/hooks/useCheckout";
@@ -16,12 +12,14 @@ type Props = {
   selectedVariant: typProductVariant;
   product: typProduct;
   state: any;
+  isOutOfStock: boolean;
 };
 
 export default function ProductActions({
   selectedVariant,
   product,
   state,
+  isOutOfStock,
 }: Props) {
   const t = useTranslations("ProductDetails");
   const { cart, addItem, updateItem } = useCart();
@@ -88,7 +86,9 @@ export default function ProductActions({
       items: [item],
       orderId: undefined,
     });
-    router.push(`/checkout/shipping?isBuyNow=1&productId=${product.id}&variantId=${selectedVariant.id}&quantity=${state.quantity}`);
+    router.push(
+      `/checkout/shipping?isBuyNow=1&productId=${product.id}&variantId=${selectedVariant.id}&quantity=${state.quantity}`,
+    );
   };
 
   const handleAddToWishlist = async () => {
@@ -111,14 +111,16 @@ export default function ProductActions({
     <div className="flex gap-4 mt-4">
       <button
         onClick={handleAddToCart}
-        className="flex-1 px-6 py-3 bg-primary text-white rounded-lg shadow hover:bg-primary/90 transition"
+        disabled={isOutOfStock}
+        className="flex-1 px-6 py-3 bg-primary text-white rounded-lg shadow hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {t("addToCart")}
       </button>
 
       <button
         onClick={handleBuyNow}
-        className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
+        disabled={isOutOfStock}
+        className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {t("buyNow")}
       </button>

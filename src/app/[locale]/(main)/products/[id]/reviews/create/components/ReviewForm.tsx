@@ -118,7 +118,7 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
                   <FaStar
                     className={`w-7 h-7 ${
                       star <= (hoveredRating || rating)
-                        ? "text-orange-400"
+                        ? "fill-secondary"
                         : "text-icon/20"
                     }`}
                   />

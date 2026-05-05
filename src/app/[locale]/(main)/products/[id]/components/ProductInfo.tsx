@@ -9,6 +9,7 @@ import QuantitySelector from "./QuantitySelector";
 import ProductActions from "./ProductActions";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 
 interface Props {
   product: typProduct;
@@ -73,6 +74,8 @@ export default function ProductInfo({ product }: Props) {
       ),
     );
   }, [product.variants, state.selectedAttributes]);
+  const isOutOfStock = (selectedVariant?.stock ?? 0) <= 0;
+
   const handleAttributeChange = useCallback(
     (updatedSelection: Record<string, string>) => {
       dispatch({
@@ -129,13 +132,32 @@ export default function ProductInfo({ product }: Props) {
         dispatch={dispatch}
         onAttributeChange={handleAttributeChange}
       />
-
-      <QuantitySelector quantity={state.quantity} dispatch={dispatch} />
+      <div className="flex items-center gap-2">
+        {isOutOfStock ? (
+          <>
+            <FaCircleExclamation size={20} className="text-red-500" />
+            <p className="text-red-500 text-xs font-bold">Out of Stock</p>
+          </>
+        ) : (
+          <>
+            <FaCircleCheck size={20} className="text-green-500" />
+            <p className="text-green-500 text-xs font-bold">
+              In Stock ({selectedVariant?.stock})
+            </p>
+          </>
+        )}
+      </div>
+      <QuantitySelector
+        quantity={state.quantity}
+        dispatch={dispatch}
+        isOutOfStock={isOutOfStock}
+      />
 
       <ProductActions
         product={product}
         state={state}
         selectedVariant={selectedVariant!}
+        isOutOfStock={isOutOfStock}
       />
     </div>
   );

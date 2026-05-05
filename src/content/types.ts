@@ -83,7 +83,6 @@ export type typProduct = {
   specialOffers?: typProductOffer;
   averageRating: number;
   totalReviews: number;
-  reviews?: typReview[];
   displayPrice: number;
   originalPrice: number;
   defaultVariantId: number;

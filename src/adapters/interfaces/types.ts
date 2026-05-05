@@ -98,8 +98,8 @@ export interface ProductDB {
   original_price: number;
   max_price: number;
   min_price: number;
-  averageRating: number;
-  totalReviews: number;
+  average_rating: number | null;
+  reviews_count: number | null;
   default_variant_attributes: ProductAttributeDB[];
 }
 export type CartItemDB = {

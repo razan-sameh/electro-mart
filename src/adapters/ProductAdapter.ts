@@ -43,8 +43,8 @@ export class ProductAdapter extends BaseAdapter<ProductDB, typProduct> {
       description: this.handleNullUndefined(source.description, ""),
       displayPrice: this.handleNullUndefined(source.display_price, 0),
       originalPrice: this.handleNullUndefined(source.original_price, 0),
-      averageRating: this.handleNullUndefined(source.averageRating, 0),
-      totalReviews: this.handleNullUndefined(source.totalReviews, 0),
+      averageRating: this.handleNullUndefined(source.average_rating, 0),
+      totalReviews: this.handleNullUndefined(source.reviews_count, 0),
       imagesUrl: source.images || [],
       brand: source.brand
         ? this.brandAdapter.adapt(source.brand)
