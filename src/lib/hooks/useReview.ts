@@ -9,6 +9,7 @@ import {
 } from "../services/review";
 import { v4 as uuidv4 } from "uuid";
 import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 
 type CreateReviewInput = {
   productId: number;
@@ -20,6 +21,7 @@ type CreateReviewInput = {
 export function useReviews(productId: number, pageSize: number = 10) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
+  const locale = useLocale();
 
   const page = parseInt(searchParams.get("page") || "1");
   const searchComment = searchParams.get("search") || undefined;
@@ -47,6 +49,7 @@ export function useReviews(productId: number, pageSize: number = 10) {
     queryFn: () =>
       fetchReviewsByProductId(
         productId,
+        locale,
         page,
         pageSize,
         searchComment,

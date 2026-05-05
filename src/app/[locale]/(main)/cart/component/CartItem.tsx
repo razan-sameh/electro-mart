@@ -33,7 +33,7 @@ export default function CartItem({ item }: Props) {
         {/* Product Image */}
         <div className="flex-shrink-0 flex items-center justify-center">
           <Link
-            href={`/products/${item.product.id}`}
+            href={`/products/${item.product.id}?variant=${item.variant.id}`}
             className="flex items-center justify-center"
           >
             <img

@@ -20,7 +20,7 @@ export default function ReviewSummary({ productId }: ReviewSummaryProps) {
 
   const handleCreateReview = () => {
     if (!isAuthenticated) {
-      router.push(`/login?redirect=/products/${productId}`);
+      router.push(`/login?redirect=/products/${productId}/reviews/create`);
     } else {
       router.push(`/products/${productId}/reviews/create`);
     }

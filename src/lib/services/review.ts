@@ -18,6 +18,7 @@ export async function fetchProductRatingSummary(productId: number) {
 
 export const fetchReviewsByProductId = async (
   productId: number,
+  locale: string,
   page: number = 1,
   pageSize: number = 10,
   searchComment?: string,
@@ -26,6 +27,7 @@ export const fetchReviewsByProductId = async (
 ) => {
   const { data, error } = await supabase.rpc("get_product_reviews", {
     p_product_id: productId,
+    p_locale: locale,
     p_page: page,
     p_page_size: pageSize,
     p_search: searchComment ?? null,

@@ -8,13 +8,15 @@ import ProductAttributes from "./ProductAttributes";
 import QuantitySelector from "./QuantitySelector";
 import ProductActions from "./ProductActions";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const variantIdFromUrl = searchParams.get("variant");
   // Extract all attribute types (Color, Storage, RAM, etc)
   const attributesMap = useMemo(() => {
@@ -43,12 +45,12 @@ export default function ProductInfo({ product }: Props) {
     quantity: 1,
     selectedAttributes: defaultSelectedAttributes,
   });
- // **هنا نعمل useEffect عشان نحدد selection من URL**
+  // **هنا نعمل useEffect عشان نحدد selection من URL**
   useEffect(() => {
     if (!variantIdFromUrl) return;
 
     const selectedVariant = product.variants.find(
-      (v) => v.id === Number(variantIdFromUrl)
+      (v) => v.id === Number(variantIdFromUrl),
     );
 
     if (!selectedVariant) return;
@@ -67,10 +69,32 @@ export default function ProductInfo({ product }: Props) {
   const selectedVariant = useMemo(() => {
     return product.variants.find((v) =>
       v.attributes.every(
-        (attr) => state.selectedAttributes[attr.attribute] === attr.value
-      )
+        (attr) => state.selectedAttributes[attr.attribute] === attr.value,
+      ),
     );
   }, [product.variants, state.selectedAttributes]);
+  const handleAttributeChange = useCallback(
+    (updatedSelection: Record<string, string>) => {
+      dispatch({
+        type: "SELECT_ATTRIBUTE",
+        payload: updatedSelection,
+      });
+
+      // Find the matching variant for the new selection
+      const matchedVariant = product.variants.find((v) =>
+        v.attributes.every(
+          (attr) => updatedSelection[attr.attribute] === attr.value,
+        ),
+      );
+
+      if (matchedVariant) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("variant", String(matchedVariant.id));
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+    },
+    [product.variants, searchParams, router],
+  );
 
   const discountedPrice = useMemo(() => {
     if (!selectedVariant) return 0;
@@ -103,6 +127,7 @@ export default function ProductInfo({ product }: Props) {
         attributesMap={attributesMap}
         state={state}
         dispatch={dispatch}
+        onAttributeChange={handleAttributeChange}
       />
 
       <QuantitySelector quantity={state.quantity} dispatch={dispatch} />

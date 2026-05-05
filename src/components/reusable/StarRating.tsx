@@ -65,11 +65,10 @@ export const StarRating = ({
             {/* Filled star overlay */}
             {(isFilled || isHalfFilled) && (
               <div
-                className={`absolute top-0 ${
-                  isRTL ? " right-0 " : "left-0"
-                }overflow-hidden`}
+                className="absolute top-0 overflow-hidden"
                 style={{
                   width: isHalfFilled ? "50%" : "100%",
+                  direction: isRTL ? "rtl" : "ltr",
                 }}
               >
                 <FaStar size={size} className="fill-secondary" />

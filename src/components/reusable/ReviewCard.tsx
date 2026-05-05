@@ -50,12 +50,6 @@ export default function ReviewCard({ review }: Props) {
               <span className="font-medium">{attr.value}</span>
             </div>
           ))}
-          {review.variant && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-lightGray/20 rounded-lg text-xs">
-              <span className="text-gray-500">Price:</span>
-              <span className="font-medium">{review.variant.price} EGP</span>
-            </div>
-          )}
         </div>
       )}
 

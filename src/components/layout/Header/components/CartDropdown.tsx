@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { typCartItem } from "@/content/types";
 import Loader from "@/components/ui/Loader";
+import { useCreateOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
 
 interface Props {
   onClose: () => void;
@@ -17,16 +18,27 @@ export default function CartDropdown({ onClose }: Props) {
   const t = useTranslations("CartDropdown");
   const locale = useLocale();
   const isRTL = locale === "ar";
-
+  const { mutateAsync: createOrder, isPending } = useCreateOrder();
   const total =
     cart?.items?.reduce((acc, item: typCartItem) => {
       return acc + item.unitPrice * item.quantity;
     }, 0) ?? 0;
+  const { data: orderId } = useDraftOrderId();
 
   const handleCheckout = async () => {
     onClose();
-    // if (isGuest) router.push("/login?redirect=/checkout/shipping");
-    // else router.push("/checkout/shipping");
+
+    const res = await fetch("/api/auth/me");
+    const data = await res.json();
+    if (!data.user) router.push("/login?redirect=/checkout/shipping");
+    else {
+      createOrder({
+        items: cart?.items!,
+        orderId: orderId ?? null,
+      }).then(() => {
+        router.push("/checkout/shipping");
+      });
+    }
   };
 
   function handleReviewItems() {

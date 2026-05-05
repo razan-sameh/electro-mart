@@ -23,22 +23,22 @@ function WishListCard({ item, onRemove }: productCardProps) {
   const colorAttributes = useMemo(
     () =>
       item.variant.attributes?.filter(
-        (a) => a.attribute.toLowerCase() === "color"
+        (a) => a.attribute.toLowerCase() === "color",
       ) ?? [],
-    [item.variant.attributes]
+    [item.variant.attributes],
   );
 
   const otherAttributes = useMemo(
     () =>
       item.variant.attributes?.filter(
-        (a) => a.attribute.toLowerCase() !== "color"
+        (a) => a.attribute.toLowerCase() !== "color",
       ) ?? [],
-    [item.variant.attributes]
+    [item.variant.attributes],
   );
 
   const isInCart = useMemo(() => {
     return cart?.items.some(
-      (cartItem) => cartItem.variant.id === item.variant.id
+      (cartItem) => cartItem.variant.id === item.variant.id,
     );
   }, [cart?.items, item.variant.id]);
 
@@ -70,7 +70,10 @@ function WishListCard({ item, onRemove }: productCardProps) {
         <IoMdClose className="w-4 h-4 text-content" />
       </button>
 
-      <Link href={`/products/${item?.product?.id}`} className="block">
+      <Link
+        href={`/products/${item?.product?.id}?variant=${item?.variant?.id}`}
+        className="block"
+      >
         <div className="relative">
           {item?.product?.specialOffers?.title && (
             <span className="absolute top-2 left-0 bg-secondary text-white text-xs px-2 py-1 rounded-e-sm">

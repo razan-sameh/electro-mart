@@ -29,13 +29,15 @@ export default function LanguageDropdown() {
       <IconButton onClick={() => setShowDropdown(!showDropdown)}>
         <div className="flex items-center gap-1">
           {currentLanguage.icon}
-          <span className="text-sm font-medium">{currentLanguage.displayCode}</span>
+          <span className="text-sm font-medium">
+            {currentLanguage.displayCode}
+          </span>
           <FaChevronDown size={10} />
         </div>
       </IconButton>
 
       {showDropdown && (
-        <div className="absolute top-full right-0 mt-2 bg-background/40 shadow-lg z-50 min-w-[120px]">
+        <div className="absolute top-full right-0 mt-2 bg-background shadow-lg z-50 min-w-[120px] rounded-md p-2 space-y-1">
           {languageOptions.map((option) => (
             <button
               key={option.code}
@@ -43,11 +45,11 @@ export default function LanguageDropdown() {
                 changeLanguage(option.code.toLowerCase());
                 setShowDropdown(false);
               }}
-              className={`flex items-center gap-2 w-full px-3 py-2 cursor-pointer text-start hover:bg-icon/20 transition-colors ${
+              className={`flex items-center gap-2 w-full px-3 py-2 text-start hover:bg-gray-200 rounded-md transition-colors ${
                 option.code.toLowerCase() === locale
-                  ? "bg-background text-blue-600"
+                  ? " text-blue-600"
                   : "text-icon"
-              }`}
+              } `}
             >
               <span className="text-sm">{option.label}</span>
             </button>

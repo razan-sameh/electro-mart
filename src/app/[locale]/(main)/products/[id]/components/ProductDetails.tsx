@@ -43,7 +43,7 @@ export default function ProductDetails({ productId }: ProductDetailsProps) {
       </div>
 
       {/* Extra sections */}
-      <ProductReviews productId={productId} averageRating={product?.averageRating!} />
+      <ProductReviews productId={productId} />
       <SimilarProducts product={product!} />
       <ProductAds />
       <ProductAccessories />
