@@ -13,13 +13,13 @@ export default function CategoriesDrawerList({
   const { data: categories = [] } = useCategories();
   const t = useTranslations("Header");
   const allCategories = [
-    { id: "all", name: t("allCategories") },
+    { id: 0, name: t("allCategories") },
     ...categories,
   ];
   const router = useRouter();
 
-  const handleSelectCategory = (categoryId: string | null) => {
-    const updatedCat = categoryId === "all" ? null : categoryId;
+  const handleSelectCategory = (categoryId: number | null) => {
+    const updatedCat = categoryId === 0 ? null : categoryId;
     router.push(updatedCat ? `/categories/${updatedCat}` : `/categories`);
     setMenuOpen(false);
   };

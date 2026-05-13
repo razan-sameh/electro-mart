@@ -58,10 +58,10 @@ export default function AddressForm() {
     if (order) {
       reset({
         phone: order.phone || {},
-        country: order.ShippingAddress?.country || "",
-        city: order.ShippingAddress?.city || "",
-        postalCode: order.ShippingAddress?.postalCode || "",
-        streetAddress: order.ShippingAddress?.streetAddress || "",
+        country: order.shippingAddress?.country || "",
+        city: order.shippingAddress?.city || "",
+        postalCode: order.shippingAddress?.postalCode || "",
+        streetAddress: order.shippingAddress?.streetAddress || "",
       });
     }
   }, [reset, draftOrderId, order]);

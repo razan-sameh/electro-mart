@@ -1,32 +1,3 @@
-export interface StrapiColor {
-  documentId: string;
-  id: number;
-  name: string;
-  hex_code: string;
-}
-
-export type StrapiReview = {
-  documentId: string;
-  id: number;
-  Rating: number;
-  Comment: string;
-  product: ProductDB;
-  createdAt: string;
-  updatedAt: string;
-  user: UserDB;
-};
-
-export type StrapiBuyNow = {
-  documentId: string;
-  id: number;
-  product: ProductDB;
-  quantity: number;
-  product_color: StrapiColor;
-  expiresAt: string;
-};
-
-////////////////////////////////////////////
-
 export interface UserDB {
   id: string;
   email: string;

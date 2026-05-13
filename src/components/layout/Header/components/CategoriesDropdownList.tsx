@@ -19,16 +19,16 @@ export default function CategoriesDropdownList({
   const searchParams = useSearchParams();
 
   const allCategories = [
-    { id: "all", name: t("allCategories") },
+    { id: 0, name: t("allCategories") },
     ...categories,
   ];
 
-  const handleSelectCategory = (categoryId: string | null) => {
+  const handleSelectCategory = (categoryId: number | null) => {
     const params = new URLSearchParams(searchParams.toString());
     const q = params.get("q"); // keep search if exists
-    const updatedCat = categoryId === "all" ? null : categoryId;
+    const updatedCat = categoryId === 0 ? null : categoryId;
     const selected = allCategories.find(
-      (cat) => cat.id === (updatedCat ?? "all")
+      (cat) => cat.id === (updatedCat ?? 0)
     );
     setSelectedCategoryName(selected?.name || t("products"));
     router.push(

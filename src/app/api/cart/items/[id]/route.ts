@@ -4,13 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: number }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { quantity } = await req.json();
   const supabase = await createServer();
   const { id } = await params;
   const { data, error } = await supabase.rpc("update_cart_item", {
-    p_item_id: id,
+    p_item_id: Number(id),
     p_quantity: quantity,
   });
 
@@ -23,16 +23,17 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const supabase = await createServer();
+  const { id } = await params;
   const { error } = await supabase.rpc("remove_cart_item", {
-    p_item_id: Number(params.id),
+    p_item_id: Number(id),
   });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data: { id: params.id } });
+  return NextResponse.json({ data: { id } });
 }

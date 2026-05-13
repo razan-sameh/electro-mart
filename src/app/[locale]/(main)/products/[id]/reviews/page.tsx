@@ -5,7 +5,7 @@ import ReviewsDetails from "./components/ReviewsDetails";
 export default async function ReviewsPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: number }>;
 }) {
   const { id } = await params;
 

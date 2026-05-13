@@ -175,6 +175,8 @@ export type typPayment = {
   currency: string;
   cardBrand: string;
   cardLast4: string;
+  cardExpMonth?: string | number;
+  cardExpYear?: string | number;
 };
 
 export type typOrder = {
