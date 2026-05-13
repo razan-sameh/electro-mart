@@ -19,11 +19,11 @@ export class SpecialOfferAdapter extends BaseAdapter<ProductOfferDB, typProductO
 
   adapt(source: ProductOfferDB): typProductOffer {
     return {
-      title: this.handleNullUndefined(source.title, ''),
-      discount_percent: source.discount_percent,
-      discount_amount: this.handleNullUndefined(source.discount_amount, 0),
-      startDate: this.handleNullUndefined(source.start_date, ''),
-      endDate: this.handleNullUndefined(source.end_date, ''),
+      title: this.handleNullUndefined(source.title, ""),
+      discountPercent: source.discount_percent,
+      discountAmount: this.handleNullUndefined(source.discount_amount, 0),
+      startDate: this.handleNullUndefined(source.start_date, ""),
+      endDate: this.handleNullUndefined(source.end_date, ""),
     };
   }
 }

@@ -8,11 +8,13 @@ interface Props {
 }
 
 export default function CartList({ items }: Props) {
+  if (!items?.length) return null;
+
   return (
     <div className="space-y-4">
-      {items.map((item) => (
+      {items?.map((item) => (
         <CartItem
-          key={`${item.id}-${item.selectedColor?.documentId}`}
+          key={`${item?.id}-${item?.variant?.id}`}
           item={item}
         />
       ))}

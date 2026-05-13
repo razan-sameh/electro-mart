@@ -46,6 +46,8 @@ export default function ResetPasswordForm() {
         throw new Error(result.error || t("resetError"));
       }
 
+      // ✅ Reset form and redirect
+      form.reset();
       router.push("/profile");
     } catch (err: any) {
       setError(err.message);

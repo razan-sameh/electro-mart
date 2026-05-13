@@ -1,26 +1,24 @@
-// File: adapters/OrderAdapter.ts
-import { typShippingAddress, typOrder } from "@/content/types";
+import { typOrder } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiOrder } from "./interfaces/types";
+import { orderDB } from "./interfaces/types";
 import { OrderItemAdapter } from "./OrderItemAdapter";
 import { PaymentAdapter } from "./PaymentAdapter";
-import { enmOrderStatus } from "@/content/enums";
-import { UserAdapter } from "./UserAdapter";
 import { AddressAdapter } from "./AddressAdapter";
+import { PhoneAdapter } from "./PhoneAdapter";
 
-export class OrderAdapter extends BaseAdapter<StrapiOrder, typOrder> {
+export class OrderAdapter extends BaseAdapter<orderDB, typOrder> {
   private static instance: OrderAdapter;
   private orderItemAdapter: OrderItemAdapter;
   private paymentAdapter: PaymentAdapter;
-  private userAdapter: UserAdapter;
   private addressAdapter: AddressAdapter;
+  private phoneAdapter: PhoneAdapter;
 
   private constructor() {
     super();
     this.orderItemAdapter = OrderItemAdapter.getInstance();
     this.paymentAdapter = PaymentAdapter.getInstance();
-    this.userAdapter = UserAdapter.getInstance();
     this.addressAdapter = AddressAdapter.getInstance();
+    this.phoneAdapter = PhoneAdapter.getInstance();
   }
 
   public static getInstance(): OrderAdapter {
@@ -29,36 +27,26 @@ export class OrderAdapter extends BaseAdapter<StrapiOrder, typOrder> {
     }
     return OrderAdapter.instance;
   }
-  private mapOrderStatus(
-    status: StrapiOrder["order_status"]
-  ): typOrder["orderStatus"] {
-    switch (status) {
-      case "Pending":
-        return enmOrderStatus.PENDING;
-      case "Shipped":
-        return enmOrderStatus.SHIPPED; // or whatever mapping fits your logic
-      case "Delivered":
-        return enmOrderStatus.DELIVERED;
-      case "Cancelled":
-        return enmOrderStatus.CANCELLED;
-      default:
-        return enmOrderStatus.PENDING; // fallback
-    }
-  }
 
-  adapt(source: StrapiOrder): typOrder {
+  adapt(source: orderDB): typOrder {
     return {
       id: source.id,
-      documentId: source.documentId,
-      total: source.Total,
-      subtotal: source.subtotal,
-      discountTotal: source.discount_total,
-      orderStatus: this.mapOrderStatus(source.order_status),
-      payment: this.paymentAdapter.adapt(source.payment),
-      date: source.createdAt,
-      ShippingAddress: this.addressAdapter.adapt(source.address), // <-- we'll handle this next
-      orderItems: this.orderItemAdapter.adaptMany(source.order_items),
-      user: this.userAdapter.adapt(source.user),
+      orderNumber: source.order_number,
+      date: source.created_at,
+      total: source.total_amount,
+      subtotal: source.subtotal_amount,
+      discountAmount: source.discount_amount ?? null,
+      orderStatus: source.status,
+      shippingAddress: source.shipping_address
+        ? this.addressAdapter.adapt(source.shipping_address)
+        : null,
+      phone: source.phone
+        ? this.phoneAdapter.adapt(source.phone)
+        : null,
+      payment: source.payment
+        ? this.paymentAdapter.adapt(source.payment)
+        : null,
+      items: this.orderItemAdapter.adaptMany(source.items),
     };
   }
 }

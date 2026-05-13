@@ -50,9 +50,8 @@ export default function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    const strapiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337/api";
-    window.location.href = `${strapiUrl}/connect/google`;
+    const redirectParam = encodeURIComponent(redirect);
+    window.location.href = `/api/auth/google?redirect=${redirectParam}`;
   };
 
   return (

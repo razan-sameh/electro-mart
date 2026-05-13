@@ -4,17 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import IconButton from "./IconButton";
 import CartDropdown from "./CartDropdown";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function CartButton() {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
   // ✅ Use unified cart (works for both guest & logged-in users)
-  const { cartItems: cart, isLoading } = useUnifiedCart();
+  const {cart, isLoading } = useCart();
 
   // ✅ Calculate total quantity
-  const itemCount = cart?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+  const itemCount = cart?.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
 
   // Close dropdown when clicking outside
   useEffect(() => {

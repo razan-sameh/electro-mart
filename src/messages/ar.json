@@ -118,7 +118,8 @@
     "brand": "ماركة",
     "color": "اللون",
     "empty": "سلتك فارغة",
-    "guestNotice": "أنت تتسوق كزائر — سجّل الدخول لمزامنة سلتك."
+    "guestNotice": "أنت تتسوق كزائر — سجّل الدخول لمزامنة سلتك.",
+    "continueShopping": "تابع التسوق"
   },
   "Checkout": {
     "deliveryDetails": "تفاصيل التوصيل",
@@ -172,6 +173,7 @@
     "description": "الوصف",
     "specifications": "المواصفات",
     "customerReviews": "آراء العملاء",
+    "reviews": "المراجعات",
     "noReviews": "لا توجد مراجعات بعد.",
     "shareFeedback": "شارك رأيك وساعدنا على تحسين تجربة التسوق للجميع. شكرًا لك على وقتك.",
     "writeReview": "اكتب مراجعتك",
@@ -182,22 +184,32 @@
     "clickAway": "على بُعد نقرة واحدة فقط!",
     "viewAll": "عرض الكل",
     "successAdded": "تمت إضافة {product} بنجاح",
+    "successRemoved": "تمت حذف {product} بنجاح",
     "reviewsHaeder": "تقييمات ومراجعات المستخدمين"
   },
   "Review": {
     "rateProduct": "قيّم منتجنا",
     "provideFeedback": "قدّم لنا ملاحظاتك حول المنتج.",
     "yourRating": "تقييمك",
+    "selectVariant": "اختر المتغير الذي تود مراجعته",
+    "chooseVariant": "اختر المتغير",
     "productName": "اسم المنتج",
     "productReview": "مراجعة المنتج",
     "submit": "إرسال",
     "cancel": "إلغاء",
-    "provideDetailedReview": "قدّم مراجعة تفصيلية..."
+    "provideDetailedReview": "قدّم مراجعة تفصيلية...",
+    "cannotReview": "لا يمكنك مراجعة هذا المنتج",
+    "mustPurchaseFirst": "فقط المشتريات التي تم تسليمها يمكن مراجعتها",
+    "selectPurchase": "أي عملية شراء تقوم بمراجعتها؟",
+    "order": "الطلب",
+    "submitting": "جارٍ الإرسال...",
+    "goBack": "العودة"
   },
   "ReviewDetails": {
     "searchPlaceholder": "ابحث في مراجعات العملاء",
     "searchButton": "بحث",
     "allStars": "جميع التقييمات",
+    "allVariants": "جميع المتغيرات",
     "stars": "تقيممات",
     "star": "تقيم",
     "translateReviews": "ترجمة جميع المراجعات إلى الإنجليزية",
@@ -215,7 +227,10 @@
     "password": "كلمة المرور",
     "updatingSuccess": "تم تحديث {field} بنجاح!",
     "updatingError": "حدث خطأ ما",
-    "loading": "جاري التحميل..."
+    "loading": "جاري التحميل...",
+    "emailChangeTitle": "تحقق من بريدك الإلكتروني الجديد",
+    "emailChangeDesc": "لقد أرسلنا رابط تأكيد إلى {email}. انقر عليه لإكمال تغيير البريد الإلكتروني.",
+    "gotIt": "فهمت"
   },
   "ProfileSidebar": {
     "hi": "مرحباً، {name}",
@@ -237,14 +252,21 @@
   "Orders": {
     "tabs": {
       "all": "كل الأوقات",
-      "current": "الحالية",
-      "delivered": "تم التسليم"
+      "pending": "قيد المعالجة",
+      "placed": "تم الطلب",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "cancelled": "تم الإلغاء"
     },
     "noOrders": "لم تقم بأي طلبات بعد",
     "orderNumber": "رقم الطلب",
     "date": "التاريخ",
     "total": "الإجمالي",
     "statusProcessing": "قيد المعالجة",
+    "statusCancelled": "تم الإلغاء",
+    "statusDelivered": "تم التسليم",
+    "statusShipped": "تم الشحن",
+    "statusPlaced": "تم الطلب",
     "delivered": "تم التسليم",
     "TableHeader": {
       "orderNumber": "رقم الطلب",

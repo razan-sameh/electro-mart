@@ -33,6 +33,7 @@ export async function fetchMe(): Promise<typUser | null> {
   if (!res.ok) return null;
 
   const data = await res.json();
+  
   if (!data) {
     notFound();
   }
@@ -64,6 +65,18 @@ export async function signupApi(credentials: SignupCredentials): Promise<SignupR
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to create user");
+  }
+
+  return result;
+}
+
+export async function logout(){
+  const response = await fetch("/api/auth/logout", { method: "POST" });
 
   const result = await response.json();
 

@@ -2,22 +2,28 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useLayoutEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useOrder } from "@/lib/hooks/useOrders";
+import { useOrderById } from "@/lib/hooks/useOrders";
 import { formatDateTime } from "@/content/utils";
 import { useLocale } from "next-intl";
 import { useCheckoutStore } from "@/stores/checkoutStore";
 import { useCart } from "@/lib/hooks/useCart";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SuccessPage() {
   const params = useSearchParams();
   const router = useRouter();
-  const orderId = params.get("orderId");
-  const isBuyNow = params.get("isBuyNow") === "1";
-  const { data: order, isLoading, error } = useOrder(orderId!);
+  const orderId = Number(params.get("orderId"));
+  const { data: order, isLoading, error } = useOrderById(orderId!);
   const locale = useLocale();
   const { resetCheckout } = useCheckoutStore();
-  const { clearCart } = useCart();
+  const { clearCart, removeItem, updateItem } = useCart();
+  const queryClient = useQueryClient();
+  const isBuyNow = params.get("isBuyNow") === "1";
+  const productId = params.get("productId");
+  const variantId = params.get("variantId");
+  const quantity = params.get("quantity");
+  const { cart } = useCart();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -32,7 +38,29 @@ export default function SuccessPage() {
 
   useLayoutEffect(() => {
     async function clear() {
-      if (!isBuyNow) await clearCart();
+      if (isBuyNow) {
+        const cartItem = cart?.items.find(
+          (item) =>
+            item.product.id === Number(productId) &&
+            item.variant.id === Number(variantId),
+        );
+
+        if (cartItem) {
+          const originalQty = cartItem.quantity - Number(quantity);
+
+          if (originalQty <= 0) {
+            // Item wasn't in cart before Buy Now — remove it entirely
+            await removeItem(cartItem.id);
+          } else {
+            // Item was already in cart — restore original quantity
+            await updateItem({ itemId: cartItem.id, quantity: originalQty });
+          }
+        }
+      } else {
+        await clearCart();
+      }
+      queryClient.setQueryData<number | null>(["draftOrderId"], null);
+      queryClient.invalidateQueries({ queryKey: ["checkoutStep", order?.id] });
       resetCheckout();
     }
     clear();
@@ -87,7 +115,7 @@ export default function SuccessPage() {
 
           <div className="flex justify-between">
             <span className="text-gray-500">Order number</span>
-            <span className="font-medium">{orderId}</span>
+            <span className="font-medium">{order.orderNumber}</span>
           </div>
 
           <div className="flex justify-between">
@@ -97,7 +125,7 @@ export default function SuccessPage() {
 
           <div className="flex justify-between">
             <span className="text-gray-500">Total items</span>
-            <span className="font-medium">{order.orderItems?.length ?? 0}</span>
+            <span className="font-medium">{order.items.length ?? 0}</span>
           </div>
         </div>
 

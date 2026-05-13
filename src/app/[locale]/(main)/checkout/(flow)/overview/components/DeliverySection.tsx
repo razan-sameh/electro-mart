@@ -1,15 +1,16 @@
 import React from "react";
 import { FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
 import { useTranslations } from "next-intl";
-import { typShippingAddress } from "@/content/types";
+import { typPhone, typShippingAddress } from "@/content/types";
 import { useAuth } from "@/lib/hooks/useAuth";
-import RootError from "@/app/[locale]/error";
 
 interface DeliverySectionProps {
   shippingAddress: typShippingAddress | null;
+  phone:typPhone | null
 }
 export default function DeliverySection({
   shippingAddress,
+  phone
 }: DeliverySectionProps) {
   const t = useTranslations("Checkout");
   const { user } = useAuth();
@@ -48,8 +49,7 @@ export default function DeliverySection({
             <strong>{t("Phone")}:</strong>
           </div>
           <p>
-            {shippingAddress?.phone.dialCode}
-            {shippingAddress?.phone.number}
+            {phone?.dialCode}{" "}{phone?.number}
           </p>
         </div>
       </div>

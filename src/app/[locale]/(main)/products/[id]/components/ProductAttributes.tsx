@@ -6,34 +6,36 @@ type Props = {
   attributesMap: Record<string, Set<string>>;
   state: any;
   dispatch: any;
+  onAttributeChange: (updatedSelection: Record<string, string>) => void;
 };
 
 function ProductAttributes({
   product,
   attributesMap,
   state,
-  dispatch,
+  onAttributeChange,
 }: Props) {
-
   const getHexCode = useCallback(
     (variants: typProductVariant[], attribute: string, value: string) => {
       const variant = variants.find((v) =>
-        v.attributes.some((a) => a.attribute === attribute && a.value === value)
+        v.attributes.some(
+          (a) => a.attribute === attribute && a.value === value,
+        ),
       );
 
       return variant?.attributes.find(
-        (a) => a.attribute === attribute && a.value === value
+        (a) => a.attribute === attribute && a.value === value,
       )?.hexCode;
     },
-    []
+    [],
   );
 
-    const isValueAvailable = useCallback(
+  const isValueAvailable = useCallback(
     (
       variants: typProductVariant[],
       selectedAttributes: Record<string, string>,
       currentAttribute: string,
-      value: string
+      value: string,
     ) => {
       return variants.some((variant) => {
         return variant.attributes.every((attr) => {
@@ -44,7 +46,7 @@ function ProductAttributes({
         });
       });
     },
-    []
+    [],
   );
 
   const getNextValidSelection = useCallback(
@@ -52,22 +54,22 @@ function ProductAttributes({
       variants: typProductVariant[],
       selectedAttributes: Record<string, string>,
       currentAttribute: string,
-      value: string
+      value: string,
     ) => {
       const newSelection = { ...selectedAttributes, [currentAttribute]: value };
 
       const validVariant = variants.find((variant) =>
         variant.attributes.every(
-          (attr) => newSelection[attr.attribute] === attr.value
-        )
+          (attr) => newSelection[attr.attribute] === attr.value,
+        ),
       );
 
       if (validVariant) return newSelection;
 
       const fallback = variants.find((variant) =>
         variant.attributes.some(
-          (attr) => attr.attribute === currentAttribute && attr.value === value
-        )
+          (attr) => attr.attribute === currentAttribute && attr.value === value,
+        ),
       );
 
       if (!fallback) return selectedAttributes;
@@ -79,7 +81,25 @@ function ProductAttributes({
 
       return updated;
     },
-    []
+    [],
+  );
+
+  const handleClick = useCallback(
+    (attribute: string, value: string) => {
+      const updatedSelection = getNextValidSelection(
+        product.variants,
+        state.selectedAttributes,
+        attribute,
+        value,
+      );
+      onAttributeChange(updatedSelection);
+    },
+    [
+      getNextValidSelection,
+      product.variants,
+      state.selectedAttributes,
+      onAttributeChange,
+    ],
   );
 
   return (
@@ -93,7 +113,7 @@ function ProductAttributes({
                 product.variants,
                 state.selectedAttributes,
                 attribute,
-                value
+                value,
               );
 
               const isSelected = state.selectedAttributes[attribute] === value;
@@ -102,19 +122,7 @@ function ProductAttributes({
               return attribute === "Color" ? (
                 <button
                   key={value}
-                  onClick={() => {
-                    const updatedSelection = getNextValidSelection(
-                      product.variants,
-                      state.selectedAttributes,
-                      attribute,
-                      value
-                    );
-
-                    dispatch({
-                      type: "SELECT_ATTRIBUTE",
-                      payload: updatedSelection,
-                    });
-                  }}
+                  onClick={() => handleClick(attribute, value)}
                   className={`w-10 h-10 rounded-full border-2 transition flex items-center justify-center
                     ${isSelected ? "border-primary" : "border-gray-300"}
                     ${!isAvailable ? "opacity-40 cursor-not-allowed" : ""}
@@ -125,19 +133,7 @@ function ProductAttributes({
               ) : (
                 <button
                   key={value}
-                  onClick={() => {
-                    const updatedSelection = getNextValidSelection(
-                      product.variants,
-                      state.selectedAttributes,
-                      attribute,
-                      value
-                    );
-
-                    dispatch({
-                      type: "SELECT_ATTRIBUTE",
-                      payload: updatedSelection,
-                    });
-                  }}
+                  onClick={() => handleClick(attribute, value)}
                   className={`px-3 py-2 rounded-md border transition
                     ${
                       isSelected

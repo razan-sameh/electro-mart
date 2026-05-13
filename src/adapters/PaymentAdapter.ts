@@ -1,17 +1,12 @@
-// File: adapters/OrderItemAdapter.ts
 import { typPayment } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiPayment } from "./interfaces/types";
-import { PaymentMethodAdapter } from "./PaymentMethodAdapter";
+import { paymentDB } from "./interfaces/types";
 
-export class PaymentAdapter extends BaseAdapter<StrapiPayment, typPayment> {
+export class PaymentAdapter extends BaseAdapter<paymentDB, typPayment> {
   private static instance: PaymentAdapter;
-  private paymentMethodAdapter: PaymentMethodAdapter;
 
   private constructor() {
     super();
-        this.paymentMethodAdapter = PaymentMethodAdapter.getInstance();
-    
   }
 
   public static getInstance(): PaymentAdapter {
@@ -21,13 +16,14 @@ export class PaymentAdapter extends BaseAdapter<StrapiPayment, typPayment> {
     return PaymentAdapter.instance;
   }
 
-  adapt(source: StrapiPayment): typPayment {
+  adapt(source: paymentDB): typPayment {
     return {
-      id: source.id,
-      documentId: source.documentId,
-      paymentMethod: this.paymentMethodAdapter.adapt(source.payment_method),
-      totalPayment: source.Amount,
-      paymentStatus: source.payment_status,
+      paymentMethod: source.payment_method,
+      paymentStatus: source.status,
+      amount: source.amount,
+      currency: source.currency,
+      cardBrand: source.card_brand,
+      cardLast4: source.card_last4,
     };
   }
 }

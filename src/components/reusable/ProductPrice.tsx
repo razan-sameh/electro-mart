@@ -1,5 +1,4 @@
 import { typProduct } from "@/content/types";
-import { calculateDiscountedPrice } from "@/content/utils";
 import React from "react";
 
 interface ProductPriceProps {

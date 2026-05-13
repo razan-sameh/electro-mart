@@ -1,9 +1,9 @@
 // File: adapters/BrandAdapter.ts
-import { typColor, typPhone } from "@/content/types";
+import { typPhone } from "@/content/types";
 import { BaseAdapter } from "./base/BaseAdapter";
-import { StrapiColor, StrapiPhone } from "./interfaces/types";
+import { PhoneDB } from "./interfaces/types";
 
-export class PhoneAdapter extends BaseAdapter<StrapiPhone, typPhone> {
+export class PhoneAdapter extends BaseAdapter<PhoneDB, typPhone> {
   private static instance: PhoneAdapter;
 
   private constructor() {
@@ -17,12 +17,10 @@ export class PhoneAdapter extends BaseAdapter<StrapiPhone, typPhone> {
     return PhoneAdapter.instance;
   }
 
-  adapt(source: StrapiPhone): typPhone {
+  adapt(source: PhoneDB): typPhone {
     return {
-      id: source.id,
-      documentId: source.documentId,
       countryCode: this.handleNullUndefined(source.countryCode, ""),
-      dialCode: this.handleNullUndefined(source.dailcode, ""),
+      dialCode: this.handleNullUndefined(source.dialCode, ""),
       number: this.handleNullUndefined(source.number, ""),
     };
   }

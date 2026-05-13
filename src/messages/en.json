@@ -118,7 +118,8 @@
     "brand": "Brand",
     "color": "Color",
     "empty": "Your cart is empty",
-    "guestNotice": "You’re shopping as a guest — log in to sync your cart."
+    "guestNotice": "You’re shopping as a guest — log in to sync your cart.",
+    "continueShopping": "Continue Shopping"
   },
   "Checkout": {
     "deliveryDetails": "Delivery Details",
@@ -172,6 +173,7 @@
     "description": "Description",
     "specifications": "Specifications",
     "customerReviews": "Customer reviews",
+    "reviews": "Reviews",
     "noReviews": "No reviews yet.",
     "shareFeedback": "Share your feedback and create a better shopping experience for everyone. Thank you for taking the time to share your opinion.",
     "writeReview": "Write a review",
@@ -182,22 +184,32 @@
     "clickAway": "is just a click away!",
     "viewAll": "View all",
     "successAdded": "{product} successfully added",
+    "successRemoved": "{product} successfully removed",
     "reviewsHaeder": "User ratings and reviews"
   },
   "Review": {
     "rateProduct": "Rate Our Product",
     "provideFeedback": "Provide us with feedback for the product.",
     "yourRating": "Your Rating",
+    "selectVariant": "Which variant are you reviewing?",
+    "chooseVariant": "Choose variant",
     "productName": "Product Name",
     "productReview": "Product Review",
     "submit": "Submit",
     "cancel": "Cancel",
-    "provideDetailedReview": "Provide a detailed review..."
+    "provideDetailedReview": "Provide a detailed review...",
+    "cannotReview": "You cannot review this product",
+    "mustPurchaseFirst": "Only delivered purchases can be reviewed",
+    "selectPurchase": "Which purchase are you reviewing?",
+    "order": "Order",
+    "submitting": "Submitting...",
+    "goBack": "Go Back"
   },
   "ReviewDetails": {
     "searchPlaceholder": "Search customer reviews",
     "searchButton": "Search",
     "allStars": "All stars",
+    "allVariants": "All variants",
     "stars": "stars",
     "star": "star",
     "translateReviews": "Translate all reviews to English",
@@ -215,7 +227,10 @@
     "password": "Password",
     "updatingSuccess": "{field} updated successfully!",
     "updatingError": "Something went wrong",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "emailChangeTitle": "Check your new email",
+    "emailChangeDesc": "We sent a confirmation link to {email}. Click it to complete the email change.",
+    "gotIt": "Got it"
   },
   "ProfileSidebar": {
     "hi": "Hi, {name}",
@@ -237,14 +252,21 @@
   "Orders": {
     "tabs": {
       "all": "All Time",
-      "current": "Current",
-      "delivered": "Delivered"
+      "pending": "Pending",
+      "placed": "Placed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
     },
     "noOrders": "You have not placed any orders yet",
     "orderNumber": "Order number",
     "date": "Date",
     "total": "Total",
     "statusProcessing": "Being processed",
+    "statusCancelled": "Cancelled",
+    "statusDelivered": "Delivered",
+    "statusPlaced": "Placed",
+    "statusShipped": "Shipped",
     "delivered": "Delivered",
     "TableHeader": {
       "orderNumber": "Order number",

@@ -5,14 +5,15 @@ import { notFound } from "next/navigation";
 
 const orderAdapter = OrderAdapter.getInstance();
 
+// fetchOrders
 export async function fetchOrders(
   locale: string,
   page = 1,
   pageSize = 10,
-  status?: enmOrderStatus
+  status?: enmOrderStatus,
 ) {
   const params = new URLSearchParams({
-    locale,
+    locale, // ← add back locale
     page: String(page),
     pageSize: String(pageSize),
   });
@@ -29,18 +30,15 @@ export async function fetchOrders(
 
   if (!res.ok) throw new Error("Failed to fetch orders");
 
-  const data = await res.json();
-  if (!data.data) {
-    notFound();
-  }
+  const json = await res.json();
+
   return {
-    orders: orderAdapter.adaptMany(data.data),
-    meta: data.meta,
+    orders: orderAdapter.adaptMany(json.orders),
+    meta: json.meta,
   };
 }
-
 // Fetch a single order by ID
-export async function fetchOrderById(locale: string, id: string) {
+export async function fetchOrderById(locale: string, id: number) {
   const res = await fetch(`/api/orders/${id}?locale=${locale}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -50,8 +48,10 @@ export async function fetchOrderById(locale: string, id: string) {
   if (!res.ok) throw new Error("Failed to fetch order");
 
   const data = await res.json();
-  if (!data.data) {
+
+  if (!data) {
     notFound();
   }
-  return orderAdapter.adapt(data.data);
+
+  return orderAdapter.adapt(data);
 }

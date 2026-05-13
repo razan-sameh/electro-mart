@@ -4,23 +4,23 @@ import { useProductsById } from "@/lib/hooks/useProducts";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaStar, FaTimes, FaInfoCircle, FaPen } from "react-icons/fa";
+import { FaStar, FaInfoCircle, FaPen } from "react-icons/fa";
 import { reviewSchema, ReviewSchemaType } from "./schema";
 import { useReviews } from "@/lib/hooks/useReview";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import toast from "react-hot-toast";
 
 interface ReviewFormProps {
-  productId: string;
+  productId: number;
 }
 
 export default function ReviewForm({ productId }: ReviewFormProps) {
-  const { data: product ,isFetching} = useProductsById(productId);
+  const { data: product, isFetching } = useProductsById(productId);
   const { createReview } = useReviews(productId);
   const router = useRouter();
   const t = useTranslations("Review");
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -33,33 +33,49 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
     defaultValues: {
       rating: 0,
       review: "",
+      variantId: 0,
     },
   });
+
+  // remove selectedVariantId state, use form value instead
+  const variantId = watch("variantId");
 
   const rating = watch("rating");
   const review = watch("review");
 
   const [hoveredRating, setHoveredRating] = useState(0);
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
+    null,
+  );
+
+  const getVariantLabel = (variant: any) => {
+    return variant.attributes
+      .map((a: any) => `${a.attribute}: ${a.value}`)
+      .join(" | ");
+  };
 
   const onSubmit = async (data: ReviewSchemaType) => {
     try {
-      createReview({
+      await createReview({
         productId,
+        productVariantId: data.variantId,
         rating: data.rating,
         comment: data.review,
       });
-      reset(); // clear form
+      toast.success(t("reviewSubmitted"));
+      reset();
       router.back();
-    } catch (error: any) {
-      console.error(error);
+    } catch (err: any) {
+      toast.error(err.message || t("updatingError"));
     }
   };
 
   const handleCancel = () => {
     reset();
+    router.back();
   };
 
-  if (isFetching) return <LoadingSpinner/>;
+  if (isFetching) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-body flex items-center justify-center p-4">
@@ -86,10 +102,9 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
           {/* Rating Section */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <label className="text-sm font-medium ">{t("yourRating")}</label>
-              <FaInfoCircle className="w-4 h-4 " />
+              <label className="text-sm font-medium">{t("yourRating")}</label>
+              <FaInfoCircle className="w-4 h-4" />
             </div>
-
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -103,14 +118,13 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
                   <FaStar
                     className={`w-7 h-7 ${
                       star <= (hoveredRating || rating)
-                        ? "text-orange-400"
+                        ? "fill-secondary"
                         : "text-icon/20"
                     }`}
                   />
                 </button>
               ))}
             </div>
-
             {errors.rating && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.rating.message}
@@ -123,12 +137,37 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
             <label className="text-sm font-medium mb-3 block">
               {t("productName")}
             </label>
-
-            <div className="relative">
-              <div className="w-full px-4 py-3 bg-lightGray/20 border border-gray-200 rounded-xl text-gray-700">
-                {product.name}
-              </div>
+            <div className="w-full px-4 py-3 bg-lightGray/20 border border-gray-200 rounded-xl text-gray-700">
+              {product?.name}
             </div>
+          </div>
+
+          {/* Variant Selector */}
+          <div>
+            <label className="text-sm font-medium mb-3 block">
+              {t("selectVariant")}
+            </label>
+            <select
+              className="w-full px-4 py-3 bg-lightGray/20 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={variantId || ""}
+              onChange={(e) =>
+                setValue("variantId", Number(e.target.value), {
+                  shouldValidate: true,
+                })
+              }
+            >
+              <option value="">{t("chooseVariant")}</option>
+              {product?.variants?.map((variant: any) => (
+                <option key={variant.id} value={variant.id}>
+                  {getVariantLabel(variant)}
+                </option>
+              ))}
+            </select>
+            {errors.variantId && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.variantId.message}
+              </p>
+            )}
           </div>
 
           {/* Product Review */}
@@ -139,7 +178,6 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
               </label>
               <FaInfoCircle className="w-4 h-4" />
             </div>
-
             <div className="relative">
               <textarea
                 {...register("review")}
@@ -151,7 +189,6 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
                 <FaPen className="w-3 h-3" />
               </div>
             </div>
-
             {errors.review && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.review.message}
@@ -168,7 +205,6 @@ export default function ReviewForm({ productId }: ReviewFormProps) {
             >
               {t("cancel")}
             </button>
-
             <button
               type="submit"
               className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/80 transition-colors font-medium"

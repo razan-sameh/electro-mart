@@ -3,13 +3,13 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { enmOrderStatus } from "@/content/enums";
+import { typOrder } from "@/content/types";
 
 interface OrderHeaderProps {
-  order: any;
-  orderId: string;
+  order: typOrder;
 }
 
-export default function OrderHeader({ order, orderId }: OrderHeaderProps) {
+export default function OrderHeader({ order }: OrderHeaderProps) {
   const t = useTranslations("OrderDetail");
   const getStatusTextColor = (status: enmOrderStatus) => {
     switch (status) {
@@ -57,16 +57,16 @@ export default function OrderHeader({ order, orderId }: OrderHeaderProps) {
     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
       <div>
         <p className="text-content">{t("orderId")}:</p>
-        <p className="font-bold">#{orderId}</p>
+        <p className="font-bold">#{order.orderNumber}</p>
       </div>
       <span
         className={`text-sm ${getStatusTextColor(
-          order.orderStatus
+          order.orderStatus as enmOrderStatus,
         )} font-medium ${getStatusBGColor(
-          order.orderStatus
+          order.orderStatus as enmOrderStatus,
         )} px-3 py-1 rounded-full self-start sm:self-auto`}
       >
-        {getStatusLabel(order.orderStatus)}
+        {getStatusLabel(order.orderStatus as enmOrderStatus)}
       </span>
     </div>
   );

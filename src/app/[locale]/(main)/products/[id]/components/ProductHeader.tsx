@@ -1,9 +1,9 @@
-import { typProduct } from "@/content/types";
+import { typProduct, typProductVariant } from "@/content/types";
 import { FaStar } from "react-icons/fa";
 
 type Props = {
   product: typProduct;
-  selectedVariant: any;
+  selectedVariant: typProductVariant;
   formattedDiscountedPrice: string;
 };
 
@@ -24,8 +24,8 @@ export default function ProductHeader({
       </div>
 
       <div className="flex items-baseline gap-3">
-        {selectedVariant?.offer?.discount_percent ? (
-          <span className="text-gray-400 line-through text-lg">
+        {selectedVariant?.offer?.title != "" ? (
+          <span className="text-2xl text-gray-400 line-through">
             {selectedVariant.price} E£
           </span>
         ) : null}

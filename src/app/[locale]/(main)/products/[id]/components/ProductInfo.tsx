@@ -1,18 +1,24 @@
 "use client";
 
 import { typProduct, typProductVariant } from "@/content/types";
-import { useReducer, useMemo, useCallback } from "react";
+import { useReducer, useMemo, useCallback, useEffect } from "react";
 import { cartItemReducer } from "./cartItemReducer";
 import ProductHeader from "./ProductHeader";
 import ProductAttributes from "./ProductAttributes";
 import QuantitySelector from "./QuantitySelector";
 import ProductActions from "./ProductActions";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 
 interface Props {
   product: typProduct;
 }
 
 export default function ProductInfo({ product }: Props) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const variantIdFromUrl = searchParams.get("variant");
   // Extract all attribute types (Color, Storage, RAM, etc)
   const attributesMap = useMemo(() => {
     const map: Record<string, Set<string>> = {};
@@ -40,15 +46,58 @@ export default function ProductInfo({ product }: Props) {
     quantity: 1,
     selectedAttributes: defaultSelectedAttributes,
   });
+  // **هنا نعمل useEffect عشان نحدد selection من URL**
+  useEffect(() => {
+    if (!variantIdFromUrl) return;
 
+    const selectedVariant = product.variants.find(
+      (v) => v.id === Number(variantIdFromUrl),
+    );
+
+    if (!selectedVariant) return;
+
+    const selectedAttributes: Record<string, string> = {};
+    selectedVariant.attributes.forEach((attr) => {
+      selectedAttributes[attr.attribute] = attr.value;
+    });
+
+    dispatch({
+      type: "SELECT_ATTRIBUTE",
+      payload: selectedAttributes,
+    });
+  }, [variantIdFromUrl, product.variants]);
   // Find matching variant based on selected attributes
   const selectedVariant = useMemo(() => {
     return product.variants.find((v) =>
       v.attributes.every(
-        (attr) => state.selectedAttributes[attr.attribute] === attr.value
-      )
+        (attr) => state.selectedAttributes[attr.attribute] === attr.value,
+      ),
     );
   }, [product.variants, state.selectedAttributes]);
+  const isOutOfStock = (selectedVariant?.stock ?? 0) <= 0;
+
+  const handleAttributeChange = useCallback(
+    (updatedSelection: Record<string, string>) => {
+      dispatch({
+        type: "SELECT_ATTRIBUTE",
+        payload: updatedSelection,
+      });
+
+      // Find the matching variant for the new selection
+      const matchedVariant = product.variants.find((v) =>
+        v.attributes.every(
+          (attr) => updatedSelection[attr.attribute] === attr.value,
+        ),
+      );
+
+      if (matchedVariant) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("variant", String(matchedVariant.id));
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+    },
+    [product.variants, searchParams, router],
+  );
 
   const discountedPrice = useMemo(() => {
     if (!selectedVariant) return 0;
@@ -56,8 +105,8 @@ export default function ProductInfo({ product }: Props) {
     const offer = selectedVariant.offer;
     const price = selectedVariant.price;
 
-    if (offer && offer.discount_percent) {
-      return price - (price * offer.discount_percent) / 100;
+    if (offer && offer.discountPercent) {
+      return price - (price * offer.discountPercent) / 100;
     }
     return price;
   }, [selectedVariant]);
@@ -72,7 +121,7 @@ export default function ProductInfo({ product }: Props) {
     <div className="flex flex-col gap-6">
       <ProductHeader
         product={product}
-        selectedVariant={selectedVariant}
+        selectedVariant={selectedVariant!}
         formattedDiscountedPrice={formattedDiscountedPrice}
       />
 
@@ -81,14 +130,34 @@ export default function ProductInfo({ product }: Props) {
         attributesMap={attributesMap}
         state={state}
         dispatch={dispatch}
+        onAttributeChange={handleAttributeChange}
       />
-
-      <QuantitySelector quantity={state.quantity} dispatch={dispatch} />
+      <div className="flex items-center gap-2">
+        {isOutOfStock ? (
+          <>
+            <FaCircleExclamation size={20} className="text-red-500" />
+            <p className="text-red-500 text-xs font-bold">Out of Stock</p>
+          </>
+        ) : (
+          <>
+            <FaCircleCheck size={20} className="text-green-500" />
+            <p className="text-green-500 text-xs font-bold">
+              In Stock ({selectedVariant?.stock})
+            </p>
+          </>
+        )}
+      </div>
+      <QuantitySelector
+        quantity={state.quantity}
+        dispatch={dispatch}
+        isOutOfStock={isOutOfStock}
+      />
 
       <ProductActions
         product={product}
         state={state}
-        selectedVariant={selectedVariant}
+        selectedVariant={selectedVariant!}
+        isOutOfStock={isOutOfStock}
       />
     </div>
   );

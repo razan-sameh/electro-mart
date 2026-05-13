@@ -1,9 +1,9 @@
 import { z } from "zod";
+
 export const reviewSchema = z.object({
   rating: z.number().min(1, "Rating is required"),
-  review: z
-    .string()
-    .min(10, "Review must be at least 10 characters")
+  review: z.string().min(10, "Review must be at least 10 characters"),
+  variantId: z.number().min(1, "Please select a variant"),
 });
 
 export type ReviewSchemaType = z.infer<typeof reviewSchema>;

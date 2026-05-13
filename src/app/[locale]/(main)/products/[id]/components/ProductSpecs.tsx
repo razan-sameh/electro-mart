@@ -1,5 +1,5 @@
 "use client";
-import { typProductSpec, typSpecificationValues } from "@/content/types";
+import { typProductSpec } from "@/content/types";
 import { useTranslations } from "next-intl";
 
 interface Props {

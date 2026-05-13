@@ -1,71 +1,112 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaMapMarkerAlt, FaFlag, FaCity, FaMailBulk } from "react-icons/fa";
 import InputField from "@/components/reusable/InputField";
 import CartSummary from "@/components/reusable/CartSummary";
 import { typAddressFormData, AddressSchema } from "./schema";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
-import { useCheckoutStore } from "@/stores/checkoutStore";
-import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import { useTranslations } from "next-intl";
+import { useCart } from "@/lib/hooks/useCart";
+import { useDraftOrderId, useUpdateShipping } from "@/lib/hooks/useCheckout";
+import { useOrderById } from "@/lib/hooks/useOrders";
+import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 export default function AddressForm() {
   const t = useTranslations("Checkout");
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  const { cartItems } = useUnifiedCart();
-  const { data: buyNowItems } = useBuyNow();
-  const { setShippingAddress, shippingAddress } = useCheckoutStore();
-
+  const { cart } = useCart();
+  const { data: draftOrderId } = useDraftOrderId();
+  const { data: order } = useOrderById(draftOrderId);
+  const { mutateAsync: UpdateShipping, isPending } = useUpdateShipping();
   const isBuyNow = searchParams.get("isBuyNow") === "1";
-  const itemsToCheckout = isBuyNow ? buyNowItems! : cartItems;
+  const productId = searchParams.get("productId");
+  const variantId = searchParams.get("variantId");
+  const quantity = searchParams.get("quantity");
+  const itemsToCheckout =
+    isBuyNow && productId && variantId && quantity
+      ? (cart?.items ?? [])
+          .filter(
+            (item) =>
+              item.product.id === Number(productId) &&
+              item.variant.id === Number(variantId),
+          )
+          .map((item) => ({ ...item, quantity: Number(quantity) }))
+      : (cart?.items ?? []);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<typAddressFormData>({
     resolver: zodResolver(AddressSchema),
     defaultValues: {
-      phone: shippingAddress?.phone,
-      country: shippingAddress?.country || "",
-      city: shippingAddress?.city || "",
-      postalCode: shippingAddress?.postalCode || "",
-      streetAddress: shippingAddress?.streetAddress || "",
+      phone: {},
+      country: "",
+      city: "",
+      postalCode: "",
+      streetAddress: "",
     },
   });
+  useEffect(() => {
+    if (order) {
+      reset({
+        phone: order.phone || {},
+        country: order.ShippingAddress?.country || "",
+        city: order.ShippingAddress?.city || "",
+        postalCode: order.ShippingAddress?.postalCode || "",
+        streetAddress: order.ShippingAddress?.streetAddress || "",
+      });
+    }
+  }, [reset, draftOrderId, order]);
 
   const phoneValue = watch("phone");
-
-  // Convert phone object to string for display
   const phoneString = phoneValue
     ? `${phoneValue.dialCode}${phoneValue.number}`
     : "";
 
-  const onSubmit = (data: typAddressFormData) => {
-    setShippingAddress(data);
-    if (isBuyNow) {
-      router.push("/checkout/payment?isBuyNow=1");
-    } else {
-      router.push("/checkout/payment");
-    }
+  const onSubmit: SubmitHandler<typAddressFormData> = async (data) => {
+    const { city, country, postalCode, streetAddress, phone } = data;
+
+    UpdateShipping({
+      items: itemsToCheckout,
+      shippingAddress: {
+        country,
+        city,
+        postalCode,
+        streetAddress,
+      },
+      phone: {
+        countryCode: phone.countryCode,
+        dialCode: `+${phone.dialCode}`,
+        number: phone.number,
+      },
+      orderId: draftOrderId,
+    }).then(() => {
+      if (isBuyNow) {
+        router.push(
+          `/checkout/payment?isBuyNow=1&productId=${itemsToCheckout[0].product.id}&variantId=${itemsToCheckout[0].variant.id}&quantity=${itemsToCheckout[0].quantity}`,
+        );
+      } else {
+        router.push("/checkout/payment");
+      }
+    });
   };
+
+  // Fix: handleSubmit returns a function
+  const handleFormSubmit = handleSubmit(onSubmit);
+  if (!draftOrderId) return <div>Loading...</div>;
 
   return (
     <div className="grid lg:grid-cols-[2fr_1fr] gap-6 mt-6">
-      {/* LEFT SIDE — Address Form Fields */}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        id="address-form"
-      >
+      {/* LEFT */}
+      <form onSubmit={handleFormSubmit} className="space-y-4" id="address-form">
         <h2 className="text-xl font-semibold mb-4">{t("deliveryDetails")}</h2>
 
         <InputField
@@ -73,7 +114,7 @@ export default function AddressForm() {
           register={register}
           name="phone"
           error={
-            errors.phone?.number || // ✅ main field check
+            errors.phone?.number ||
             errors.phone?.dialCode ||
             errors.phone?.countryCode
           }
@@ -89,6 +130,7 @@ export default function AddressForm() {
           name="country"
           error={errors.country}
         />
+
         <InputField
           placeholder={t("city")}
           icon={FaCity}
@@ -96,6 +138,7 @@ export default function AddressForm() {
           name="city"
           error={errors.city}
         />
+
         <InputField
           placeholder={t("postalCode")}
           icon={FaMailBulk}
@@ -103,6 +146,7 @@ export default function AddressForm() {
           name="postalCode"
           error={errors.postalCode}
         />
+
         <InputField
           placeholder={t("streetAddress")}
           icon={FaMapMarkerAlt}
@@ -112,12 +156,14 @@ export default function AddressForm() {
         />
       </form>
 
-      {/* RIGHT SIDE — Cart Summary */}
+      {/* RIGHT */}
       <div className="self-start">
         <CartSummary
-          items={itemsToCheckout ?? []}
+          items={itemsToCheckout}
           buttonText={t("continueButton")}
-          onButtonClick={handleSubmit(onSubmit)}
+          onButtonClick={handleFormSubmit}
+          loading={isPending}
+          quantity={isBuyNow ? Number(quantity) : undefined}
         />
       </div>
     </div>

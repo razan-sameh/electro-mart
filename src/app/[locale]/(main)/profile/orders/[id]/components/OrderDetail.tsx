@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useOrder } from "@/lib/hooks/useOrders";
+import { useOrderById } from "@/lib/hooks/useOrders";
 import OrderHeader from "./OrderHeader";
 import ShipmentSection from "./ShipmentSection";
 import OrderItemsSection from "./OrderItemsSection";
@@ -9,9 +9,9 @@ import PaymentSummary from "./PaymentSummary";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useTranslations } from "next-intl";
 
-export default function OrderDetail({ orderId }: { orderId: string }) {
+export default function OrderDetail({ orderId }: { orderId: number }) {
   const t = useTranslations("OrderDetail");
-  const { data: order, isLoading, isError } = useOrder(orderId);
+  const { data: order, isLoading, isError } = useOrderById(orderId);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <div>{t("errorLoading")}</div>;
@@ -22,9 +22,9 @@ export default function OrderDetail({ orderId }: { orderId: string }) {
       <h1 className="text-2xl sm:text-3xl font-semibold">{t("title")}</h1>
 
       <div className="bg-background rounded-2xl shadow-md p-4 sm:p-6 space-y-6">
-        <OrderHeader order={order} orderId={orderId} />
+        <OrderHeader order={order}/>
         <ShipmentSection order={order} />
-        <OrderItemsSection orderItems={order.orderItems} />
+        <OrderItemsSection orderItems={order.items} />
         <PaymentSummary order={order} />
       </div>
     </div>

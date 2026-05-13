@@ -1,6 +1,6 @@
 "use client";
 import { Link, useRouter } from "@/i18n/navigation";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { useAuth, useLogout } from "@/lib/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { FiUser, FiShoppingBag, FiHeart, FiLogOut } from "react-icons/fi";
@@ -12,19 +12,24 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const menuItems = [
     { label: t("myProfile"), href: "/profile", icon: FiUser },
     { label: t("orders"), href: "/profile/orders", icon: FiShoppingBag },
-    { label: t("myFavorite"), href: "/profile/wishlist", icon: FiHeart }
+    { label: t("myFavorite"), href: "/profile/wishlist", icon: FiHeart },
   ];
 
   const pathname = usePathname();
   const normalizedPath = pathname.replace(/^\/[a-z]{2}(\/|$)/, "/");
   const router = useRouter();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
+  const logoutMutation = useLogout();
 
   async function handleLogout(): Promise<void> {
-    await fetch("/api/auth/logout", { method: "POST" });
-    queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-    router.push("/login");
+    try {
+      const result = await logoutMutation.mutateAsync();
+      if (result.success) {
+        router.push("/login");
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   }
 
   return (

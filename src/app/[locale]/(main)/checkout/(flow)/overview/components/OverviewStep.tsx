@@ -1,167 +1,124 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CartSummary from "@/components/reusable/CartSummary";
-import CartItemCard from "@/components/reusable/CartItemCard";
 import DeliverySection from "./DeliverySection";
 import PaymentMethodSection from "./PaymentMethodSection";
 import PaymentResultModal from "./PaymentResultModal";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
-import { useCheckoutStore } from "@/stores/checkoutStore";
-import { useRouter as useI18nRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
-import { useBuyNow } from "@/lib/hooks/useBuyNow";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useCheckoutStore } from "@/stores/checkoutStore";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { useOrderById } from "@/lib/hooks/useOrders";
+import { typCartItem, typOrderItem } from "@/content/types";
+import CartItemCard from "@/components/reusable/CartItemCard";
+import { useConfirmOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
+import { useSearchParams } from "next/navigation";
+import { useCart } from "@/lib/hooks/useCart";
 
 export default function OverviewStep() {
   const t = useTranslations("Checkout");
-  const router = useI18nRouter();
+  const router = useRouter();
+  // const { orderId } = useCheckoutStore();
+  const { data: orderId } = useDraftOrderId();
+  const { data: order, isPending } = useOrderById(orderId!);
+  const [status, setStatus] = useState<"success" | "failed" | null>(null);
+  const { mutateAsync: confirmOrder, isPending: isConfirmPending } =
+    useConfirmOrder();
   const searchParams = useSearchParams();
   const isBuyNow = searchParams.get("isBuyNow") === "1";
+  const productId = searchParams.get("productId");
+  const variantId = searchParams.get("variantId");
+  const quantity = searchParams.get("quantity");
+  const { cart } = useCart();
+  const itemsToCheckout =
+    isBuyNow && productId && variantId && quantity
+      ? (cart?.items ?? [])
+          .filter(
+            (item) =>
+              item.product.id === Number(productId) &&
+              item.variant.id === Number(variantId),
+          )
+          .map((item) => ({ ...item, quantity: Number(quantity) }))
+      : (cart?.items ?? []);
 
-  const { cartItems } = useUnifiedCart();
-  const { data: buyNowItems, isLoading } = useBuyNow();
-  const {
-    shippingAddress,
-    paymentMethod,
-    setCardInfo,
-    setLoadingCardInfo,
-    loadingCardInfo,
-  } = useCheckoutStore();
-
-  const [loading, setLoading] = useState(false);
-  const [retryLoading, setRetryLoading] = useState(false);
-  const [status, setStatus] = useState<"success" | "failed" | null>(null);
-
-  const itemsToCheckout = isBuyNow ? buyNowItems : cartItems;
-  const isPageLoading =
-    isLoading || // buyNow loading
-    loadingCardInfo || // card info loading
-    !itemsToCheckout || // cart not ready
-    itemsToCheckout.length === 0;
-
-
-  // 🔁 Verify previous steps and fetch card info
-  useEffect(() => {
-    if (!shippingAddress) {
-      isBuyNow
-        ? router.push("/checkout/shipping?isBuyNow=1")
-        : router.push("/checkout/shipping");
-      return;
-    }
-
-    if (!paymentMethod?.id) {
-      isBuyNow
-        ? router.push("/checkout/payment?isBuyNow=1")
-        : router.push("/checkout/payment");
-      return;
-    }
-    fetchCardInfo();
-  }, [shippingAddress, paymentMethod]);
-
-  const fetchCardInfo = async () => {
-    setLoadingCardInfo(true);
-    try {
-      const res = await fetch(`/api/payment-method/${paymentMethod?.id}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed");
-
-      setCardInfo({
-        brand: data.brand,
-        last4: data.last4,
-        exp_month: data.exp_month,
-        exp_year: data.exp_year,
-      });
-    } catch (err) {
-      console.error("Failed to fetch card info:", err);
-      setCardInfo(null);
-    } finally {
-      setLoadingCardInfo(false);
-    }
-  };
-
-  // 💳 Confirm Order
-  const handleConfirmOrder = async (isRetry = false) => {
-    if (!paymentMethod) return alert(t("noPaymentMethod"));
-
-    isRetry ? setRetryLoading(true) : setLoading(true);
-
-    try {
-      const res = await fetch("/api/pay-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cartItems: itemsToCheckout,
-          shippingAddress,
-          paymentMethodId: paymentMethod.id,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        isBuyNow
-          ? router.replace(
-              `/checkout/success?isBuyNow=1&orderId=${data.orderId}`
-            )
-          : router.replace(`/checkout/success?orderId=${data.orderId}`);
-      } else {
-        setStatus("failed");
-      }
-    } catch (err) {
-      setStatus("failed");
-    } finally {
-      isRetry ? setRetryLoading(false) : setLoading(false);
-    }
-  };
-  if (isPageLoading) {
+  if (isPending || !order) {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
         <LoadingSpinner />
       </div>
     );
   }
+
+  const { items, payment } = order;
+
+  // 💳 Confirm Order
+  const handleConfirmOrder = async (isRetry = false) => {
+    if (!payment) {
+      alert(t("noPaymentMethod"));
+      return;
+    }
+
+    // isRetry ? setRetryLoading(true) : setLoading(true);
+
+    try {
+      const data = await confirmOrder(orderId!);
+
+      if (data.success) {
+        if (isBuyNow) {
+          router.replace(
+            `/checkout/success?isBuyNow=1&productId=${itemsToCheckout[0].product.id}&variantId=${itemsToCheckout[0].variant.id}&quantity=${itemsToCheckout[0].quantity}&orderId=${order.id}`,
+          );
+        } else router.replace(`/checkout/success?orderId=${order.id}`);
+      } else {
+        setStatus("failed");
+      }
+    } catch {
+      setStatus("failed");
+    }
+  };
+
   return (
     <>
       <div className="grid lg:grid-cols-3 gap-8 mt-6">
         <div className="lg:col-span-2 space-y-10">
-          {/* 🚚 Delivery info */}
-          <DeliverySection shippingAddress={shippingAddress} />
+          {/* 🚚 Delivery */}
+          <DeliverySection
+            shippingAddress={order.shippingAddress}
+            phone={order.phone}
+          />
 
-          {/* 🧾 Order summary */}
+          {/* 🧾 Items */}
           <section>
             <h2 className="font-semibold text-lg mb-4">{t("OrderSummary")}</h2>
+
             <div className="space-y-4">
-              {itemsToCheckout?.map((item: any) => (
-                <CartItemCard
-                  key={`${item.id}-${item.selectedColor?.id || "default"}`}
-                  item={item}
-                />
+              {itemsToCheckout.map((item: typCartItem) => (
+                <CartItemCard key={item.variant.id} item={item} />
               ))}
             </div>
           </section>
 
-          {/* 💳 Payment method */}
-          <PaymentMethodSection />
+          {/* 💳 Payment */}
+          <PaymentMethodSection payment={payment} />
         </div>
 
-        {/* 🧮 Cart Summary & Submit */}
+        {/* 🧮 Summary */}
         <div>
           <CartSummary
-            items={itemsToCheckout!}
+            items={itemsToCheckout}
             buttonText={t("SubmitAndPay")}
             onButtonClick={() => handleConfirmOrder(false)}
-            loading={loading}
+            loading={isConfirmPending}
+            quantity={isBuyNow ? Number(quantity) : undefined}
           />
         </div>
       </div>
 
-      {/* ❌ Payment Failure Modal */}
+      {/* ❌ Failure */}
       <PaymentResultModal
         status={status === "failed" ? "failed" : null}
-        shippingAddress={shippingAddress}
-        retryLoading={retryLoading}
+        shippingAddress={order.shippingAddress}
+        retryLoading={isConfirmPending}
         onRetry={() => handleConfirmOrder(true)}
         onGoHome={() => router.push("/")}
       />

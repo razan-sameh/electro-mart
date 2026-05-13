@@ -1,54 +1,56 @@
-// app/api/review/route.ts
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { serverApiClient } from "@/app/api/serverApiClient";
-
-// app/api/review/route.ts
+import { createServer } from "../supabaseServer";
+// POST /api/review
 export async function POST(req: Request) {
   try {
-    const { rating, comment, productId } = await req.json();
+    const supabase = await createServer();
 
-    if (!productId || !rating || !comment) {
-      return NextResponse.json(
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+
+    const {
+      productId,
+      productVariantId,
+      rating,
+      comment,
+    } = body;
+
+    if (!productId || !productVariantId ) {
+      return Response.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const cookieStore = await cookies();
-    const token = cookieStore.get("jwtToken")?.value;
-
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const payload = {
-      data: {
-        Rating: rating,
-        Comment: comment,
-        product: productId, // ⚠️ This might need to be an ID, not documentId
-      },
-    };
-
-    const data = await serverApiClient("/reviews", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+    const { data, error } = await supabase.rpc("create_product_review", {
+      p_product_id: productId,
+      p_product_variant_id: productVariantId,
+      p_user_id: user.id,
+      p_rating: rating,
+      p_comment: comment,
     });
 
-    return NextResponse.json(data, { status: 201 });
-  } catch (err: any) {
-    console.error("Create review error:", err);
-    console.error("Error details:", err.response || err); // Log full error
+    if (error) {
+      console.error("RPC error (create review):", error);
+      return Response.json({ error: error.message }, { status: 500 });
+    }
 
-    return NextResponse.json(
-      {
-        error: err.message || "Internal Server Error",
-        details: err.response?.data || null, // Include Strapi error details
-      },
+    if (data?.error) {
+      return Response.json({ error: data.error }, { status: 400 });
+    }
+
+    return Response.json(data);
+  } catch (error: any) {
+    console.error("Create review error:", error);
+    return Response.json(
+      { error: error.message || "Failed to create review" },
       { status: 500 }
     );
   }

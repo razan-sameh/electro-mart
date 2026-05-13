@@ -3,33 +3,53 @@
 import React from "react";
 import CartList from "./CartList";
 import CartSummary from "../../../../../components/reusable/CartSummary";
-import { useUnifiedCart } from "@/hooks/useUnifiedCart";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useCart } from "@/lib/hooks/useCart";
+import { FiShoppingBag } from "react-icons/fi";
+import { useCreateOrder, useDraftOrderId } from "@/lib/hooks/useCheckout";
 
 function Cart() {
-  const { cartItems: cart, isGuest, isLoading } = useUnifiedCart();
+  const { cart, isLoading } = useCart();
   const router = useRouter();
   const t = useTranslations("Cart");
+  const { mutateAsync: createOrder, isPending } = useCreateOrder();
+  const { data: orderId } = useDraftOrderId();
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-if (!cart || cart.length === 0) {
-  return (
-    <div className="flex items-center justify-center h-[60vh]">
-      <p className="text-gray-500 text-center text-lg">{t("empty")}</p>
-    </div>
-  );
-}
+  if (!cart || cart?.items?.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh]">
+        <div className="flex items-center justify-center">
+          <FiShoppingBag className="w-6 h-6 text-gray-400 me-2" />
+          <p className="text-gray-500 text-center text-lg">{t("empty")}</p>
+        </div>
+        <Link
+          href="/categories"
+          className="inline-block bg-primary text-white px-6 py-3 mt-2 rounded-lg hover:bg-primary/80 transition"
+        >
+          {t("continueShopping")}
+        </Link>
+      </div>
+    );
+  }
 
   const handleCheckout = async () => {
     const res = await fetch("/api/auth/me");
     const data = await res.json();
     if (!data.user) router.push("/login?redirect=/checkout/shipping");
-    else router.push("/checkout/shipping");
+    else {
+      createOrder({
+        items: cart.items,
+        orderId: orderId ?? null,
+      }).then(() => {
+        router.push("/checkout/shipping");
+      });
+    }
   };
 
   return (
@@ -39,15 +59,19 @@ if (!cart || cart.length === 0) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* 🛒 Cart Items */}
           <div className="flex-1">
-            <CartList items={cart} />
+            <CartList items={cart?.items} />
           </div>
 
           {/* 💳 Order Summary */}
           <div className="w-full lg:w-[392px] flex-shrink-0">
-            <CartSummary items={cart} onButtonClick={handleCheckout} />
-            {isGuest && (
+            <CartSummary
+              items={cart?.items}
+              onButtonClick={handleCheckout}
+              loading={isPending}
+            />
+            {/* {isGuest && (
               <p className="text-sm text-gray-400 mt-4">{t("guestNotice")}</p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
