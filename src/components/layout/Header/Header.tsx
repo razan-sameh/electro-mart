@@ -20,8 +20,8 @@ export default function Header() {
 
   // classes based on pathname
   const containerClasses = isLanding
-    ? "relative container mx-auto rounded-t-lg rounded-b-none md:rounded-lg md:px-12 py-3"
-    : "relative mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-4 md:px-12 py-3";
+    ? "relative container mx-auto rounded-t-lg rounded-b-none md:rounded-lg md:px-12 py-3 px-3"
+    : "relative mx-auto rounded-t-lg md:rounded-t-lg md:rounded-b-none px-3 md:px-12 py-3";
 
   return (
     <header

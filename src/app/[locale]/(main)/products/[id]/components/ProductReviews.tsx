@@ -12,9 +12,9 @@ interface Props {
 }
 
 export default function ProductReviews({ productId }: Props) {
-  const { reviews, isFetching } = useReviews(productId);
+  const { reviews, isFetching } = useReviews(productId, 3, true);
   const t = useTranslations("ProductDetails");
-  if (isFetching) return <LoadingSpinner />;
+
   return (
     <div className="mt-12">
       <SectionHeader
@@ -27,14 +27,14 @@ export default function ProductReviews({ productId }: Props) {
 
         {/* Right Reviews */}
         <div className="flex-1 space-y-4">
-          {reviews?.length === 0 ? (
+          {isFetching ? (
+            <LoadingSpinner />
+          ) : reviews.length === 0 ? (
             <p className="text-gray-500">{t("noReviews")}</p>
           ) : (
-            reviews
-              .slice(0, 3)
-              .map((review: typReview) => (
-                <ReviewCard key={review.id} review={review} />
-              ))
+            reviews.map((review: typReview) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
           )}
         </div>
       </div>

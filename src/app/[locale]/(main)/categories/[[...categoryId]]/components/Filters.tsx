@@ -45,25 +45,18 @@ export default function Filters({ isMobile = false }: FiltersProps) {
   // Memoize sets for better performance
   const selectedColorsSet = useMemo(
     () => new Set(selectedColors),
-    [selectedColors]
+    [selectedColors],
   );
   const selectedSpecsSet = useMemo(
     () => new Set(selectedSpecs),
-    [selectedSpecs]
+    [selectedSpecs],
   );
   const selectedBrandsSet = useMemo(
     () => new Set(selectedBrands),
-    [selectedBrands]
+    [selectedBrands],
   );
 
   /* ================= PRICE DEBOUNCE ================= */
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updatePriceRange(priceRange[0], priceRange[1]);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [priceRange]);
 
   function updatePriceRange(min: number, max: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -134,8 +127,14 @@ export default function Filters({ isMobile = false }: FiltersProps) {
 
   const clearAllFilters = () => {
     startTransition(() => router.push(pathname));
-    setPriceRange([minPrice, maxPrice]);
   };
+
+  useEffect(() => {
+    setPriceRange([
+      selectedMinPrice ? Number(selectedMinPrice) : minPrice,
+      selectedMaxPrice ? Number(selectedMaxPrice) : maxPrice,
+    ]);
+  }, [selectedMinPrice, selectedMaxPrice, minPrice, maxPrice]);
 
   return (
     <div
@@ -159,7 +158,7 @@ export default function Filters({ isMobile = false }: FiltersProps) {
           {filters.attributes
             .filter(
               (attr: typProductAttribute) =>
-                attr.attribute.toLowerCase() === "color"
+                attr.attribute.toLowerCase() === "color",
             )
             .map((attr: any) => (
               <div key={`color-${attr.attribute_id}`} className="mb-5">
@@ -232,6 +231,7 @@ export default function Filters({ isMobile = false }: FiltersProps) {
             step={1}
             value={priceRange}
             onValueChange={(val) => setPriceRange(val as [number, number])}
+            onValueCommit={(val) => updatePriceRange(val[0], val[1])}
             className="relative flex items-center w-full h-5"
           >
             <Slider.Track className="bg-lightGray/40 relative grow rounded-full h-1">

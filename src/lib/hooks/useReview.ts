@@ -18,7 +18,11 @@ type CreateReviewInput = {
   comment: string;
 };
 
-export function useReviews(productId: number, pageSize: number = 10) {
+export function useReviews(
+  productId: number,
+  pageSize: number = 10,
+  ignoreFilters = false,
+) {
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const locale = useLocale();
@@ -28,9 +32,11 @@ export function useReviews(productId: number, pageSize: number = 10) {
   const ratingFilter = searchParams.get("rating")
     ? parseInt(searchParams.get("rating")!)
     : undefined;
-  const variantId = searchParams.get("variant")
-    ? parseInt(searchParams.get("variant")!)
-    : undefined;
+  const variantId = ignoreFilters
+    ? undefined
+    : searchParams.get("variant")
+      ? parseInt(searchParams.get("variant")!)
+      : undefined;
   const queryKey = [
     "reviews",
     productId,
