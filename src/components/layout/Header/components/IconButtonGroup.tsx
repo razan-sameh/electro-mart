@@ -7,10 +7,9 @@ import ThemeButton from "./ThemeButton";
 
 interface Props {
   layout: "desktop" | "mobile";
-  cartItemCount?: number; // Optional cart count
 }
 
-export default function IconButtonGroup({ layout, cartItemCount }: Props) {
+export default function IconButtonGroup({ layout }: Props) {
   // Define which components to show on each layout
   const componentConfig = [
     {

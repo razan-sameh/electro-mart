@@ -12,7 +12,7 @@ function ProductPrice({ item }: ProductPriceProps) {
           {item.originalPrice} E£
         </span>
       )}
-      <span className="text-lg font-bold text-secondary">
+      <span className="text-lg font-bold text-secondary-text">
         {item.displayPrice} E£
       </span>
     </div>

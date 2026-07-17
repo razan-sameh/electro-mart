@@ -36,7 +36,7 @@ export default function ReviewSummary({ productId }: ReviewSummaryProps) {
         <StarRating rating={ratingSummary?.avg_rating ?? 0} size={18} />
       </div>
 
-      <p className="text-center text-sm text-gray-500 mb-4">
+      <p className="text-center text-sm text-gray-700 mb-4">
         {ratingSummary?.reviews_count ?? 0} {t("reviews")}
       </p>
 

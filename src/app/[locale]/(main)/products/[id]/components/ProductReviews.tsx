@@ -30,7 +30,7 @@ export default function ProductReviews({ productId }: Props) {
           {isFetching ? (
             <LoadingSpinner />
           ) : reviews.length === 0 ? (
-            <p className="text-gray-500">{t("noReviews")}</p>
+            <p className="text-gray-700">{t("noReviews")}</p>
           ) : (
             reviews.map((review: typReview) => (
               <ReviewCard key={review.id} review={review} />

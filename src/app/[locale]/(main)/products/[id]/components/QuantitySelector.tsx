@@ -6,18 +6,24 @@ type Props = {
   isOutOfStock: boolean;
 };
 
-export default function QuantitySelector({ quantity, dispatch, isOutOfStock }: Props) {
+export default function QuantitySelector({
+  quantity,
+  dispatch,
+  isOutOfStock,
+}: Props) {
   return (
     <div className="flex items-center gap-3 mt-2">
       <button
+        aria-label="Decrease quantity"
         onClick={() => dispatch({ type: "DECREASE" })}
-          disabled={isOutOfStock}
+        disabled={isOutOfStock}
         className="px-3 py-2 border border-lightGray rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FiMinus />
       </button>
 
       <input
+        aria-label="Quantity"
         type="number"
         min={1}
         value={quantity}
@@ -32,6 +38,7 @@ export default function QuantitySelector({ quantity, dispatch, isOutOfStock }: P
       />
 
       <button
+        aria-label="Increase quantity"
         onClick={() => dispatch({ type: "INCREASE" })}
         disabled={isOutOfStock}
         className="px-3 py-2 border border-lightGray rounded-md disabled:opacity-50 disabled:cursor-not-allowed"

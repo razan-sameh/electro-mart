@@ -14,7 +14,7 @@ export default async function MainLayout({
       <Container>
         <Header />
       </Container>
-      {children}
+      <main> {children}</main>
       <Toaster position="bottom-right" />
       <Footer />
     </>

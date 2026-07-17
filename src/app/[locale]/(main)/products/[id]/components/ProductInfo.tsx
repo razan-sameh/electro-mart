@@ -42,30 +42,33 @@ export default function ProductInfo({ product }: Props) {
     return result;
   }, [attributesMap]);
 
-  const [state, dispatch] = useReducer(cartItemReducer, {
-    quantity: 1,
-    selectedAttributes: defaultSelectedAttributes,
-  });
-  // **هنا نعمل useEffect عشان نحدد selection من URL**
-  useEffect(() => {
-    if (!variantIdFromUrl) return;
+  const initialSelectedAttributes = useMemo(() => {
+    if (!variantIdFromUrl) {
+      return defaultSelectedAttributes;
+    }
 
-    const selectedVariant = product.variants.find(
+    const variant = product.variants.find(
       (v) => v.id === Number(variantIdFromUrl),
     );
 
-    if (!selectedVariant) return;
+    if (!variant) {
+      return defaultSelectedAttributes;
+    }
 
-    const selectedAttributes: Record<string, string> = {};
-    selectedVariant.attributes.forEach((attr) => {
-      selectedAttributes[attr.attribute] = attr.value;
+    const attrs: Record<string, string> = {};
+
+    variant.attributes.forEach((attr) => {
+      attrs[attr.attribute] = attr.value;
     });
 
-    dispatch({
-      type: "SELECT_ATTRIBUTE",
-      payload: selectedAttributes,
-    });
-  }, [variantIdFromUrl, product.variants]);
+    return attrs;
+  }, [variantIdFromUrl, product.variants, defaultSelectedAttributes]);
+
+  const [state, dispatch] = useReducer(cartItemReducer, {
+    quantity: 1,
+    selectedAttributes: initialSelectedAttributes,
+  });
+
   // Find matching variant based on selected attributes
   const selectedVariant = useMemo(() => {
     return product.variants.find((v) =>
@@ -132,16 +135,16 @@ export default function ProductInfo({ product }: Props) {
         dispatch={dispatch}
         onAttributeChange={handleAttributeChange}
       />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-w-[140px]">
         {isOutOfStock ? (
           <>
-            <FaCircleExclamation size={20} className="text-red-500" />
-            <p className="text-red-500 text-xs font-bold">Out of Stock</p>
+            <FaCircleExclamation size={18} className="text-red-500 shrink-0" />
+            <p className="text-red-500 text-sm font-bold">Out of Stock</p>
           </>
         ) : (
           <>
-            <FaCircleCheck size={20} className="text-green-500" />
-            <p className="text-green-500 text-xs font-bold">
+            <FaCircleCheck size={18} className="text-[#087f3d] shrink-0" />
+            <p className="text-[#087f3d] text-sm font-bold">
               In Stock ({selectedVariant?.stock})
             </p>
           </>

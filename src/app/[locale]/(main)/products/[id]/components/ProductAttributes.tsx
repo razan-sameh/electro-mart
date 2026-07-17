@@ -106,7 +106,7 @@ function ProductAttributes({
     <>
       {Object.keys(attributesMap).map((attribute) => (
         <div key={attribute} className="flex flex-col gap-2">
-          <h3 className="text-lg font-medium">{attribute}</h3>
+          <h2 className="text-lg font-medium">{attribute}</h2>
           <div className="flex gap-2 flex-wrap">
             {Array.from(attributesMap[attribute]).map((value) => {
               const isAvailable = isValueAvailable(
@@ -125,7 +125,6 @@ function ProductAttributes({
                   onClick={() => handleClick(attribute, value)}
                   className={`w-10 h-10 rounded-full border-2 transition flex items-center justify-center
                     ${isSelected ? "border-primary" : "border-gray-300"}
-                    ${!isAvailable ? "opacity-40 cursor-not-allowed" : ""}
                   `}
                   style={{ backgroundColor: code }}
                   title={value}
@@ -134,13 +133,12 @@ function ProductAttributes({
                 <button
                   key={value}
                   onClick={() => handleClick(attribute, value)}
-                  className={`px-3 py-2 rounded-md border transition
+                  className={`relative overflow-hidden px-3 py-2 rounded-md border transition
                     ${
                       isSelected
                         ? "border-primary bg-primary/10"
                         : "border-gray-300"
                     }
-                    ${!isAvailable ? "opacity-40 cursor-not-allowed" : ""}
                   `}
                 >
                   {value}

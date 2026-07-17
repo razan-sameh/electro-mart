@@ -1,7 +1,5 @@
-"use client";
-
+import Image from "next/image";
 import { typProductImage } from "@/content/types";
-import { useState } from "react";
 
 interface Props {
   images: typProductImage[];
@@ -9,38 +7,65 @@ interface Props {
 }
 
 export default function ProductImages({ images, name }: Props) {
-  const [selectedImage, setSelectedImage] = useState(0);
-
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Main Image - centered with fixed responsive size */}
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-md h-64 sm:h-80 md:h-96 lg:h-[28rem] rounded-lg  overflow-hidden">
-          <img 
-            src={images[selectedImage].url} 
-            alt={name} 
-            className="w-full h-full object-contain"
+      {/* Warm up the connection + start fetching the LCP image immediately */}
+      {images[0] && (
+        <>
+          <link
+            rel="preconnect"
+            href="https://vmcypnenslolrpkhzkrm.supabase.co"
+            crossOrigin=""
           />
-        </div>
+          <link
+            rel="preload"
+            as="image"
+            href={images[0].url}
+            fetchPriority="high"
+          />
+        </>
+      )}
+
+      <div className="w-full flex justify-center relative main-image-stage">
+        {images.map((img, i) => (
+          <div key={i} className="contents">
+            <input
+              aria-label={`Select image ${i + 1}`}
+              type="radio"
+              name="product-image"
+              id={`img-${i}`}
+              defaultChecked={i === 0}
+              className="hidden-radio peer"
+            />
+            <div className="main-image-slide w-full max-w-md h-64 sm:h-80 md:h-96 lg:h-[28rem] peer-checked:main-image-active">
+              <Image
+                src={img.url}
+                alt={name}
+                fill
+                priority={i === 0}
+                fetchPriority="high"
+                unoptimized={i === 0}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
+              />
+            </div>
+          </div>
+        ))}
       </div>
-      
-      {/* Thumbnail Images - centered as a group */}
+
       {images.length > 1 && (
         <div className="flex gap-2 justify-center flex-wrap">
           {images.map((img, i) => (
-            <img
-              key={i}
-              src={img.url}
-              alt={`${name} ${i}`}
-              width={100}
-              height={80}
-              className={`rounded-md border cursor-pointer hover:scale-105 transition object-cover ${
-                selectedImage === i 
-                  ? 'border-primary border-2' 
-                  : 'border-lightGray'
-              }`}
-              onClick={() => setSelectedImage(i)}
-            />
+            <label key={i} htmlFor={`img-${i}`} className="thumb-label">
+              <Image
+                src={img.url}
+                alt={`${name} ${i}`}
+                width={100}
+                height={80}
+                loading="lazy"
+                className="rounded-md border cursor-pointer hover:scale-105 transition object-cover thumb-img"
+              />
+            </label>
           ))}
         </div>
       )}

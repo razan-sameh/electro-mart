@@ -1,18 +1,20 @@
 "use client";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 export default function ProductAds() {
   const t = useTranslations("ProductDetails");
 
   return (
     <section className="relative w-full h-[30vh] bg-gray-100">
-      <img
-        src="/ads/ads1.png"
+      <Image
+        src="/ads/ads1.webp"
         alt="ads1"
-        className="w-full h-full object-cover"
+        fill
+        sizes="100vw"
+        className="object-cover"
       />
-
       <div className="absolute inset-0 flex flex-col justify-center items-end p-6">
         <div className="flex flex-col items-center text-center">
           <span className="text-white text-lg">{t("yourNextFavorite")}</span>

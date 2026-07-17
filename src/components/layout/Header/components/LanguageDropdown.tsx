@@ -26,7 +26,11 @@ export default function LanguageDropdown() {
 
   return (
     <div ref={dropdownRef} className="relative">
-      <IconButton onClick={() => setShowDropdown(!showDropdown)}>
+      <IconButton
+        aria-label="Select language"
+        aria-haspopup="menu"
+        onClick={() => setShowDropdown(!showDropdown)}
+      >
         <div className="flex items-center gap-1">
           {currentLanguage.icon}
           <span className="text-sm font-medium">

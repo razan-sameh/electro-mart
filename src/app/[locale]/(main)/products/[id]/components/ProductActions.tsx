@@ -110,6 +110,7 @@ export default function ProductActions({
   return (
     <div className="flex gap-4 mt-4">
       <button
+        aria-label="Add to cart"
         onClick={handleAddToCart}
         disabled={isOutOfStock}
         className="flex-1 px-6 py-3 bg-primary text-white rounded-lg shadow hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
@@ -118,6 +119,7 @@ export default function ProductActions({
       </button>
 
       <button
+        aria-label="Buy now"
         onClick={handleBuyNow}
         disabled={isOutOfStock}
         className="flex-1 px-6 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition disabled:opacity-50 disabled:cursor-not-allowed"
@@ -126,6 +128,7 @@ export default function ProductActions({
       </button>
 
       <button
+        aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
         onClick={handleAddToWishlist}
         className="px-4 py-3 bg-lightGray/40 rounded-lg shadow hover:bg-lightGray/60 transition"
       >

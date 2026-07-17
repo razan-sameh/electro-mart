@@ -11,9 +11,11 @@ body {
   --color-icon: #4b4b4b;
   --color-content: #4b4b4b;
   --color-lightGray: #cbcbcb;
-  --color-secondary: #fb5f2f;
+  --color-secondary: #c62e00;
   --color-primary: #1a4de1;
   --color-success: #1fc16b;
+  --color-secondary-text: #c62e00; /* ~4.6:1 on white  */
+  --color-muted: #767676;
 }
 
 .dark {
@@ -25,6 +27,8 @@ body {
   --color-secondary: #fb5f2f;
   --color-primary: #1a4de1;
   --color-success: #1fc16b;
+  --color-secondary-text: #ff7a4d; /* lighter orange, ~4.8:1 on #000/#141414 */
+  --color-muted: #a0a0a0;
 }
 
 @keyframes slide-up {
@@ -89,4 +93,28 @@ li {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
+}
+
+.hidden-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.main-image-stage {
+  position: relative;
+}
+
+.main-image-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hidden-radio:checked ~ .main-image-slide {
+  opacity: 1;
+  position: relative;
 }

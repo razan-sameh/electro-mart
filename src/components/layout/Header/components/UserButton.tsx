@@ -19,7 +19,7 @@ export default function UserButton() {
 
   return (
     <div className="relative">
-      <IconButton onClick={handleUserClick}>
+      <IconButton aria-label="User account" onClick={handleUserClick}>
         <FaUser size={20} />
       </IconButton>
 

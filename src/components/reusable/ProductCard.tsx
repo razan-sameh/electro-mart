@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { FaStar } from "react-icons/fa";
 import ProductPrice from "./ProductPrice";
 import { FaCircleExclamation } from "react-icons/fa6";
+import Image from "next/image";
 
 type ProductCardProps = {
   item: typProduct;
@@ -52,12 +53,16 @@ export default function ProductCard({ item }: ProductCardProps) {
             <p className=" text-red-500 text-xs font-bold">Out of Stock</p>
           </div>
         )}
-
-        <img
-          src={item.imagesUrl[0].url}
-          alt={item.name}
-          className="w-full h-36 object-contain mb-3"
-        />
+        <div className="relative w-full h-36">
+          <Image
+            src={item.imagesUrl[0].url}
+            alt={item.name}
+            fill
+            loading="lazy"
+            sizes="(max-width:768px) 50vw, 25vw"
+            className="object-contain"
+          />
+        </div>
       </div>
 
       {/* Title & Price */}
@@ -70,7 +75,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
         {/* Attributes */}
         {item.defaultVariantAttributes?.length > 0 && (
-          <div className="my-2 text-sm text-gray-500">
+          <div className="my-2 text-sm text-gray-700">
             {colorAttribute && (
               <div className="flex items-center gap-2">
                 <span
@@ -90,7 +95,7 @@ export default function ProductCard({ item }: ProductCardProps) {
         )}
 
         {/* Rating */}
-        <div className="flex items-center justify-end text-sm text-gray-600">
+        <div className="flex justify-end text-sm text-gray-600">
           <FaStar className="w-4 h-4 fill-secondary mr-1" />
           {item.averageRating.toFixed(2)} ({item.totalReviews})
         </div>

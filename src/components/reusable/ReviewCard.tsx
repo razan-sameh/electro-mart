@@ -22,7 +22,7 @@ export default function ReviewCard({ review }: Props) {
       </div>
 
       {/* Date */}
-      <p className="text-sm text-gray-500 text-start">
+      <p className="text-sm text-gray-700 text-start">
         {formatDateTime(review.createdAt, local)}
       </p>
 
@@ -46,7 +46,7 @@ export default function ReviewCard({ review }: Props) {
                   style={{ backgroundColor: attr.hexCode }}
                 />
               )}
-              <span className="text-gray-500">{attr.attribute}:</span>
+              <span className="text-gray-700">{attr.attribute}:</span>
               <span className="font-medium">{attr.value}</span>
             </div>
           ))}
